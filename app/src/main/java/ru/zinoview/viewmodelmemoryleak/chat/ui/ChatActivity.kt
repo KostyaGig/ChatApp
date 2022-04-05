@@ -2,103 +2,63 @@ package ru.zinoview.viewmodelmemoryleak.chat.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
+import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import io.socket.client.IO
+import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.R
-import ru.zinoview.viewmodelmemoryleak.chat.ChatAdapter
-import kotlin.concurrent.thread
+import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.CloudDataSource
+import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.Connect
 
 class ChatActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_chat)
-
-        val chatRv = findViewById<RecyclerView>(R.id.chat_rv)
-        val callback = ChatMessageDiffUtil()
-        val sizeListener = ItemSizeListener.Base(chatRv)
-        val adapter = ChatAdapter(callback,sizeListener)
-
-        chatRv.adapter = adapter
-
-        val messages = UiChatMessagesObservable()
-        val messageObserver = UiChatMessagesObserver(adapter)
-
-        messages.observe(messageObserver)
-
-        thread {
-            for (i in 0..100) {
-                Thread.sleep(1000)
-                if (i % 2 == 0) {
-                    runOnUiThread {
-                        messages.add(
-                            listOf(
-                                UiChatMessage.Sent(
-                                    i,"content $i",1,2
-                                )
-                            )
-                        )
-                    }
-
-                } else {
-                    runOnUiThread {
-                        messages.add(
-                            listOf(
-                                UiChatMessage.Received(
-                                    i,"content $i",2,1
-                                )
-                            )
-                        )
-                    }
-
-                }
-
-            }
-        }
-
-//        thread {
-//            runOnUiThread {
-//                adapter.submitList(listOf(
-//                    UiChatMessage.Received(
-//                        1,"content $1",2,1
-//                    )
-//                ))
-//            }
-//
-//
-//            Thread.sleep(1000)
-//            runOnUiThread {
-//                adapter.submitList(listOf(
-//                    UiChatMessage.Received(
-//                        1,"content $1",2,1
-//                    ),
-//                    UiChatMessage.Received(
-//                        2,"content $2",2,1
-//                    )
-//                ))
-//            }
-//
-//
-//            Thread.sleep(1000)
-//
-//            runOnUiThread {
-//                adapter.submitList(listOf(
-//                    UiChatMessage.Received(
-//                        1,"content $1",2,1
-//                    ),
-//                    UiChatMessage.Sent(
-//                        1,"content $2",2,1
-//                    ),
-//                    UiChatMessage.Received(
-//                        3,"content $3",2,1
-//                    )
-//                ))
-//            }
-//
-//        }
-
-
+    private val viewModel: ChatViewModel by lazy{
+        ViewModelProvider(
+            this,
+            ChatViewModelFactory.Base(
+                CloudDataSource.Count(
+                    IO.socket("http://10.0.2.2:3000"),
+                    Connect.Base()
+                )
+            )
+        )[ChatViewModel.Base::class.java]
     }
 
+    private lateinit var resultTv: TextView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_chat_fake)
+
+//        val chatRv = findViewById<RecyclerView>(R.id.chat_rv)
+//        val callback = ChatMessageDiffUtil()
+//        val adapter = ChatAdapter(callback)
+//
+//        chatRv.adapter = adapter
+
+        resultTv = findViewById(R.id.result_tv)
+        val tapBtn = findViewById<Button>(R.id.tap_btn)
+
+        tapBtn.setOnClickListener {
+            viewModel.emit()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        viewModel.disconnect()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        viewModel.observe { model ->
+            model.show(resultTv)
+        }
+    }
 
 
 }

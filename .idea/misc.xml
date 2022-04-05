@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/layout/activity_chat.xml" value="0.2953703703703704" />
+        <entry key="app/src/main/res/layout/activity_chat_fake.xml" value="0.26944444444444443" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.26944444444444443" />
         <entry key="app/src/main/res/layout/activity_tap.xml" value="0.26944444444444443" />
         <entry key="app/src/main/res/layout/empty_screen.xml" value="0.26944444444444443" />

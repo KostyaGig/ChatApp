@@ -42,12 +42,12 @@ interface UiChatMessage : DiffSame<UiChatMessage>, Same, Bind {
         private val content: String,
         private val senderId: Int,
         private val receiverId: Int
-    ) : Message(id,"senderId: $senderId $content")
+    ) : Message(id,"messageId: $id $content")
 
     data class Received(
         private val id: Int,
         private val content: String,
         private val senderId: Int,
         private val receiverId: Int
-    ) : Message(id,"senderId: $senderId $content")
+    ) : Message(id,"messageId: $id $content")
 }
