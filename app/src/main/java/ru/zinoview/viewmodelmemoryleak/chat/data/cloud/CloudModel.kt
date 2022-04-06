@@ -6,14 +6,14 @@ interface CloudModel {
 
     fun show(textView: TextView)
 
-    class Base<T>(private val data: T) : CloudModel {
+    data class Base<T>(private val data: T) : CloudModel {
 
         override fun show(textView: TextView) {
             textView.text = data.toString()
         }
     }
 
-    class Failure(
+    data class Failure(
         private val message: String
     ) : CloudModel {
 

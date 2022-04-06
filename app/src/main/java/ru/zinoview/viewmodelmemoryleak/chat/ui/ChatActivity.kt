@@ -2,31 +2,37 @@ package ru.zinoview.viewmodelmemoryleak.chat.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import io.socket.client.IO
-import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.R
+import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
+import ru.zinoview.viewmodelmemoryleak.chat.data.cache.SharedPreferencesReader
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.Connect
+import kotlin.math.log
 
 class ChatActivity : AppCompatActivity() {
 
-    private val viewModel: ChatViewModel by lazy{
+    private val viewModel: ChatViewModel by lazy {
         ViewModelProvider(
             this,
             ChatViewModelFactory.Base(
-                CloudDataSource.Count(
+                CloudDataSource.Chat.Base(
                     IO.socket("http://10.0.2.2:3000"),
-                    Connect.Base()
+                    Connect.Base(),
+                    IdSharedPreferences.Base(
+                        SharedPreferencesReader.Base(),
+                        applicationContext
+                    )
                 )
             )
         )[ChatViewModel.Base::class.java]
     }
 
-    private lateinit var resultTv: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,26 +44,23 @@ class ChatActivity : AppCompatActivity() {
 //
 //        chatRv.adapter = adapter
 
-        resultTv = findViewById(R.id.result_tv)
-        val tapBtn = findViewById<Button>(R.id.tap_btn)
+        val nicknameField = findViewById<EditText>(R.id.nickname_field)
+        val joinButton = findViewById<Button>(R.id.join_btn)
 
-        tapBtn.setOnClickListener {
-            viewModel.emit()
+        joinButton.setOnClickListener {
+            val nickname = nicknameField.text.toString().trim()
+            viewModel.joinUser(nickname)
         }
+
     }
 
     override fun onPause() {
         super.onPause()
-
         viewModel.disconnect()
     }
 
     override fun onStart() {
         super.onStart()
-
-        viewModel.observe { model ->
-            model.show(resultTv)
-        }
     }
 
 

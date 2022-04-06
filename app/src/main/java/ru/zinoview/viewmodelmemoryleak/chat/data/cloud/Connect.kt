@@ -10,7 +10,13 @@ interface Connect {
 
     fun disconnect(socket: Socket)
 
+    fun disconnectBranch(socket: Socket,branch: String)
+
+    fun addSocketBranch(branch: String)
+
     class Base : Connect {
+
+        private val branches = ArrayList<String>()
 
         override fun connect(socket: Socket) {
             if (socket.isActive.not()) {
@@ -23,7 +29,20 @@ interface Connect {
         override fun disconnect(socket: Socket) {
             if (socket.isActive) {
                 socket.disconnect()
+
+                branches.forEach { branch ->
+                    disconnectBranch(socket,branch)
+                }
             }
         }
+
+        override fun disconnectBranch(socket: Socket, branch: String) {
+            socket.off(branch)
+        }
+
+        override fun addSocketBranch(branch: String) {
+            branches.add(branch)
+        }
+
     }
 }
