@@ -1,9 +1,8 @@
-package ru.zinoview.viewmodelmemoryleak.chat.ui
+package ru.zinoview.viewmodelmemoryleak.chat.ui.core
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 interface Dispatcher {
 

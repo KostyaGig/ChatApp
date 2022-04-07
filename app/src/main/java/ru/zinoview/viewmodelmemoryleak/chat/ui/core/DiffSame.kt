@@ -4,4 +4,5 @@ interface DiffSame<T> {
 
     fun isItemTheSame(item: T) : Boolean
     fun isContentTheSame(item: T) : Boolean
+
 }

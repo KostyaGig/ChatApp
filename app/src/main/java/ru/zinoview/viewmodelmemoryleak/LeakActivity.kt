@@ -6,13 +6,13 @@ import androidx.lifecycle.ViewModelProvider
 import ru.zinoview.viewmodelmemoryleak.memory_leak.LeakViewModel
 import kotlin.concurrent.thread
 
-class MainActivity : AppCompatActivity() {
+class LeakActivity : AppCompatActivity() {
 
     private var viewModel: LeakViewModel = LeakViewModel.Empty()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_leak)
 
         viewModel = ViewModelProvider(this)[LeakViewModel.Base::class.java]
         viewModel.addView(this)

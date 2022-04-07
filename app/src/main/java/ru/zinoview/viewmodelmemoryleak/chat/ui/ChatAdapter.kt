@@ -9,9 +9,11 @@ import ru.zinoview.viewmodelmemoryleak.chat.ui.core.AbstractDiffUtil
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.AbstractViewHolder
 import java.lang.IllegalStateException
 
- class ChatAdapter(
+ open class ChatAdapter(
      diffUtil: AbstractDiffUtil<UiChatMessage>
  ) : androidx.recyclerview.widget.ListAdapter<UiChatMessage, ChatAdapter.ChatViewHolder>(diffUtil) {
+
+     object Empty : ChatAdapter(AbstractDiffUtil.Empty)
 
     override fun getItemViewType(position: Int): Int {
         return when(getItem(position)) {

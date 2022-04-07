@@ -1,20 +1,14 @@
 package ru.zinoview.viewmodelmemoryleak.chat.data.cloud
 
+import android.app.UiModeManager
 import android.util.Log
+import com.google.gson.Gson
 import io.socket.client.Socket
 import org.json.JSONObject
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
-import java.lang.Exception
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
+import ru.zinoview.viewmodelmemoryleak.chat.ui.UiChatMessage
 
 interface CloudDataSource : Disconnect {
-
-    suspend fun emit()
-
-    suspend fun model(block: (CloudModel) -> Unit)
-
-    suspend fun modelFirst(block: (CloudModel) -> Unit)
 
     abstract class DisconnectSource(
         private val socket: Socket,
@@ -24,67 +18,17 @@ interface CloudDataSource : Disconnect {
         override fun disconnect() = connect.disconnect(socket)
     }
 
-    class Count(
-        private val socket: Socket,
-        private val connect: Connect
-    ) : CloudDataSource, DisconnectSource(socket,connect) {
+    interface JoinUser : Disconnect, CloudDataSource {
 
-        override suspend fun emit() {
-            try {
-                connect.connect(socket)
-                connect.disconnectBranch(socket,KEY_FIRST_VALUE)
-                socket.emit(KEY_VALUE)
-            } catch (e: Exception) {
-                Log.d("zinoviewk","Count.emit(), ${e.javaClass}")
-            }
-        }
-
-        override suspend fun model(block: (CloudModel) -> Unit) {
-            data(KEY_VALUE,block)
-        }
-
-        override suspend fun modelFirst(block: (CloudModel) -> Unit) {
-            data(KEY_FIRST_VALUE,block)
-            socket.emit(KEY_FIRST_VALUE)
-        }
-
-        private fun data(keyConnection:String,block: (CloudModel) -> Unit) {
-            try {
-                connect.connect(socket)
-                socket.on(keyConnection) { data ->
-                    if (data != null) {
-                        val count = data[0] as Int
-                        block.invoke(CloudModel.Base(count))
-                    } else {
-                        block.invoke(CloudModel.Failure("received data is null"))
-                    }
-                }
-            } catch (e: Exception) {
-                block.invoke(CloudModel.Failure(e.message.toString()))
-            }
-        }
-
-        private companion object {
-            private const val KEY_VALUE = "counter"
-            private const val KEY_FIRST_VALUE = "first_connection"
-        }
-    }
-
-    interface Chat : Disconnect, CloudDataSource {
-
-        fun joinUser(nickname: String)
-
-        override suspend fun emit() = Unit
-        override suspend fun model(block: (CloudModel) -> Unit) = Unit
-        override suspend fun modelFirst(block: (CloudModel) -> Unit) = Unit
+        fun joinUser(nickname: String,block: () -> Unit)
 
         class Base(
             private val socket: Socket,
             private val connect: Connect,
             private val idSharedPreferences: IdSharedPreferences
-        ) : DisconnectSource(socket, connect), Chat {
+        ) : DisconnectSource(socket, connect), JoinUser {
 
-            override fun joinUser(nickname: String) {
+            override fun joinUser(nickname: String,block: () -> Unit) {
                 connect.connect(socket)
                 connect.addSocketBranch(JOIN_USER)
 
@@ -95,7 +39,7 @@ interface CloudDataSource : Disconnect {
                 socket.on(JOIN_USER) { data ->
                     val id = data[0] as Int
                     idSharedPreferences.save(id)
-                    Log.d("zinoviewk","saved id ${idSharedPreferences.read()}")
+                    block.invoke()
                 }
                 socket.emit(JOIN_USER,user)
             }
@@ -104,7 +48,89 @@ interface CloudDataSource : Disconnect {
                 private const val JOIN_USER = "join_user"
             }
         }
+    }
 
+    interface SendMessage : Disconnect{
+
+        fun sendMessage(content: String)
+
+        fun observeMessages(block:(List<UiChatMessage>) -> Unit)
+
+        class Base(
+            private val socket: Socket,
+            private val connect: Connect,
+            private val idSharedPreferences: IdSharedPreferences
+        ) : SendMessage, DisconnectSource(socket, connect) {
+
+            override fun sendMessage(content: String) {
+                val id = idSharedPreferences.read()
+
+                // todo remove hardcode
+                val message = JSONObject().apply {
+                    put("senderId",id)
+                    put("content",content)
+                }
+
+                connect.connect(socket)
+                socket.emit(SEND_MESSAGE,message)
+            }
+
+
+            interface Mapper<T> {
+
+                fun map() : T
+            }
+
+            data class CloudMessage(
+                private val id: String,
+                private val senderId: Int,
+                private val content: String,
+                private val senderNickname: String
+            ) {
+                fun map(idPrefs: IdSharedPreferences) : UiChatMessage = if (idPrefs.read() == senderId) {
+                        UiChatMessage.Sent(id,content, senderId.toString(), senderNickname)
+                    } else {
+                        UiChatMessage.Received(id,content, senderId.toString(), senderNickname)
+                    }
+                }
+
+            data class Value(
+                private val nameValuePairs: CloudMessage
+            ) : Mapper<CloudMessage> {
+
+                override fun map(): CloudMessage
+                    = nameValuePairs
+            }
+
+            data class Root (
+                private val values: ArrayList<Value>
+            ) : Mapper<List<CloudMessage>> {
+                override fun map(): List<CloudMessage>
+                    = values.map { value ->
+                        value.map()
+                    }
+            }
+
+            override fun observeMessages(block: (List<UiChatMessage>) -> Unit) {
+                connect.connect(socket)
+                socket.on(SEND_MESSAGE) { data ->
+                    val json = Gson().toJson(data.get(0))
+                    val messages = Gson().fromJson(json,Root::class.java).map()
+                    val uiMessages = messages.map { it.map(idSharedPreferences) }
+                    block.invoke(uiMessages)
+
+                    Log.d("zinoviewk","observe messages $uiMessages")
+                }
+                connect.addSocketBranch(SEND_MESSAGE)
+            }
+
+
+
+        }
+
+        private companion object {
+            private const val SEND_MESSAGE = "send_message"
+        }
     }
 
 }
