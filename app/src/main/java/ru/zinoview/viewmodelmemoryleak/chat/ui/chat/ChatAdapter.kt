@@ -1,4 +1,4 @@
-package ru.zinoview.viewmodelmemoryleak.chat.ui
+package ru.zinoview.viewmodelmemoryleak.chat.ui.chat
 
 import android.view.LayoutInflater
 import android.view.View

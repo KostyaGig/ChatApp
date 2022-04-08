@@ -1,6 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.chat.data.cloud
 
-interface Disconnect {
+interface Disconnect<T> {
 
-    fun disconnect()
+    fun disconnect(arg: T)
 }

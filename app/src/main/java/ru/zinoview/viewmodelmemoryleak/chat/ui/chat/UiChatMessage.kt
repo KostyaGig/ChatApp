@@ -1,17 +1,21 @@
-package ru.zinoview.viewmodelmemoryleak.chat.ui
+package ru.zinoview.viewmodelmemoryleak.chat.ui.chat
 
-import android.util.Log
 import android.widget.TextView
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.Bind
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.DiffSame
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.Same
+import ru.zinoview.viewmodelmemoryleak.chat.ui.core.Ui
 
-interface UiChatMessage : DiffSame<UiChatMessage>, Same, Bind {
+interface UiChatMessage : DiffSame<UiChatMessage>, Same, Bind, Ui {
 
     override fun isContentTheSame(item: UiChatMessage) = false
     override fun isItemTheSame(item: UiChatMessage) = false
 
+    override fun same(data: String) = false
+    override fun sameId(id: String) = false
     override fun bind(view: TextView) = Unit
+
+    object Empty : UiChatMessage
 
     abstract class Abstract(
         private val id: String,
@@ -22,23 +26,11 @@ interface UiChatMessage : DiffSame<UiChatMessage>, Same, Bind {
             view.text = content
         }
 
-        override fun isItemTheSame(item: UiChatMessage) : Boolean {
-            val result = item.sameId(id)
-            Log.d("zinoviewk","isItemTheSame $result")
-            return result
-        }
-        override fun isContentTheSame(item: UiChatMessage) : Boolean{
-            val result = item.same(content)
-//            Log.d("zinoviewk","isContentTheSame $result")
-            return result
-        }
+        override fun isItemTheSame(item: UiChatMessage) = item.sameId(id)
+        override fun isContentTheSame(item: UiChatMessage) = item.same(content)
 
         override fun same(data: String) = content == data
-        override fun sameId(id: String) : Boolean {
-            val result = this.id == id
-            Log.d("zinoviewk","same id src ${this.id}, coming $id")
-            return result
-        }
+        override fun sameId(id: String) = this.id == id
     }
 
     data class Base(

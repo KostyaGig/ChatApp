@@ -1,35 +1,28 @@
 package ru.zinoview.viewmodelmemoryleak.chat.ui.join
-import androidx.lifecycle.ViewModel
+
 import androidx.lifecycle.viewModelScope
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.CloudDataSource
+import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.join.JoinUserRepository
+import ru.zinoview.viewmodelmemoryleak.chat.core.Clean
+import ru.zinoview.viewmodelmemoryleak.chat.ui.core.BaseViewModel
+import ru.zinoview.viewmodelmemoryleak.chat.ui.core.CommunicationObserve
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.Dispatcher
 
-interface JoinUserViewModel {
+interface JoinUserViewModel : Clean, CommunicationObserve<Unit> {
 
-    fun disconnect()
-
-    fun joinUser(nickname: String,block:() -> Unit)
+    fun join(nickname: String)
 
     class Base(
-        private val cloudDataSource: CloudDataSource.JoinUser,
-        private val dispatcher: Dispatcher
-    ) : ViewModel(), JoinUserViewModel {
+        private val repository: JoinUserRepository,
+        private val dispatcher: Dispatcher,
+        private val communication: JoinUserCommunication
+    ) : BaseViewModel<Unit>(repository,communication), JoinUserViewModel {
 
-        // todo use livedata
-        private var block: (() -> Unit)? = null
-
-        override fun joinUser(nickname: String,block:() -> Unit) {
-            this.block = block
+        override fun join(nickname: String) {
             dispatcher.doBackground(viewModelScope) {
-                cloudDataSource.joinUser(nickname,block)
+                repository.join(nickname) {
+                    communication.postValue(Unit)
+                }
             }
         }
-
-        override fun disconnect() {
-            block = null
-            cloudDataSource.disconnect()
-        }
-
-
     }
 }

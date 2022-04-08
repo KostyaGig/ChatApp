@@ -1,41 +1,33 @@
 package ru.zinoview.viewmodelmemoryleak.chat.ui.chat
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.CloudDataSource
-import ru.zinoview.viewmodelmemoryleak.chat.ui.UiChatMessage
+import ru.zinoview.viewmodelmemoryleak.chat.core.Clean
+import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.ChatRepository
+import ru.zinoview.viewmodelmemoryleak.chat.ui.core.BaseViewModel
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.Dispatcher
 
-interface ChatViewModel {
-
-    fun disconnect()
+interface ChatViewModel : ChatViewModelObserve,Clean {
 
     fun sendMessage(content: String)
 
-    fun observeMessages(block:(List<UiChatMessage>) -> Unit)
-
     class Base(
-        private val cloudDataSource: CloudDataSource.SendMessage,
-        private val dispatcher: Dispatcher
-    ) : ViewModel(), ChatViewModel {
-
-        // todo use livedata
-        private var block: ((List<UiChatMessage>) -> Unit)? = null
+        private val repository: ChatRepository,
+        private val dispatcher: Dispatcher,
+        private val mapper: DataToUiMessageMapper,
+        private val communication: MessagesCommunication
+    ) : BaseViewModel<List<UiChatMessage>>(repository,communication), ChatViewModel {
 
         override fun sendMessage(content: String)
-            = cloudDataSource.sendMessage(content)
+            = repository.sendMessage(content)
 
-        override fun observeMessages(block: (List<UiChatMessage>) -> Unit) {
-            this.block = block
-            cloudDataSource.observeMessages { messages ->
+        override fun observeMessages() {
+            repository.observe { messages ->
+                val uiMessages = messages.map {
+                    it.map(mapper)
+                }
                 dispatcher.doUi(viewModelScope) {
-                    block.invoke(messages)
+                    communication.postValue(uiMessages)
                 }
             }
-        }
-
-        override fun disconnect() {
-            block = null
-            cloudDataSource.disconnect()
         }
     }
 }

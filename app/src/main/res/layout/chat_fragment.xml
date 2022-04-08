@@ -27,7 +27,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <EditText
+            <view class="ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.MessageField$Base"
                 android:id="@+id/message_field"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

@@ -1,22 +1,23 @@
 package ru.zinoview.viewmodelmemoryleak.chat.ui.chat
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import com.google.gson.Gson
 import io.socket.client.IO
+import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.abstract_ex.AbstractFragment
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.SharedPreferencesReader
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.CloudDataSource
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.Connect
-import ru.zinoview.viewmodelmemoryleak.chat.ui.ChatAdapter
-import ru.zinoview.viewmodelmemoryleak.chat.ui.ChatMessageDiffUtil
-import ru.zinoview.viewmodelmemoryleak.chat.ui.UiChatMessage
+import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.Json
+import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.SocketConnection
+import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.ChatRepository
+import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.CloudDataSource
+import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.CloudToDataMessageMapper
+import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.MessageField
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
-import kotlin.math.log
 
 class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
     ChatViewModel.Base::class
@@ -24,17 +25,26 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
 
     private var adapter: ChatAdapter = ChatAdapter.Empty
 
-    override fun factory(): ViewModelProvider.Factory
-        = ChatViewModelFactory.Base(
-                CloudDataSource.SendMessage.Base(
+    override fun factory(): ViewModelProvider.Factory {
+        val prefs = IdSharedPreferences.Base(
+            SharedPreferencesReader.Base(),
+            requireContext()
+        )
+        return ChatViewModelFactory.Base(
+            ChatRepository.Base(
+                CloudDataSource.Base(
                     IO.socket("http://10.0.2.2:3000"),
-                    Connect.Base(),
-                    IdSharedPreferences.Base(
-                        SharedPreferencesReader.Base(),
-                        requireContext()
-                    )
-                )
-            )
+                    SocketConnection.Base(),
+                    Json.Base(),
+                    Gson()
+                ),
+                CloudToDataMessageMapper(
+                    prefs
+                ),
+                prefs
+            ))
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,24 +54,21 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
         binding.chatRv.adapter = adapter
 
         binding.sendMessageBtn.setOnClickListener {
-            val message = binding.messageField.text.toString().trim()
-
-            // todo rewrite
-            binding.messageField.setText("")
-            viewModel.sendMessage(message)
+            val field = view.findViewById<MessageField.Base>(R.id.message_field)
+            field.send(viewModel)
         }
     }
 
     override fun onStart() {
         super.onStart()
-        viewModel.observeMessages { messages ->
+        viewModel.observe(this) { messages ->
             adapter.submitList(ArrayList(messages))
         }
     }
 
     override fun onPause() {
         super.onPause()
-        viewModel.disconnect()
+        viewModel.clean()
     }
 
     override fun initBinding(inflater: LayoutInflater, container: ViewGroup?): ChatFragmentBinding

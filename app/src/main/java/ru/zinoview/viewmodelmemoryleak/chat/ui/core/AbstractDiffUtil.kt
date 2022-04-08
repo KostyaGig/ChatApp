@@ -1,7 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.chat.ui.core
 
 import androidx.recyclerview.widget.DiffUtil
-import ru.zinoview.viewmodelmemoryleak.chat.ui.UiChatMessage
+import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.UiChatMessage
 
 abstract class AbstractDiffUtil<T : DiffSame<T>> : DiffUtil.ItemCallback<T>() {
 
