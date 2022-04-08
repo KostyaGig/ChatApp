@@ -12,6 +12,6 @@ interface JoinUserViewModelFactory : ViewModelProvider.Factory {
     ) : JoinUserViewModelFactory {
 
         override fun <T : ViewModel?> create(modelClass: Class<T>): T
-            = JoinUserViewModel.Base(repository, Dispatcher.Base()) as T
+            = JoinUserViewModel.Base(repository, Dispatcher.Base(),JoinUserCommunication(),DataToUiJoinMapper()) as T
     }
 }

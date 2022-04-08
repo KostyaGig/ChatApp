@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.chat.data.cloud
 
-import android.util.Log
 import io.socket.client.Socket
 
 
@@ -12,13 +11,19 @@ interface SocketConnection : Disconnect<Socket> {
 
     fun addSocketBranch(branch: String)
 
-    class Base : SocketConnection {
+    class Base(
+        private val activity: ActivityConnection
+    ) : SocketConnection {
 
         private val branches = ArrayList<String>()
 
         override fun connect(socket: Socket) {
-            if (socket.isActive.not()) {
+            if (activity.isNotActive(socket)) {
                 socket.connect()
+
+                if (activity.isNotActive(socket)) {
+                    throw SocketConnectionException()
+                }
             }
         }
 

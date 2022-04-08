@@ -2,12 +2,12 @@ package ru.zinoview.viewmodelmemoryleak.chat.ui.chat
 import androidx.lifecycle.viewModelScope
 import ru.zinoview.viewmodelmemoryleak.chat.core.Clean
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.ChatRepository
+import ru.zinoview.viewmodelmemoryleak.chat.ui.core.ActionViewModel
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.BaseViewModel
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.Dispatcher
 
-interface ChatViewModel : ChatViewModelObserve,Clean {
+interface ChatViewModel : ChatViewModelObserve,Clean, ActionViewModel<String> {
 
-    fun sendMessage(content: String)
 
     class Base(
         private val repository: ChatRepository,
@@ -16,7 +16,7 @@ interface ChatViewModel : ChatViewModelObserve,Clean {
         private val communication: MessagesCommunication
     ) : BaseViewModel<List<UiChatMessage>>(repository,communication), ChatViewModel {
 
-        override fun sendMessage(content: String)
+        override fun doAction(content: String)
             = repository.sendMessage(content)
 
         override fun observeMessages() {

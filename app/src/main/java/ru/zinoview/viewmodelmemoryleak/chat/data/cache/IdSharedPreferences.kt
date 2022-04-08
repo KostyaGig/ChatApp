@@ -8,8 +8,11 @@ interface IdSharedPreferences {
 
     fun read() : Int
 
+    fun isEmpty() : Boolean
+
     class Base(
         private val reader: SharedPreferencesReader<Int>,
+        private val id: Id,
         context: Context
     ) : IdSharedPreferences {
 
@@ -19,6 +22,7 @@ interface IdSharedPreferences {
 
         override fun save(id: Int) = prefs.edit().putInt(KEY,id).apply()
 
+        override fun isEmpty() = id.isEmpty(read())
 
         private companion object {
             private const val NAME = "user_id_prefs"

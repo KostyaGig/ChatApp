@@ -9,8 +9,11 @@ import com.google.gson.Gson
 import io.socket.client.IO
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.abstract_ex.AbstractFragment
+import ru.zinoview.viewmodelmemoryleak.chat.core.navigation.Navigation
+import ru.zinoview.viewmodelmemoryleak.chat.data.cache.Id
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.SharedPreferencesReader
+import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.ActivityConnection
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.SocketConnection
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.ChatRepository
@@ -18,6 +21,11 @@ import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.CloudToDataMessageMapper
 import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.MessageField
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
+import android.R.color
+
+import android.content.res.ColorStateList
+import android.graphics.Color
+
 
 class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
     ChatViewModel.Base::class
@@ -26,15 +34,19 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
     private var adapter: ChatAdapter = ChatAdapter.Empty
 
     override fun factory(): ViewModelProvider.Factory {
+        val id = Id.Base()
         val prefs = IdSharedPreferences.Base(
-            SharedPreferencesReader.Base(),
+            SharedPreferencesReader.Base(id),
+            id,
             requireContext()
         )
         return ChatViewModelFactory.Base(
             ChatRepository.Base(
                 CloudDataSource.Base(
                     IO.socket("http://10.0.2.2:3000"),
-                    SocketConnection.Base(),
+                    SocketConnection.Base(
+                        ActivityConnection.Base()
+                    ),
                     Json.Base(),
                     Gson()
                 ),
@@ -55,7 +67,7 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
 
         binding.sendMessageBtn.setOnClickListener {
             val field = view.findViewById<MessageField.Base>(R.id.message_field)
-            field.send(viewModel)
+            field.doAction(viewModel)
         }
     }
 
@@ -70,6 +82,8 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
         super.onPause()
         viewModel.clean()
     }
+
+    override fun back(navigation: Navigation) = navigation.exit()
 
     override fun initBinding(inflater: LayoutInflater, container: ViewGroup?): ChatFragmentBinding
         = ChatFragmentBinding.inflate(layoutInflater,container,false)

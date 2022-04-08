@@ -1,9 +1,9 @@
 package ru.zinoview.viewmodelmemoryleak.chat.ui.chat
 
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.Message
+import ru.zinoview.viewmodelmemoryleak.chat.core.chat.Mapper
 
 
-class DataToUiMessageMapper : Message.Mapper<UiChatMessage> {
+class DataToUiMessageMapper : Mapper<UiChatMessage> {
 
     override fun mapSent(
         id: String,

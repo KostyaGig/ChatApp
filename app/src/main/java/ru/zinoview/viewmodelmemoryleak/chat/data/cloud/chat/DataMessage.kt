@@ -1,8 +1,11 @@
 package ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat
 
+import ru.zinoview.viewmodelmemoryleak.chat.core.chat.Mapper
+import ru.zinoview.viewmodelmemoryleak.chat.core.chat.Message
+
 interface DataMessage : Message {
 
-    override fun <T> map(mapper: ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.Message.Mapper<T>): T
+    override fun <T> map(mapper: Mapper<T>): T
         = mapper.map()
 
     object Empty : DataMessage
@@ -14,7 +17,7 @@ interface DataMessage : Message {
         private val senderNickname: String
     ) : DataMessage {
 
-        override fun <T> map(mapper: ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.Message.Mapper<T>): T
+        override fun <T> map(mapper: Mapper<T>): T
             = mapper.map(id, senderId, content, senderNickname)
     }
 

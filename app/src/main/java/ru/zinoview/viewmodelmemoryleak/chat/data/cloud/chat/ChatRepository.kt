@@ -1,9 +1,11 @@
 package ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.chat.core.Clean
 import ru.zinoview.viewmodelmemoryleak.chat.core.CleanRepository
 import ru.zinoview.viewmodelmemoryleak.chat.core.Observe
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
+import java.lang.Exception
 
 interface ChatRepository : Observe<List<DataMessage>>, Clean {
 
@@ -16,15 +18,24 @@ interface ChatRepository : Observe<List<DataMessage>>, Clean {
     ) : ChatRepository,CleanRepository(cloudDataSource) {
 
         override fun sendMessage(content: String) {
-            val userId = prefs.read()
-            cloudDataSource.sendMessage(userId,content)
+            try {
+                val userId = prefs.read()
+                cloudDataSource.sendMessage(userId,content)
+            } catch (e: Exception) {
+                Log.d("zinoviewk","ChatRepository send message exc ${e.message}")
+            }
         }
 
         override fun observe(block: (List<DataMessage>) -> Unit) {
-            cloudDataSource.observe {  cloudMessages ->
+            try {
+                cloudDataSource.observe {  cloudMessages ->
                     val dataMessages = cloudMessages.map { it.map(mapper) }
-                 block.invoke(dataMessages)
+                    block.invoke(dataMessages)
+                }
+            } catch (e: Exception) {
+                Log.d("zinoviewk","ChatRepository observe exc ${e.message}")
             }
+
         }
 
 

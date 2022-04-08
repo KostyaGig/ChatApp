@@ -1,10 +1,12 @@
 package ru.zinoview.viewmodelmemoryleak.chat.data.cloud.join
 
+import android.util.Log
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.ConnectionCloudDataSource
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.SocketConnection
+import java.lang.Exception
 
 interface CloudDataSource : Disconnect<Unit>, ConnectionCloudDataSource {
 
@@ -17,21 +19,23 @@ interface CloudDataSource : Disconnect<Unit>, ConnectionCloudDataSource {
     ) : ConnectionCloudDataSource.Base(socket, connection), CloudDataSource {
 
         override fun join(nickname: String, block: (Int) -> Unit) {
-            connection.connect(socket)
-            connection.addSocketBranch(JOIN_USER)
 
-            val user = json.create(
-                Pair(
-                    NICKNAME_KEY,
-                    nickname
+                connection.connect(socket)
+                connection.addSocketBranch(JOIN_USER)
+
+                val user = json.create(
+                    Pair(
+                        NICKNAME_KEY,
+                        nickname
+                    )
                 )
-            )
 
-            socket.on(JOIN_USER) { data ->
-                val id = data.first() as Int
-                block.invoke(id)
-            }
-            socket.emit(JOIN_USER,user)
+                socket.on(JOIN_USER) { data ->
+                    val id = data.first() as Int
+                    block.invoke(id)
+                }
+                socket.emit(JOIN_USER,user)
+
         }
 
         private companion object {

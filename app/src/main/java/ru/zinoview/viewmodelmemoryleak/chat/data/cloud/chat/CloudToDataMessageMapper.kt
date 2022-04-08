@@ -1,10 +1,11 @@
 package ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat
 
+import ru.zinoview.viewmodelmemoryleak.chat.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
 
 class CloudToDataMessageMapper(
     private val idSharedPreferences: IdSharedPreferences
-) : Message.Mapper<DataMessage> {
+) : Mapper<DataMessage> {
 
     override fun map(
         id: String,

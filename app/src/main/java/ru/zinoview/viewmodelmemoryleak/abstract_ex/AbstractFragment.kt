@@ -8,11 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
+import ru.zinoview.viewmodelmemoryleak.chat.core.navigation.Back
 import kotlin.reflect.KClass
 
 abstract class AbstractFragment<VM : ViewModel, B: ViewBinding>(
     viewModelClass: KClass<VM>
-) : Fragment() {
+) : Fragment(), Back {
 
     abstract fun factory() : ViewModelProvider.Factory
 

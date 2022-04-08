@@ -1,6 +1,9 @@
 package ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat
 
-interface CloudMessage : Message{
+import ru.zinoview.viewmodelmemoryleak.chat.core.chat.Mapper
+import ru.zinoview.viewmodelmemoryleak.chat.core.chat.Message
+
+interface CloudMessage : Message {
 
     class Base(
         private val id: String,
@@ -9,14 +12,19 @@ interface CloudMessage : Message{
         private val senderNickname: String
     ) : CloudMessage {
 
-        override fun <T> map(mapper: Message.Mapper<T>): T
+        override fun <T> map(mapper: Mapper<T>): T
             = mapper.map(id, senderId, content, senderNickname)
+    }
+
+    object Empty : CloudMessage {
+        override fun <T> map(mapper: Mapper<T>): T
+            = mapper.map()
     }
 }
 
 class Value(
     private val nameValuePairs: CloudMessage
-) : Message.Mapper<CloudMessage> {
+) : Mapper<CloudMessage> {
 
     override fun map(
         id: String,
@@ -24,11 +32,25 @@ class Value(
         content: String,
         senderNickname: String
     ) = nameValuePairs
+
+    override fun mapReceived(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ): CloudMessage = CloudMessage.Base(id, senderId, content, senderNickname)
+
+    override fun mapSent(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ): CloudMessage = CloudMessage.Empty
 }
 
 class WrapperMessages (
     private val values: ArrayList<Value>
-) : Message.Mapper<List<CloudMessage>> {
+) : Mapper<List<CloudMessage>> {
 
     override fun map(
         id: String,
@@ -39,5 +61,18 @@ class WrapperMessages (
         value.map(id, senderId, content, senderNickname)
     }
 
+    override fun mapReceived(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ): List<CloudMessage> = emptyList()
+
+    override fun mapSent(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ): List<CloudMessage> = emptyList()
 }
 
