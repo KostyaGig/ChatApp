@@ -13,7 +13,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBaseline_toTopOf="@id/write_message_container"
+            app:layout_constraintBottom_toTopOf="@id/write_message_container"
             android:id="@+id/chat_rv"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 

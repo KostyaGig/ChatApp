@@ -14,6 +14,7 @@ import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.Connect
 import ru.zinoview.viewmodelmemoryleak.chat.ui.ChatAdapter
 import ru.zinoview.viewmodelmemoryleak.chat.ui.ChatMessageDiffUtil
+import ru.zinoview.viewmodelmemoryleak.chat.ui.UiChatMessage
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
 import kotlin.math.log
 
@@ -44,6 +45,9 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
 
         binding.sendMessageBtn.setOnClickListener {
             val message = binding.messageField.text.toString().trim()
+
+            // todo rewrite
+            binding.messageField.setText("")
             viewModel.sendMessage(message)
         }
     }

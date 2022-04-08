@@ -53,12 +53,12 @@ interface UiChatMessage : DiffSame<UiChatMessage>, Same, Bind {
         private val content: String,
         private val senderId: String,
         private val senderNickname: String
-    ) : Abstract(id,"messageId: $id $content")
+    ) : Abstract(senderNickname,content)
 
     data class Received(
         private val id: String,
         private val content: String,
         private val senderId: String,
         private val senderNickname: String
-    ) : Abstract(id,"messageId: $id $content")
+    ) : Abstract(senderNickname,content)
 }
