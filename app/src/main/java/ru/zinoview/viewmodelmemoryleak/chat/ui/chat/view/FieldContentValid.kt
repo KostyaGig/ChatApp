@@ -8,15 +8,21 @@ interface FieldContentValid {
     fun check(message: String,viewModel: ActionViewModel<String>,field: MessageField)
 
     class Base(
-        private val underLine: UnderLine
+        private val snackBar: SnackBar
     ) : FieldContentValid {
 
         override fun check(message: String,viewModel: ActionViewModel<String>,field: MessageField) {
             if (message.isEmpty()) {
-                underLine.changeColor(field)
+                snackBar.show(
+                    EMPTY_FIELD_MESSAGE
+                )
             } else {
                 viewModel.doAction(message)
             }
+        }
+
+        private companion object {
+            private const val EMPTY_FIELD_MESSAGE = "The field is empty"
         }
     }
 }

@@ -10,9 +10,11 @@ interface DataJoin : Join {
             = mapper.map()
     }
 
-    object Failure : DataJoin {
+    class Failure(
+        private val message: String
+    ) : DataJoin {
         override fun <T> map(mapper: Mapper<T>): T
-            = mapper.mapFailure()
+            = mapper.map(message)
     }
 
 }

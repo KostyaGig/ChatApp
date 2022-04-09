@@ -18,7 +18,7 @@ interface MessageField : Action<ActionViewModel<String>> {
         ) : androidx.appcompat.widget.AppCompatEditText(context, attrs, defStyle), MessageField {
 
             private val messageValid = FieldContentValid.Base(
-                UnderLine.Base()
+                SnackBar.Base(this)
             )
 
 

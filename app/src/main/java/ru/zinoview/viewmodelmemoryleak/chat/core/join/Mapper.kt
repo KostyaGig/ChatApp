@@ -4,5 +4,5 @@ interface Mapper<T> {
 
     fun map() : T
 
-    fun mapFailure() : T
+    fun map(message: String) : T
 }

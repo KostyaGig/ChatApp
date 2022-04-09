@@ -1,12 +1,10 @@
 package ru.zinoview.viewmodelmemoryleak.chat.data.cloud.join
 
-import android.util.Log
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.ConnectionCloudDataSource
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.SocketConnection
-import java.lang.Exception
 
 interface CloudDataSource : Disconnect<Unit>, ConnectionCloudDataSource {
 
@@ -35,7 +33,6 @@ interface CloudDataSource : Disconnect<Unit>, ConnectionCloudDataSource {
                     block.invoke(id)
                 }
                 socket.emit(JOIN_USER,user)
-
         }
 
         private companion object {

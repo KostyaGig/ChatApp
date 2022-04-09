@@ -1,8 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.chat.ui.join
 
-import android.annotation.SuppressLint
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +8,8 @@ import androidx.lifecycle.ViewModelProvider
 import io.socket.client.IO
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.abstract_ex.AbstractFragment
+import ru.zinoview.viewmodelmemoryleak.chat.core.ExceptionMapper
+import ru.zinoview.viewmodelmemoryleak.chat.core.ResourceProvider
 import ru.zinoview.viewmodelmemoryleak.chat.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.Id
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
@@ -21,6 +20,7 @@ import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.SocketConnection
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.join.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.join.JoinUserRepository
 import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.MessageField
+import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.databinding.JoinFragmentBinding
 
 class JoinUserFragment : AbstractFragment<JoinUserViewModel.Base,JoinFragmentBinding>(
@@ -42,23 +42,19 @@ class JoinUserFragment : AbstractFragment<JoinUserViewModel.Base,JoinFragmentBin
                         ActivityConnection.Base()
                     ),
                     Json.Base()
+                ),
+                ExceptionMapper.Base(
+                    ResourceProvider.Base(requireContext())
                 )
             ),
         )
     }
 
-    @SuppressLint("RestrictedApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.joinBtn.setOnClickListener {
             val nicknameField = view.findViewById<MessageField.Base>(R.id.nickname_field)
-            nicknameField.background =
-                //todo join error -> change background field
-//            nicknameField.doAction(viewModel)
-
-//            val colorStateList = ColorStateList.valueOf(Color.RED)
-//            nicknameField.backgroundTintList = colorStateList
-//            nicknameField.supportBackgroundTintList = colorStateList
+            nicknameField.doAction(viewModel)
         }
     }
 
@@ -66,6 +62,9 @@ class JoinUserFragment : AbstractFragment<JoinUserViewModel.Base,JoinFragmentBin
         super.onStart()
         viewModel.observe(this) { uiJoin ->
             uiJoin.navigate(requireActivity() as Navigation)
+            uiJoin.showError(
+                SnackBar.Base(binding.joinBtn)
+            )
         }
     }
 

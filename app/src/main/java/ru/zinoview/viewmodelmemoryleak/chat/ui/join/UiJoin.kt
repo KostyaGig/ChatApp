@@ -2,11 +2,14 @@ package ru.zinoview.viewmodelmemoryleak.chat.ui.join
 
 import ru.zinoview.viewmodelmemoryleak.chat.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.ChatFragment
+import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.Navigate
+import ru.zinoview.viewmodelmemoryleak.chat.ui.core.ShowError
 
-interface UiJoin : Navigate {
+interface UiJoin : Navigate, ShowError {
 
     override fun navigate(navigation: Navigation) = Unit
+    override fun showError(snackBar: SnackBar) = Unit
 
     object Success : UiJoin {
 
@@ -14,5 +17,10 @@ interface UiJoin : Navigate {
             = navigation.navigateTo(ChatFragment())
     }
 
-    object Failure : UiJoin
+    class Failure(
+        private val message: String
+    ) : UiJoin {
+        override fun showError(snackBar: SnackBar)
+            = snackBar.show(message)
+    }
 }

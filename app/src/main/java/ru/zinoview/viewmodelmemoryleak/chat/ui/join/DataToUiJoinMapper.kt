@@ -6,5 +6,5 @@ class DataToUiJoinMapper : Mapper<UiJoin> {
 
     override fun map() = UiJoin.Success
 
-    override fun mapFailure() = UiJoin.Failure
+    override fun map(message: String) = UiJoin.Failure(message)
 }

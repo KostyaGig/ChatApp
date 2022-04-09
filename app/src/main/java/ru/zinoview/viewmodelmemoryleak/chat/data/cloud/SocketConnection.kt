@@ -20,10 +20,6 @@ interface SocketConnection : Disconnect<Socket> {
         override fun connect(socket: Socket) {
             if (activity.isNotActive(socket)) {
                 socket.connect()
-
-                if (activity.isNotActive(socket)) {
-                    throw SocketConnectionException()
-                }
             }
         }
 

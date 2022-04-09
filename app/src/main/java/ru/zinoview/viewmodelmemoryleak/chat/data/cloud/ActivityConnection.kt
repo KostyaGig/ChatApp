@@ -7,6 +7,6 @@ interface ActivityConnection {
     class Base : ActivityConnection {
 
         override fun isNotActive(socket: io.socket.client.Socket)
-            = socket.isActive.not()
+            = socket.isActive.not() || socket.id() == null
     }
 }
