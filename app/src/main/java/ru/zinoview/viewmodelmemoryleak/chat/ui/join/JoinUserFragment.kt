@@ -14,11 +14,11 @@ import ru.zinoview.viewmodelmemoryleak.chat.ui.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.Id
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.SharedPreferencesReader
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.ActivityConnection
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.Json
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.SocketConnection
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.join.CloudDataSource
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.join.JoinUserRepository
+import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.ActivityConnection
+import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.Json
+import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.SocketConnection
+import ru.zinoview.viewmodelmemoryleak.chat.data.join.cloud.CloudDataSource
+import ru.zinoview.viewmodelmemoryleak.chat.data.join.JoinUserRepository
 import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.MessageField
 import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.databinding.JoinFragmentBinding

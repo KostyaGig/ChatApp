@@ -1,4 +1,4 @@
-package ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat
+package ru.zinoview.viewmodelmemoryleak.chat.data.chat
 
 import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.chat.core.chat.Mapper

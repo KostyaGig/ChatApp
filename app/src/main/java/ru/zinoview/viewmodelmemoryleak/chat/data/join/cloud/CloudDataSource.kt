@@ -1,10 +1,10 @@
-package ru.zinoview.viewmodelmemoryleak.chat.data.cloud.join
+package ru.zinoview.viewmodelmemoryleak.chat.data.join.cloud
 
 import io.socket.client.Socket
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.AbstractCloudDataSource
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.Disconnect
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.Json
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.SocketConnection
+import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.AbstractCloudDataSource
+import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.Disconnect
+import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.Json
+import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.SocketConnection
 
 interface CloudDataSource : Disconnect<Unit>, AbstractCloudDataSource {
 

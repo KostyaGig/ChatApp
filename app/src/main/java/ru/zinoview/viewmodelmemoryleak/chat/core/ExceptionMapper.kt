@@ -1,7 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.chat.core
 
 import ru.zinoview.viewmodelmemoryleak.R
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.SocketConnectionException
+import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.SocketConnectionException
 import java.lang.Exception
 
 interface ExceptionMapper {

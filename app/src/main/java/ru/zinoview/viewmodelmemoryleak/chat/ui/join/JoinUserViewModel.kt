@@ -1,7 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.chat.ui.join
 
 import androidx.lifecycle.viewModelScope
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.join.JoinUserRepository
+import ru.zinoview.viewmodelmemoryleak.chat.data.join.JoinUserRepository
 import ru.zinoview.viewmodelmemoryleak.chat.core.Clean
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.ActionViewModel
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.BaseViewModel

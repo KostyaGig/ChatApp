@@ -1,10 +1,11 @@
-package ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat
+package ru.zinoview.viewmodelmemoryleak.chat.data.chat
 
 import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.chat.core.Clean
 import ru.zinoview.viewmodelmemoryleak.chat.core.CleanRepository
 import ru.zinoview.viewmodelmemoryleak.chat.core.Observe
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
+import ru.zinoview.viewmodelmemoryleak.chat.data.chat.cloud.CloudDataSource
 import java.lang.Exception
 
 interface ChatRepository : Observe<List<DataMessage>>, Clean {

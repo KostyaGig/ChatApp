@@ -1,10 +1,12 @@
-package ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat
+package ru.zinoview.viewmodelmemoryleak.chat.data.chat.cloud
 
-import android.util.Log
 import com.google.gson.Gson
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.chat.core.Observe
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.*
+import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.AbstractCloudDataSource
+import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.Disconnect
+import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.Json
+import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.SocketConnection
 
 interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>> {
 
@@ -17,7 +19,7 @@ interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>> {
         private val connection: SocketConnection,
         private val json: Json,
         private val gson: Gson
-    ) : AbstractCloudDataSource.Base(socket, connection),CloudDataSource {
+    ) : AbstractCloudDataSource.Base(socket, connection), CloudDataSource {
 
         override fun sendMessage(userId: Int,content: String) {
             val message = json.create(
@@ -49,13 +51,10 @@ interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>> {
 
         override suspend fun messages(block:(List<CloudMessage>) -> Unit) {
 
-
             connection.connect(socket)
             socket.on(MESSAGES) { data ->
                 val wrapperMessages = gson.toJson(data.first())
                 val messages = gson.fromJson(wrapperMessages, WrapperMessages::class.java).map()
-
-                Log.d("zinoviewk","messages $messages")
 
                 // todo remove hard code
                 val msg = if (messages.isEmpty()) {
@@ -68,21 +67,10 @@ interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>> {
                     messages
                 }
                 block.invoke(msg)
-                connection.disconnectBranch(socket,MESSAGES)
+                connection.disconnectBranch(socket, MESSAGES)
             }
             socket.emit(MESSAGES)
             connection.addSocketBranch(MESSAGES)
-
-            connection.handleActivityActivity(socket) {
-                // todo hard code remove
-                block.invoke(
-                    listOf(
-                        CloudMessage.Failure(
-                            "Waiting for server..."
-                        )
-                    )
-                )
-            }
 
             observe(block)
         }

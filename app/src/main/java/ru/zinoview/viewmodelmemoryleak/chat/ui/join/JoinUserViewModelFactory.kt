@@ -2,7 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.chat.ui.join
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.join.JoinUserRepository
+import ru.zinoview.viewmodelmemoryleak.chat.data.join.JoinUserRepository
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.Dispatcher
 
 interface JoinUserViewModelFactory : ViewModelProvider.Factory {

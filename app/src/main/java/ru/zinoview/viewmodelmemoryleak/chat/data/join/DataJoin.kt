@@ -1,4 +1,4 @@
-package ru.zinoview.viewmodelmemoryleak.chat.data.cloud.join
+package ru.zinoview.viewmodelmemoryleak.chat.data.join
 
 import ru.zinoview.viewmodelmemoryleak.chat.core.join.Join
 import ru.zinoview.viewmodelmemoryleak.chat.core.join.Mapper

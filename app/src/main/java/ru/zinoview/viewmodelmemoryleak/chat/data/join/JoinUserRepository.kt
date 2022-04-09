@@ -1,9 +1,10 @@
-package ru.zinoview.viewmodelmemoryleak.chat.data.cloud.join
+package ru.zinoview.viewmodelmemoryleak.chat.data.join
 
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.chat.core.Clean
 import ru.zinoview.viewmodelmemoryleak.chat.core.CleanRepository
 import ru.zinoview.viewmodelmemoryleak.chat.core.ExceptionMapper
+import ru.zinoview.viewmodelmemoryleak.chat.data.join.cloud.CloudDataSource
 import java.lang.Exception
 
 interface JoinUserRepository : Clean {

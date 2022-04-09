@@ -12,12 +12,14 @@ import ru.zinoview.viewmodelmemoryleak.chat.ui.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.Id
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.SharedPreferencesReader
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.ActivityConnection
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.Json
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.SocketConnection
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.ChatRepository
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.CloudDataSource
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.CloudToDataMessageMapper
+import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.ActivityConnection
+import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.Json
+import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.SocketConnection
+import ru.zinoview.viewmodelmemoryleak.chat.data.chat.ChatRepository
+import ru.zinoview.viewmodelmemoryleak.chat.data.chat.cloud.CloudDataSource
+import ru.zinoview.viewmodelmemoryleak.chat.data.chat.CloudToDataMessageMapper
+import ru.zinoview.viewmodelmemoryleak.chat.data.connection.CloudToDataConnectionMapper
+import ru.zinoview.viewmodelmemoryleak.chat.data.connection.ConnectionRepository
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
 
 import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.SnackBar
@@ -38,13 +40,15 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
             id,
             requireContext()
         )
+        val socket = IO.socket("http://10.0.2.2:3000")
+        val connection = SocketConnection.Base(
+            ActivityConnection.Base()
+        )
         return ChatViewModelFactory.Base(
             ChatRepository.Base(
                 CloudDataSource.Base(
-                    IO.socket("http://10.0.2.2:3000"),
-                    SocketConnection.Base(
-                        ActivityConnection.Base()
-                    ),
+                    socket,
+                    connection,
                     Json.Base(),
                     Gson()
                 ),
@@ -52,7 +56,14 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
                     prefs
                 ),
                 prefs
-            ))
+            ),
+        ConnectionRepository.Base(
+            CloudToDataConnectionMapper(),
+            ru.zinoview.viewmodelmemoryleak.chat.data.connection.cloud.CloudDataSource.Base(
+                socket, connection
+            )
+        )
+        )
     }
 
 
@@ -81,6 +92,7 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
         }
 
         viewModel.messages()
+        viewModel.connection()
     }
 
     override fun onStart() {
@@ -88,6 +100,11 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
         viewModel.observe(this) { messages ->
             messages.first().changeTitle(requireActivity() as ToolbarActivity)
             adapter.submitList(ArrayList(messages))
+        }
+        viewModel.observeConnection(this) { connection ->
+            connection.changeTitle(requireActivity() as ToolbarActivity)
+            connection.showError(adapter)
+            connection.messages(viewModel)
         }
     }
 

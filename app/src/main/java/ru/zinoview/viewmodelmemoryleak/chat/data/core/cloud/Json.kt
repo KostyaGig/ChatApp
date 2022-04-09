@@ -1,4 +1,4 @@
-package ru.zinoview.viewmodelmemoryleak.chat.data.cloud
+package ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud
 
 import org.json.JSONObject
 
