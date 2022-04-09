@@ -7,6 +7,8 @@ interface SocketConnection : Disconnect<Socket> {
 
     fun connect(socket: Socket)
 
+    suspend fun handleActivityActivity(socket: Socket, isNotActive:() -> Unit)
+
     fun disconnectBranch(socket: Socket,branch: String)
 
     fun addSocketBranch(branch: String)
@@ -22,6 +24,9 @@ interface SocketConnection : Disconnect<Socket> {
                 socket.connect()
             }
         }
+
+        override suspend fun handleActivityActivity(socket: Socket, isNotActive: () -> Unit)
+            = activity.handle(socket,isNotActive)
 
         override fun disconnect(socket: Socket) {
             if (socket.isActive) {

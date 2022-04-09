@@ -10,7 +10,7 @@ import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.abstract_ex.AbstractFragment
 import ru.zinoview.viewmodelmemoryleak.chat.core.ExceptionMapper
 import ru.zinoview.viewmodelmemoryleak.chat.core.ResourceProvider
-import ru.zinoview.viewmodelmemoryleak.chat.core.navigation.Navigation
+import ru.zinoview.viewmodelmemoryleak.chat.ui.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.Id
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.SharedPreferencesReader
@@ -63,7 +63,7 @@ class JoinUserFragment : AbstractFragment<JoinUserViewModel.Base,JoinFragmentBin
         viewModel.observe(this) { uiJoin ->
             uiJoin.navigate(requireActivity() as Navigation)
             uiJoin.showError(
-                SnackBar.Base(binding.joinBtn)
+                SnackBar.Base(binding.joinBtn,SnackBar.SnackBarVisibility.Empty())
             )
         }
     }

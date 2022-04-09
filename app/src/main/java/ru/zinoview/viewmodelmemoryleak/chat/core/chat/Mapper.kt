@@ -9,6 +9,8 @@ interface Mapper<T> {
         senderNickname: String = ""
     ) : T
 
+    fun mapFailure(message: String) : T
+
     fun mapReceived(
         id: String,
         senderId: Int,

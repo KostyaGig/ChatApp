@@ -1,6 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.chat.ui.authentication
 
-import ru.zinoview.viewmodelmemoryleak.chat.core.navigation.Navigation
+import ru.zinoview.viewmodelmemoryleak.chat.ui.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.ChatFragment
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.Navigate
 import ru.zinoview.viewmodelmemoryleak.chat.ui.join.JoinUserFragment

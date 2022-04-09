@@ -7,9 +7,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
 import io.socket.client.IO
-import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.abstract_ex.AbstractFragment
-import ru.zinoview.viewmodelmemoryleak.chat.core.navigation.Navigation
+import ru.zinoview.viewmodelmemoryleak.chat.ui.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.Id
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.SharedPreferencesReader
@@ -19,12 +18,11 @@ import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.SocketConnection
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.ChatRepository
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.chat.CloudToDataMessageMapper
-import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.MessageField
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
-import android.R.color
 
-import android.content.res.ColorStateList
-import android.graphics.Color
+import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.SnackBar
+import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.SnackBarHeight
+import ru.zinoview.viewmodelmemoryleak.chat.ui.core.ToolbarActivity
 
 
 class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
@@ -60,20 +58,35 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val diffUtil = ChatMessageDiffUtil()
         adapter = ChatAdapter(diffUtil)
 
         binding.chatRv.adapter = adapter
 
         binding.sendMessageBtn.setOnClickListener {
-            val field = view.findViewById<MessageField.Base>(R.id.message_field)
-            field.doAction(viewModel)
+            val message = binding.messageField.text.toString().trim()
+            binding.messageField.setText("")
+            if (message.isEmpty()) {
+                SnackBar.Base(
+                    binding.messageField,
+                    SnackBar.SnackBarVisibility(
+                        binding.writeMessageContainer,
+                        SnackBarHeight.Base()
+                    )
+                ).show("Enter a message")
+            } else {
+                viewModel.doAction(message)
+            }
         }
+
+        viewModel.messages()
     }
 
     override fun onStart() {
         super.onStart()
         viewModel.observe(this) { messages ->
+            messages.first().changeTitle(requireActivity() as ToolbarActivity)
             adapter.submitList(ArrayList(messages))
         }
     }

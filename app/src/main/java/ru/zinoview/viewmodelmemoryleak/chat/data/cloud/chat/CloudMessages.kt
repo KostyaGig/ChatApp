@@ -16,6 +16,13 @@ interface CloudMessage : Message {
             = mapper.map(id, senderId, content, senderNickname)
     }
 
+    class Failure(
+        private val message: String
+    ) : CloudMessage {
+        override fun <T> map(mapper: Mapper<T>): T
+            = mapper.mapFailure(message)
+    }
+
     object Empty : CloudMessage {
         override fun <T> map(mapper: Mapper<T>): T
             = mapper.map()
@@ -23,7 +30,7 @@ interface CloudMessage : Message {
 }
 
 class Value(
-    private val nameValuePairs: CloudMessage
+    private val nameValuePairs: CloudMessage.Base
 ) : Mapper<CloudMessage> {
 
     override fun map(
@@ -46,6 +53,8 @@ class Value(
         content: String,
         senderNickname: String
     ): CloudMessage = CloudMessage.Empty
+
+    override fun mapFailure(message: String) = CloudMessage.Empty
 }
 
 class WrapperMessages (
@@ -74,5 +83,7 @@ class WrapperMessages (
         content: String,
         senderNickname: String
     ): List<CloudMessage> = emptyList()
+
+    override fun mapFailure(message: String) : List<CloudMessage> = emptyList()
 }
 

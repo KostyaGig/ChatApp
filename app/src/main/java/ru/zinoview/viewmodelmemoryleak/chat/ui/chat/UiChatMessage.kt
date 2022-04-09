@@ -1,12 +1,9 @@
 package ru.zinoview.viewmodelmemoryleak.chat.ui.chat
 
 import android.widget.TextView
-import ru.zinoview.viewmodelmemoryleak.chat.ui.core.Bind
-import ru.zinoview.viewmodelmemoryleak.chat.ui.core.DiffSame
-import ru.zinoview.viewmodelmemoryleak.chat.ui.core.Same
-import ru.zinoview.viewmodelmemoryleak.chat.ui.core.Ui
+import ru.zinoview.viewmodelmemoryleak.chat.ui.core.*
 
-interface UiChatMessage : DiffSame<UiChatMessage>, Same, Bind, Ui {
+interface UiChatMessage : DiffSame<UiChatMessage>, Same, Bind, Ui,ChangeTitle<ToolbarActivity> {
 
     override fun isContentTheSame(item: UiChatMessage) = false
     override fun isItemTheSame(item: UiChatMessage) = false
@@ -15,7 +12,29 @@ interface UiChatMessage : DiffSame<UiChatMessage>, Same, Bind, Ui {
     override fun sameId(id: String) = false
     override fun bind(view: TextView) = Unit
 
+    override fun changeTitle(toolbar: ToolbarActivity) = Unit
+
+    fun bindError(view: TextView) = Unit
+
     object Empty : UiChatMessage
+
+    class Failure(
+        private val message: String
+    ) : UiChatMessage {
+        override fun changeTitle(toolbar: ToolbarActivity)
+            = toolbar.changeTitle(message)
+
+        override fun bindError(view: TextView) {
+            view.text = message
+        }
+    }
+
+    object Progress : UiChatMessage {
+        override fun changeTitle(toolbar: ToolbarActivity)
+            = toolbar.changeTitle(TITLE)
+
+        private const val TITLE = "Progress"
+    }
 
     abstract class Abstract(
         private val id: String,
@@ -31,14 +50,14 @@ interface UiChatMessage : DiffSame<UiChatMessage>, Same, Bind, Ui {
 
         override fun same(data: String) = content == data
         override fun sameId(id: String) = this.id == id
-    }
 
-    data class Base(
-        private val id: String,
-        private val content: String,
-        private val senderId: String,
-        private val senderNickname: String
-    ) : Abstract(id,content)
+        override fun changeTitle(toolbar: ToolbarActivity)
+            = toolbar.changeTitle(TITLE)
+
+        private companion object {
+            private const val TITLE = "Chat"
+        }
+    }
 
     data class Sent(
         private val id: String,

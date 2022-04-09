@@ -11,6 +11,8 @@ interface ChatRepository : Observe<List<DataMessage>>, Clean {
 
     fun sendMessage(content: String)
 
+    suspend fun messages(block: (List<DataMessage>) -> Unit)
+
     class Base(
         private val cloudDataSource: CloudDataSource,
         private val mapper: CloudToDataMessageMapper,
@@ -23,6 +25,13 @@ interface ChatRepository : Observe<List<DataMessage>>, Clean {
                 cloudDataSource.sendMessage(userId,content)
             } catch (e: Exception) {
                 Log.d("zinoviewk","ChatRepository send message exc ${e.message}")
+            }
+        }
+
+        override suspend fun messages(block: (List<DataMessage>) -> Unit) {
+            cloudDataSource.messages { cloud ->
+                val data = cloud.map { it.map(mapper) }
+                block.invoke(data)
             }
         }
 

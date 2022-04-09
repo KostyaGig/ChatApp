@@ -5,16 +5,17 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import ru.zinoview.viewmodelmemoryleak.R
-import ru.zinoview.viewmodelmemoryleak.chat.core.navigation.Back
-import ru.zinoview.viewmodelmemoryleak.chat.core.navigation.Navigation
+import ru.zinoview.viewmodelmemoryleak.chat.ui.core.navigation.Back
+import ru.zinoview.viewmodelmemoryleak.chat.ui.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.chat.data.authentication.AuthenticationRepository
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.Id
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.SharedPreferencesReader
 import ru.zinoview.viewmodelmemoryleak.chat.ui.authentication.AuthenticationViewModel
 import ru.zinoview.viewmodelmemoryleak.chat.ui.authentication.AuthenticationViewModelFactory
+import ru.zinoview.viewmodelmemoryleak.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity(), Navigation {
+class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity {
 
     private val viewModel by lazy {
         val id = Id.Base()
@@ -34,9 +35,17 @@ class MainActivity : AppCompatActivity(), Navigation {
         )[AuthenticationViewModel.Base::class.java]
     }
 
+    private var _binding: ActivityMainBinding? = null
+    private val binding by lazy {
+        checkNotNull(_binding)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        _binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(_binding?.root)
+
+        setSupportActionBar(binding.toolbar)
 
         viewModel.auth()
     }
@@ -61,5 +70,14 @@ class MainActivity : AppCompatActivity(), Navigation {
         fragment.back(this)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
     override fun exit() = finish()
+
+    override fun changeTitle(title: String) {
+        binding.toolbar.title = title
+    }
 }

@@ -1,4 +1,4 @@
-package ru.zinoview.viewmodelmemoryleak.chat.core.navigation
+package ru.zinoview.viewmodelmemoryleak.chat.ui.core.navigation
 
 interface Back {
 

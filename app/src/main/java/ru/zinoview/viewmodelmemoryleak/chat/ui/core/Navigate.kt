@@ -1,6 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.chat.ui.core
 
-import ru.zinoview.viewmodelmemoryleak.chat.core.navigation.Navigation
+import ru.zinoview.viewmodelmemoryleak.chat.ui.core.navigation.Navigation
 
 interface Navigate {
 

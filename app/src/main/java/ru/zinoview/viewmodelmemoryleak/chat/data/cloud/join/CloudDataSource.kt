@@ -1,12 +1,12 @@
 package ru.zinoview.viewmodelmemoryleak.chat.data.cloud.join
 
 import io.socket.client.Socket
-import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.ConnectionCloudDataSource
+import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.AbstractCloudDataSource
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.chat.data.cloud.SocketConnection
 
-interface CloudDataSource : Disconnect<Unit>, ConnectionCloudDataSource {
+interface CloudDataSource : Disconnect<Unit>, AbstractCloudDataSource {
 
     fun join(nickname: String,block: (Int) -> Unit)
 
@@ -14,7 +14,7 @@ interface CloudDataSource : Disconnect<Unit>, ConnectionCloudDataSource {
         private val socket: Socket,
         private val connection: SocketConnection,
         private val json: Json,
-    ) : ConnectionCloudDataSource.Base(socket, connection), CloudDataSource {
+    ) : AbstractCloudDataSource.Base(socket, connection), CloudDataSource {
 
         override fun join(nickname: String, block: (Int) -> Unit) {
 

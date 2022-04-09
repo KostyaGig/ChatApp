@@ -2,7 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.chat.data.cloud
 
 import io.socket.client.Socket
 
-interface ConnectionCloudDataSource : Disconnect<Unit> {
+interface AbstractCloudDataSource : Disconnect<Unit> {
 
     abstract class Base(
         private val socket: Socket,

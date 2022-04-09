@@ -15,6 +15,9 @@ class DataToUiMessageMapper : Mapper<UiChatMessage> {
             id,content,senderId.toString(),senderNickname
         )
 
+    override fun mapFailure(message: String): UiChatMessage
+        = UiChatMessage.Failure(message)
+
     override fun mapReceived(
         id: String,
         senderId: Int,
@@ -31,6 +34,5 @@ class DataToUiMessageMapper : Mapper<UiChatMessage> {
         content: String,
         senderNickname: String
     ) = UiChatMessage.Empty
-
 
 }

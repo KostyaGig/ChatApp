@@ -10,6 +10,13 @@ interface DataMessage : Message {
 
     object Empty : DataMessage
 
+    class Failure(
+        private val message: String
+    ) : DataMessage {
+        override fun <T> map(mapper: Mapper<T>): T
+            = mapper.mapFailure(message)
+    }
+
     abstract class Message(
         private val id: String,
         private val senderId: Int,
@@ -22,16 +29,24 @@ interface DataMessage : Message {
     }
 
     class Sent(
-        id: String,
-        senderId: Int,
-        content: String,
-        senderNickname: String
-    ) : Message(id, senderId, content, senderNickname)
+        private val id: String,
+        private val senderId: Int,
+        private val content: String,
+        private val senderNickname: String
+    ) : Message(id, senderId, content, senderNickname) {
+
+        override fun <T> map(mapper: Mapper<T>): T
+            = mapper.mapSent(id, senderId, content, senderNickname)
+    }
 
     class Received(
-        id: String,
-        senderId: Int,
-        content: String,
-        senderNickname: String
-    ) : Message(id, senderId, content, senderNickname)
+        private val id: String,
+        private val senderId: Int,
+        private val content: String,
+        private val senderNickname: String
+    ) : Message(id, senderId, content, senderNickname) {
+
+        override fun <T> map(mapper: Mapper<T>): T
+            = mapper.mapReceived(id, senderId, content, senderNickname)
+    }
 }
