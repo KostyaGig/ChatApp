@@ -24,7 +24,7 @@ class DataToUiMessageMapper : Mapper<UiChatMessage> {
         content: String,
         senderNickname: String
     ): UiChatMessage
-        = UiChatMessage.Sent(
+        = UiChatMessage.Received(
             id,content,senderId.toString(),senderNickname
         )
 

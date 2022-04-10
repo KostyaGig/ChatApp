@@ -18,6 +18,7 @@ import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.SocketConnection
 import ru.zinoview.viewmodelmemoryleak.chat.data.chat.ChatRepository
 import ru.zinoview.viewmodelmemoryleak.chat.data.chat.cloud.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.chat.data.chat.CloudToDataMessageMapper
+import ru.zinoview.viewmodelmemoryleak.chat.data.chat.cloud.Data
 import ru.zinoview.viewmodelmemoryleak.chat.data.connection.CloudToDataConnectionMapper
 import ru.zinoview.viewmodelmemoryleak.chat.data.connection.ConnectionRepository
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
@@ -50,7 +51,8 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
                     socket,
                     connection,
                     Json.Base(),
-                    Gson()
+                    Gson(),
+                    Data.CloudMessage()
                 ),
                 CloudToDataMessageMapper(
                     prefs

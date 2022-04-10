@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.chat.data.join.cloud
 
+import android.util.Log
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.AbstractCloudDataSource
 import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.Disconnect
@@ -30,6 +31,7 @@ interface CloudDataSource : Disconnect<Unit>, AbstractCloudDataSource {
 
                 socket.on(JOIN_USER) { data ->
                     val id = data.first() as Int
+                    Log.d("zinoviewk","id from server after joined $id")
                     block.invoke(id)
                 }
                 socket.emit(JOIN_USER,user)

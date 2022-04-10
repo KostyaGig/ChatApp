@@ -32,6 +32,7 @@ interface ChatRepository : Observe<List<DataMessage>>, Clean {
         override suspend fun messages(block: (List<DataMessage>) -> Unit) {
             cloudDataSource.messages { cloud ->
                 val data = cloud.map { it.map(mapper) }
+                Log.d("zinoviewk","data $data")
                 block.invoke(data)
             }
         }
@@ -40,6 +41,7 @@ interface ChatRepository : Observe<List<DataMessage>>, Clean {
             try {
                 cloudDataSource.observe {  cloudMessages ->
                     val dataMessages = cloudMessages.map { it.map(mapper) }
+
                     block.invoke(dataMessages)
                 }
             } catch (e: Exception) {

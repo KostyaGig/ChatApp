@@ -14,7 +14,7 @@ class CloudToDataMessageMapper(
         content: String,
         senderNickname: String
     ): DataMessage {
-        return if (idSharedPreferences.read().toString() == id) {
+        return if (idSharedPreferences.read() == senderId) {
             Log.d("zinoviewk","DATA MSG map to Sent")
             DataMessage.Sent(id, senderId, content, senderNickname)
         } else {

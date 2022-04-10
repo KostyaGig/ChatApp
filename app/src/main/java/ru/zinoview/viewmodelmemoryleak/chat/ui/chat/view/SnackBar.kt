@@ -44,6 +44,9 @@ interface SnackBar {
 
         class Empty : SnackBarVisibility(
             snackBarHeight = SnackBarHeight.Empty
-        )
+        ) {
+            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) = Unit
+            override fun onShown(sb: Snackbar?) = Unit
+        }
     }
 }

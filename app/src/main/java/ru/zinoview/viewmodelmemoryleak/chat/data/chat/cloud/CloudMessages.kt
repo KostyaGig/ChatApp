@@ -5,7 +5,7 @@ import ru.zinoview.viewmodelmemoryleak.chat.core.chat.Message
 
 interface CloudMessage : Message {
 
-    class Base(
+    data class Base(
         private val id: String,
         private val senderId: Int,
         private val content: String,
@@ -16,7 +16,7 @@ interface CloudMessage : Message {
             = mapper.map(id, senderId, content, senderNickname)
     }
 
-    class Failure(
+    data class Failure(
         private val message: String
     ) : CloudMessage {
         override fun <T> map(mapper: Mapper<T>): T

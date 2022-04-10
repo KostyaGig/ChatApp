@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.chat.data.cache
 
 import android.content.Context
+import android.util.Log
 
 interface IdSharedPreferences {
 
@@ -20,7 +21,10 @@ interface IdSharedPreferences {
 
         override fun read(): Int = reader.read(KEY,prefs)
 
-        override fun save(id: Int) = prefs.edit().putInt(KEY,id).apply()
+        override fun save(id: Int) {
+            Log.d("zinoviewk","prefs save id $id")
+            prefs.edit().putInt(KEY,id).apply()
+        }
 
         override fun isEmpty() = id.isEmpty(read())
 

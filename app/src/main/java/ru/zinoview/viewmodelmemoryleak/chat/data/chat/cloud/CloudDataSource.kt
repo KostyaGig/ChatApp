@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.chat.data.chat.cloud
 
+import android.util.Log
 import com.google.gson.Gson
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.chat.core.Observe
@@ -18,7 +19,8 @@ interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>> {
         private val socket: Socket,
         private val connection: SocketConnection,
         private val json: Json,
-        private val gson: Gson
+        private val gson: Gson,
+        private val data: Data<List<CloudMessage>>
     ) : AbstractCloudDataSource.Base(socket, connection), CloudDataSource {
 
         override fun sendMessage(userId: Int,content: String) {
@@ -44,6 +46,8 @@ interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>> {
                 val wrapperMessages = gson.toJson(data.first())
                 val messages = gson.fromJson(wrapperMessages, WrapperMessages::class.java).map()
 
+                Log.d("zinoviewk","observe() messages $messages")
+
                 block.invoke(messages)
             }
             connection.addSocketBranch(SEND_MESSAGE)
@@ -52,21 +56,16 @@ interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>> {
         override suspend fun messages(block:(List<CloudMessage>) -> Unit) {
 
             connection.connect(socket)
-            socket.on(MESSAGES) { data ->
-                val wrapperMessages = gson.toJson(data.first())
-                val messages = gson.fromJson(wrapperMessages, WrapperMessages::class.java).map()
+            socket.on(MESSAGES) { cloudData ->
+                val wrapperMessages = gson.toJson(cloudData.first())
+                val modelMessages = gson.fromJson(wrapperMessages, WrapperMessages::class.java).map()
 
-                // todo remove hard code
-                val msg = if (messages.isEmpty()) {
-                    listOf<CloudMessage>(
-                        CloudMessage.Failure(
-                            "Chat is empty"
-                        )
-                    )
-                } else {
-                    messages
-                }
-                block.invoke(msg)
+                val messages = data.data(modelMessages)
+
+                Log.d("zinoviewk","messages() messages $messages")
+
+                block.invoke(messages)
+
                 connection.disconnectBranch(socket, MESSAGES)
             }
             socket.emit(MESSAGES)

@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.chat.data.join
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.chat.core.Clean
 import ru.zinoview.viewmodelmemoryleak.chat.core.CleanRepository
@@ -22,6 +23,7 @@ interface JoinUserRepository : Clean {
             try {
                 cloudDataSource.join(nickname) { userId ->
                     idSharedPreferences.save(userId)
+                    Log.d("zinoviewk","repo block.invoke, uid - $userId")
                     block.invoke(DataJoin.Success)
                 }
             } catch (e: Exception) {
@@ -29,6 +31,7 @@ interface JoinUserRepository : Clean {
                 block.invoke(
                     DataJoin.Failure(message)
                 )
+                Log.d("zinoviewk","try catch e message = $message")
             }
         }
     }

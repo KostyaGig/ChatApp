@@ -10,7 +10,7 @@ interface DataMessage : Message {
 
     object Empty : DataMessage
 
-    class Failure(
+    data class Failure(
         private val message: String
     ) : DataMessage {
         override fun <T> map(mapper: Mapper<T>): T
@@ -28,7 +28,7 @@ interface DataMessage : Message {
             = mapper.map(id, senderId, content, senderNickname)
     }
 
-    class Sent(
+    data class Sent(
         private val id: String,
         private val senderId: Int,
         private val content: String,
@@ -39,7 +39,7 @@ interface DataMessage : Message {
             = mapper.mapSent(id, senderId, content, senderNickname)
     }
 
-    class Received(
+    data class Received(
         private val id: String,
         private val senderId: Int,
         private val content: String,
