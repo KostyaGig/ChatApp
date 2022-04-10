@@ -6,15 +6,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import ru.zinoview.viewmodelmemoryleak.R
+import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.AbstractDiffUtil
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.AbstractViewHolder
 import java.lang.IllegalStateException
 
  open class ChatAdapter(
-     diffUtil: AbstractDiffUtil<UiChatMessage>
+     diffUtil: AbstractDiffUtil<UiChatMessage>,
+     private val listener: EditMessageListener
  ) : androidx.recyclerview.widget.ListAdapter<UiChatMessage, ChatAdapter.BaseViewHolder>(diffUtil) {
 
-     object Empty : ChatAdapter(AbstractDiffUtil.Empty)
+     object Empty : ChatAdapter(AbstractDiffUtil.Empty, EditMessageListener.Empty)
 
     override fun getItemViewType(position: Int): Int {
         return when(getItem(position)) {
@@ -34,9 +36,11 @@ import java.lang.IllegalStateException
         return when(viewType) {
             1, 5 -> BaseViewHolder.Message(
                 LayoutInflater.from(parent.context).inflate(R.layout.sent,parent,false),
+                listener
             )
             2 -> BaseViewHolder.Message(
                 LayoutInflater.from(parent.context).inflate(R.layout.received,parent,false),
+                listener
             )
             3 -> BaseViewHolder.Progress(
                 LayoutInflater.from(parent.context).inflate(R.layout.progress,parent,false)
@@ -62,13 +66,17 @@ import java.lang.IllegalStateException
 
         class Message(
             view: View,
+            private val listener: EditMessageListener
         ) : BaseViewHolder(view) {
 
             private val contentTv = view.findViewById<TextView>(R.id.message_content_tv)
             private val stateImage = view.findViewById<ImageView>(R.id.state_send_image)
+            private val editImage = view.findViewById<ImageView>(R.id.edit_image)
 
             override fun bind(item: UiChatMessage) {
-                item.bind(contentTv,stateImage)
+                item.bind(contentTv,stateImage,editImage)
+
+                editImage.setOnClickListener { item.edit(listener) }
             }
         }
 

@@ -1,15 +1,15 @@
 package ru.zinoview.viewmodelmemoryleak.chat.data.chat.cloud
 
-import android.util.Log
 import com.google.gson.Gson
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.chat.core.Observe
+import ru.zinoview.viewmodelmemoryleak.chat.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.AbstractCloudDataSource
 import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.SocketConnection
 
-interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>> {
+interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>>, EditMessage {
 
     suspend fun sendMessage(userId: Int,content: String)
 
@@ -45,6 +45,21 @@ interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>> {
             socket.emit(SEND_MESSAGE,message)
         }
 
+        // todo support dry
+        override suspend fun editMessage(messageId: String, content: String) {
+            val message = json.create(
+                Pair(
+                    MESSAGE_ID_KEY,messageId
+                ),
+                Pair(
+                    MESSAGE_CONTENT_KEY,content
+                )
+            )
+
+            connection.connect(socket)
+            socket.emit(EDIT_MESSAGE,message)
+        }
+
 
         override fun observe(block: (List<CloudMessage>) -> Unit) {
             connection.connect(socket)
@@ -71,8 +86,6 @@ interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>> {
 
                 messagesStore.addMessages(messages)
 
-                Log.d("zinoviewk","messages()")
-
                 connection.disconnectBranch(socket, MESSAGES)
             }
             socket.emit(MESSAGES)
@@ -86,9 +99,11 @@ interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>> {
     private companion object {
         private const val SEND_MESSAGE = "send_message"
         private const val MESSAGES = "messages"
+        private const val EDIT_MESSAGE = "edit_message"
 
         private const val SENDER_ID_KEY = "senderId"
         private const val MESSAGE_CONTENT_KEY = "content"
+        private const val MESSAGE_ID_KEY = "id"
     }
 
 }

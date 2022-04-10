@@ -7,5 +7,5 @@ interface Bind {
 
     fun bind(view: TextView)
     fun bindError(view: TextView)
-    fun bind(view: TextView,imageView: ImageView)
+    fun bind(view: TextView,stateImage: ImageView,editImage: ImageView)
 }

@@ -24,11 +24,13 @@ import ru.zinoview.viewmodelmemoryleak.chat.data.chat.cloud.MessagesStore
 import ru.zinoview.viewmodelmemoryleak.chat.data.connection.CloudToDataConnectionMapper
 import ru.zinoview.viewmodelmemoryleak.chat.data.connection.ConnectionRepository
 import ru.zinoview.viewmodelmemoryleak.chat.data.connection.cloud.ConnectionState
+import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.edit.EditChatMessageSession
+import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.edit.EditMessageListener
+import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.edit.UiToEditChatMessageMapper
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
 
-import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.SnackBar
-import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.SnackBarHeight
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.ToolbarActivity
+import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.ViewWrapper
 
 
 class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
@@ -76,27 +78,53 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        networkConnectionReceiver = NetworkConnectionReceiver.Base(viewModel)
+
         val diffUtil = ChatMessageDiffUtil()
-        adapter = ChatAdapter(diffUtil)
+        val editContainer = ViewWrapper.Base(binding.editMessageContainer)
+
+        val editChatMessageSession = EditChatMessageSession.Base(
+            editContainer,
+            ViewWrapper.EditText(
+                binding.messageField
+            )
+        )
+
+        adapter = ChatAdapter(diffUtil, object : EditMessageListener {
+            override fun edit(message: UiChatMessage) {
+                message.show(
+                    ViewWrapper.Text(
+                        binding.oldMessageTv
+                    )
+                )
+                editChatMessageSession.show(Unit)
+                val editMessage = message.map(UiToEditChatMessageMapper())
+                editChatMessageSession.addMessage(editMessage)
+            }
+        })
+
+        binding.cancelEditBtn.setOnClickListener {
+            editChatMessageSession.disconnect(Unit)
+        }
 
         binding.chatRv.adapter = adapter
 
-        networkConnectionReceiver = NetworkConnectionReceiver.Base(viewModel)
-
         binding.sendMessageBtn.setOnClickListener {
             val message = binding.messageField.text.toString().trim()
-            binding.messageField.setText("")
-            if (message.isEmpty()) {
-                SnackBar.Base(
-                    binding.messageField,
-                    SnackBar.SnackBarVisibility(
-                        binding.writeMessageContainer,
-                        SnackBarHeight.Base()
-                    )
-                ).show("Enter a message")
-            } else {
-                viewModel.doAction(message)
-            }
+            editChatMessageSession.sendMessage(viewModel,message)
+
+            // todo refactor
+//            if (message.isEmpty()) {
+//                SnackBar.Base(
+//                    binding.messageField,
+//                    SnackBar.SnackBarVisibility(
+//                        binding.writeMessageContainer,
+//                        SnackBarHeight.Base()
+//                    )
+//                ).show("Enter a message")
+//            } else {
+//                viewModel.doAction(message)
+//            }
         }
 
         viewModel.messages()

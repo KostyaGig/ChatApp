@@ -16,6 +16,8 @@ interface ChatViewModel : ChatViewModelObserve, Clean, ActionViewModel<String>, 
 
     fun messages()
 
+    fun editMessage(messageId: String, content: String)
+
     class Base(
         private val repository: ChatRepository,
         private val dispatcher: Dispatcher,
@@ -27,6 +29,12 @@ interface ChatViewModel : ChatViewModelObserve, Clean, ActionViewModel<String>, 
         override fun doAction(content: String) {
             dispatcher.doBackground(viewModelScope) {
                 repository.sendMessage(content)
+            }
+        }
+
+        override fun editMessage(messageId: String, content: String) {
+            dispatcher.doBackground(viewModelScope) {
+                repository.editMessage(messageId, content)
             }
         }
 
