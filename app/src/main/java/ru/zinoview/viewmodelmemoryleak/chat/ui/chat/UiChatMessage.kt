@@ -1,5 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.chat.ui.chat
 
+import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.*
 
@@ -10,11 +12,12 @@ interface UiChatMessage : DiffSame<UiChatMessage>, Same, Bind, Ui,ChangeTitle<To
 
     override fun same(data: String) = false
     override fun sameId(id: String) = false
+
     override fun bind(view: TextView) = Unit
+    override fun bind(view: TextView, imageView: ImageView) = Unit
+    override fun bindError(view: TextView) = Unit
 
     override fun changeTitle(toolbar: ToolbarActivity) = Unit
-
-    fun bindError(view: TextView) = Unit
 
     object Empty : UiChatMessage
 
@@ -45,6 +48,11 @@ interface UiChatMessage : DiffSame<UiChatMessage>, Same, Bind, Ui,ChangeTitle<To
             view.text = content
         }
 
+        override fun bind(view: TextView, imageView: ImageView) {
+            bind(view)
+            imageView.visibility = View.GONE
+        }
+
         override fun isItemTheSame(item: UiChatMessage) = item.sameId(id)
         override fun isContentTheSame(item: UiChatMessage) = item.same(content)
 
@@ -64,12 +72,26 @@ interface UiChatMessage : DiffSame<UiChatMessage>, Same, Bind, Ui,ChangeTitle<To
         private val content: String,
         private val senderId: String,
         private val senderNickname: String
-    ) : Abstract(senderNickname,content)
+    ) : Abstract(id,content)
 
     data class Received(
         private val id: String,
         private val content: String,
         private val senderId: String,
         private val senderNickname: String
-    ) : Abstract(senderNickname,content)
+    ) : Abstract(id,content)
+
+    class ProgressMessage(
+        private val senderId: String,
+        private val content: String,
+    ) : Abstract(senderId,content) {
+
+        override fun bind(view: TextView, imageView: ImageView) {
+            super.bind(view)
+            imageView.visibility = View.VISIBLE
+        }
+
+        override fun changeTitle(toolbar: ToolbarActivity) = Unit
+    }
+
 }

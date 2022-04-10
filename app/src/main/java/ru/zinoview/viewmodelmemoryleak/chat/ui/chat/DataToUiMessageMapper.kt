@@ -28,6 +28,9 @@ class DataToUiMessageMapper : Mapper<UiChatMessage> {
             id,content,senderId.toString(),senderNickname
         )
 
+    override fun mapProgress(senderId: Int, content: String)
+        = UiChatMessage.ProgressMessage(senderId.toString(),content)
+
     override fun map(
         id: String,
         senderId: Int,

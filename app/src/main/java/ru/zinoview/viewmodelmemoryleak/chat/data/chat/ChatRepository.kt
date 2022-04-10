@@ -10,7 +10,7 @@ import java.lang.Exception
 
 interface ChatRepository : Observe<List<DataMessage>>, Clean {
 
-    fun sendMessage(content: String)
+    suspend fun sendMessage(content: String)
 
     suspend fun messages(block: (List<DataMessage>) -> Unit)
 
@@ -20,7 +20,7 @@ interface ChatRepository : Observe<List<DataMessage>>, Clean {
         private val prefs: IdSharedPreferences
     ) : ChatRepository,CleanRepository(cloudDataSource) {
 
-        override fun sendMessage(content: String) {
+        override suspend fun sendMessage(content: String) {
             try {
                 val userId = prefs.read()
                 cloudDataSource.sendMessage(userId,content)
@@ -32,7 +32,6 @@ interface ChatRepository : Observe<List<DataMessage>>, Clean {
         override suspend fun messages(block: (List<DataMessage>) -> Unit) {
             cloudDataSource.messages { cloud ->
                 val data = cloud.map { it.map(mapper) }
-                Log.d("zinoviewk","data $data")
                 block.invoke(data)
             }
         }

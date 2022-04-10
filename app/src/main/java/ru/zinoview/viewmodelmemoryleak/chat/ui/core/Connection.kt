@@ -1,6 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.chat.ui.core
 
-interface Connection {
+interface Connection : CheckNetworkConnection {
 
     fun connection()
 }

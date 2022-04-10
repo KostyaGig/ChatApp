@@ -9,8 +9,8 @@ class DataToUiConnectionMapper : Connection.Mapper<UiConnection> {
     override fun mapDisconnection(message: String): UiConnection
         = UiConnection.Disconnection(message)
 
-    override fun mapToolbarDisconnection(message: String): UiConnection
-        = UiConnection.ToolbarDisconnection(message)
+    override fun mapToolbarConnection(message: String): UiConnection
+        = UiConnection.ToolbarConnection(message)
 
     private companion object {
         private const val CONNECTION = "Chat"

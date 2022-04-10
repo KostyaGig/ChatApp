@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.chat.data.chat
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.chat.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
 
@@ -15,16 +14,17 @@ class CloudToDataMessageMapper(
         senderNickname: String
     ): DataMessage {
         return if (idSharedPreferences.read() == senderId) {
-            Log.d("zinoviewk","DATA MSG map to Sent")
             DataMessage.Sent(id, senderId, content, senderNickname)
         } else {
-            Log.d("zinoviewk","DATA MSG map to RECEIVED")
             DataMessage.Received(id, senderId, content, senderNickname)
         }
     }
 
     override fun mapFailure(message: String): DataMessage
         = DataMessage.Failure(message)
+
+    override fun mapProgress(senderId: Int, content: String)
+        = DataMessage.Progress(senderId, content)
 
     override fun mapReceived(
         id: String,

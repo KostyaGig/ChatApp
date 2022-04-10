@@ -24,8 +24,11 @@ interface ChatViewModel : ChatViewModelObserve, Clean, ActionViewModel<String>, 
         private val connectionWrapper: UiConnectionWrapper
     ) : BaseViewModel<List<UiChatMessage>>(repository,communication), ChatViewModel {
 
-        override fun doAction(content: String)
-            = repository.sendMessage(content)
+        override fun doAction(content: String) {
+            dispatcher.doBackground(viewModelScope) {
+                repository.sendMessage(content)
+            }
+        }
 
         override fun messages() {
             communication.postValue(listOf(UiChatMessage.Progress))
@@ -43,6 +46,9 @@ interface ChatViewModel : ChatViewModelObserve, Clean, ActionViewModel<String>, 
             = connectionWrapper.observeConnection(owner, observer)
 
         override fun connection() = connectionWrapper.connection(viewModelScope)
+
+        override fun checkNetworkConnection(state: Boolean)
+            = connectionWrapper.checkNetworkConnection(state)
 
     }
 }

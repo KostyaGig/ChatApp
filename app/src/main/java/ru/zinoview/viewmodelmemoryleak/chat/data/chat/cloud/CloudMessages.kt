@@ -23,6 +23,15 @@ interface CloudMessage : Message {
             = mapper.mapFailure(message)
     }
 
+    class Progress(
+        private val senderId: Int,
+        private val content: String,
+    ) : CloudMessage {
+
+        override fun <T> map(mapper: Mapper<T>): T
+            = mapper.mapProgress(senderId, content)
+    }
+
     object Empty : CloudMessage {
         override fun <T> map(mapper: Mapper<T>): T
             = mapper.map()
@@ -55,6 +64,11 @@ class Value(
     ): CloudMessage = CloudMessage.Empty
 
     override fun mapFailure(message: String) = CloudMessage.Empty
+
+    override fun mapProgress(
+        senderId: Int,
+        content: String,
+    ): CloudMessage = CloudMessage.Empty
 }
 
 class WrapperMessages (
@@ -83,6 +97,11 @@ class WrapperMessages (
         content: String,
         senderNickname: String
     ): List<CloudMessage> = emptyList()
+
+    override fun mapProgress(
+        senderId: Int,
+        content: String,
+    ) : List<CloudMessage> = emptyList()
 
     override fun mapFailure(message: String) : List<CloudMessage> = emptyList()
 }

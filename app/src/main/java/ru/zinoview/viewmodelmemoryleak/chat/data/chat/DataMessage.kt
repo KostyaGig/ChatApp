@@ -49,4 +49,13 @@ interface DataMessage : Message {
         override fun <T> map(mapper: Mapper<T>): T
             = mapper.mapReceived(id, senderId, content, senderNickname)
     }
+
+    class Progress(
+        private val senderId: Int,
+        private val content: String,
+    ) : DataMessage {
+
+        override fun <T> map(mapper: Mapper<T>): T
+            = mapper.mapProgress(senderId, content)
+    }
 }

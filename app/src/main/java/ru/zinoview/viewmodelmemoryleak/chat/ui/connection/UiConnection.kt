@@ -36,7 +36,7 @@ interface UiConnection : ChangeTitle<ToolbarActivity> {
         }
     }
 
-    class ToolbarDisconnection(private val message: String) : UiConnection {
+    class ToolbarConnection(private val message: String) : UiConnection {
 
         override fun changeTitle(toolbar: ToolbarActivity)
             = toolbar.changeTitle(message)

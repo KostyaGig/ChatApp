@@ -8,6 +8,6 @@ interface Connection {
 
         fun mapConnection() : T
         fun mapDisconnection(message: String) : T
-        fun mapToolbarDisconnection(message: String) : T
+        fun mapToolbarConnection(message: String) : T
     }
 }

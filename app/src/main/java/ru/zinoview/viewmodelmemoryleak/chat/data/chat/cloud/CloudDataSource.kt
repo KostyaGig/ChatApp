@@ -11,7 +11,7 @@ import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.SocketConnection
 
 interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>> {
 
-    fun sendMessage(userId: Int,content: String)
+    suspend fun sendMessage(userId: Int,content: String)
 
     suspend fun messages(block:(List<CloudMessage>) -> Unit)
 
@@ -20,10 +20,18 @@ interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>> {
         private val connection: SocketConnection,
         private val json: Json,
         private val gson: Gson,
-        private val data: Data<List<CloudMessage>>
+        private val data: Data<List<CloudMessage>>,
+        private val messagesStore: MessagesStore
     ) : AbstractCloudDataSource.Base(socket, connection), CloudDataSource {
 
-        override fun sendMessage(userId: Int,content: String) {
+        override suspend fun sendMessage(userId: Int,content: String) {
+            messagesStore.addMessage(
+                CloudMessage.Progress(
+                    userId,
+                    content
+                )
+            )
+
             val message = json.create(
                 Pair(
                     SENDER_ID_KEY,userId
@@ -35,36 +43,35 @@ interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>> {
 
             connection.connect(socket)
             socket.emit(SEND_MESSAGE,message)
-
         }
 
 
         override fun observe(block: (List<CloudMessage>) -> Unit) {
             connection.connect(socket)
+            messagesStore.subscribe(block)
             socket.on(SEND_MESSAGE) { data ->
 
                 val wrapperMessages = gson.toJson(data.first())
                 val messages = gson.fromJson(wrapperMessages, WrapperMessages::class.java).map()
 
-                Log.d("zinoviewk","observe() messages $messages")
-
-                block.invoke(messages)
+                messagesStore.addMessages(messages)
             }
             connection.addSocketBranch(SEND_MESSAGE)
         }
 
         override suspend fun messages(block:(List<CloudMessage>) -> Unit) {
-
             connection.connect(socket)
+            messagesStore.subscribe(block)
+
             socket.on(MESSAGES) { cloudData ->
                 val wrapperMessages = gson.toJson(cloudData.first())
                 val modelMessages = gson.fromJson(wrapperMessages, WrapperMessages::class.java).map()
 
                 val messages = data.data(modelMessages)
 
-                Log.d("zinoviewk","messages() messages $messages")
+                messagesStore.addMessages(messages)
 
-                block.invoke(messages)
+                Log.d("zinoviewk","messages()")
 
                 connection.disconnectBranch(socket, MESSAGES)
             }

@@ -3,6 +3,7 @@ package ru.zinoview.viewmodelmemoryleak.chat.ui.chat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.AbstractDiffUtil
@@ -21,6 +22,7 @@ import java.lang.IllegalStateException
             is UiChatMessage.Received -> 2
             is UiChatMessage.Progress -> 3
             is UiChatMessage.Failure -> 4
+            is UiChatMessage.ProgressMessage -> 5
             else -> -1
         }
     }
@@ -30,10 +32,10 @@ import java.lang.IllegalStateException
         viewType: Int
     ): BaseViewHolder {
         return when(viewType) {
-            1 -> BaseViewHolder.Chat(
+            1, 5 -> BaseViewHolder.Message(
                 LayoutInflater.from(parent.context).inflate(R.layout.sent,parent,false),
             )
-            2 -> BaseViewHolder.Chat(
+            2 -> BaseViewHolder.Message(
                 LayoutInflater.from(parent.context).inflate(R.layout.received,parent,false),
             )
             3 -> BaseViewHolder.Progress(
@@ -57,15 +59,19 @@ import java.lang.IllegalStateException
             view: View
         ) : BaseViewHolder(view)
 
-        class Chat(
+
+        class Message(
             view: View,
         ) : BaseViewHolder(view) {
 
             private val contentTv = view.findViewById<TextView>(R.id.message_content_tv)
+            private val stateImage = view.findViewById<ImageView>(R.id.state_send_image)
 
-            override fun bind(item: UiChatMessage) = item.bind(contentTv)
-
+            override fun bind(item: UiChatMessage) {
+                item.bind(contentTv,stateImage)
+            }
         }
+
 
         class Failure(
             view: View

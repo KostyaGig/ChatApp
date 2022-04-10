@@ -11,6 +11,11 @@ interface Mapper<T> {
 
     fun mapFailure(message: String) : T
 
+    fun mapProgress(
+        senderId: Int = -1,
+        content: String = "",
+    ) : T
+
     fun mapReceived(
         id: String,
         senderId: Int,

@@ -18,12 +18,12 @@ interface DataConnection : Connection {
 
     }
 
-    class ToolbarDisconnection(
+    class ToolbarConnection(
         private val message: String
     ) : DataConnection {
 
         override fun <T> map(mapper: ru.zinoview.viewmodelmemoryleak.chat.core.Connection.Mapper<T>): T
-            = mapper.mapToolbarDisconnection(message)
+            = mapper.mapToolbarConnection(message)
 
     }
 }

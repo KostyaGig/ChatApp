@@ -10,20 +10,19 @@ interface CloudConnection : Connection {
             = mapper.mapConnection()
     }
 
-    abstract class BaseDisconnect : CloudConnection {
 
-        protected companion object {
-            const val MESSAGE = "Waiting for server..."
-        }
-    }
-
-    object Disconnect : BaseDisconnect() {
+    class Disconnect(
+        private val message: String
+    ) : CloudConnection {
         override fun <T> map(mapper: Connection.Mapper<T>): T
-            = mapper.mapDisconnection(MESSAGE)
+            = mapper.mapDisconnection(message)
     }
 
-    object ToolBarDisconnect : BaseDisconnect() {
+    class ToolBarConnection(
+        private val message: String
+    ) : CloudConnection {
         override fun <T> map(mapper: Connection.Mapper<T>): T
-            = mapper.mapToolbarDisconnection(MESSAGE)
+            = mapper.mapToolbarConnection(message)
     }
+
 }
