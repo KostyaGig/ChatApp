@@ -9,7 +9,7 @@ import ru.zinoview.viewmodelmemoryleak.chat.ui.core.ShowError
 interface UiJoin : Navigate, ShowError {
 
     override fun navigate(navigation: Navigation) = Unit
-    override fun showError(snackBar: SnackBar) = Unit
+    override fun showError(snackBar: SnackBar<String>) = Unit
 
     object Success : UiJoin {
 
@@ -20,7 +20,7 @@ interface UiJoin : Navigate, ShowError {
     class Failure(
         private val message: String
     ) : UiJoin {
-        override fun showError(snackBar: SnackBar)
+        override fun showError(snackBar: SnackBar<String>)
             = snackBar.show(message)
     }
 }

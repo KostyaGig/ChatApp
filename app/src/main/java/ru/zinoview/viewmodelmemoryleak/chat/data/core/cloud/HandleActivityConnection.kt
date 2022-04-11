@@ -4,5 +4,5 @@ import io.socket.client.Socket
 
 interface HandleActivityConnection {
 
-    suspend fun handleActivityConnection(socket: Socket, isNotActive: () -> Unit)
+    fun handleActivityConnection(socket: Socket, isNotActive: () -> Unit)
 }

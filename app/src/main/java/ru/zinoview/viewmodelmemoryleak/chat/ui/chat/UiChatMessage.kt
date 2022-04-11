@@ -20,8 +20,6 @@ interface UiChatMessage :
 
     override fun bind(view: TextView) = Unit
     override fun bind(view: TextView, stateImage: ImageView,editImage: ImageView) = Unit
-    override fun bindError(view: TextView) = Unit
-
     override fun changeTitle(toolbar: ToolbarActivity) = Unit
 
     override fun <T> map(mapper: Mapper<T>): T = mapper.map()
@@ -34,19 +32,18 @@ interface UiChatMessage :
     class Failure(
         private val message: String
     ) : UiChatMessage {
+
         override fun changeTitle(toolbar: ToolbarActivity)
             = toolbar.changeTitle(message)
-
-        override fun bindError(view: TextView) {
-            view.text = message
-        }
     }
 
     object Progress : UiChatMessage {
-        override fun changeTitle(toolbar: ToolbarActivity)
-            = toolbar.changeTitle(TITLE)
 
-        private const val TITLE = "Progress"
+        override fun changeTitle(toolbar: ToolbarActivity) {
+            toolbar.changeTitle(TITLE)
+        }
+
+        private const val TITLE = "Progress..."
     }
 
     abstract class Abstract(

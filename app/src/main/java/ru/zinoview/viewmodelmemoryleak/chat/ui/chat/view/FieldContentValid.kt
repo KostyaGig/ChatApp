@@ -8,7 +8,7 @@ interface FieldContentValid {
     fun check(message: String,viewModel: ActionViewModel<String>,field: MessageField)
 
     class Base(
-        private val snackBar: SnackBar
+        private val snackBar: SnackBar<String>
     ) : FieldContentValid {
 
         override fun check(message: String,viewModel: ActionViewModel<String>,field: MessageField) {

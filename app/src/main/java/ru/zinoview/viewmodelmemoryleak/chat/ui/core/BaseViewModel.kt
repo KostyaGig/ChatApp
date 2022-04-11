@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.chat.ui.core
 
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel

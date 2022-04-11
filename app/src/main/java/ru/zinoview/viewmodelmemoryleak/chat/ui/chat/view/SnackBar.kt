@@ -5,20 +5,35 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.snackbar.Snackbar
+import ru.zinoview.viewmodelmemoryleak.chat.ui.core.Show
 
-interface SnackBar {
-
-    fun show(message: String)
+interface SnackBar<T> : Show<T> {
 
     class Base(
         private val view: View,
         private val snackBarVisibility: SnackBarVisibility
-    ) : SnackBar {
+    ) : SnackBar<String> {
 
         override fun show(message: String) {
             val snackBar = Snackbar.make(view,message,Snackbar.LENGTH_SHORT)
                 .addCallback(snackBarVisibility)
             snackBar.show()
+        }
+    }
+
+    class EmptyField(
+        private val view: View,
+        private val snackBarVisibility: SnackBarVisibility
+    ) : SnackBar<Unit> {
+
+        override fun show(arg: Unit) {
+            val snackBar = Snackbar.make(view,MESSAGE,Snackbar.LENGTH_SHORT)
+                .addCallback(snackBarVisibility)
+            snackBar.show()
+        }
+
+        private companion object {
+            private const val MESSAGE = "Enter empty field"
         }
     }
 
@@ -28,15 +43,12 @@ interface SnackBar {
     ) : Snackbar.Callback () {
 
         override fun onShown(sb: Snackbar?) {
-            Log.d("zinoviewk","onShown own")
             val layoutParams = container?.layoutParams as ConstraintLayout.LayoutParams
             layoutParams.bottomMargin = snackBarHeight.height()
             container.layoutParams = layoutParams
         }
 
         override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-            Log.d("zinoviewk","onDissmised")
-
             val layoutParams = container?.layoutParams as ConstraintLayout.LayoutParams
             layoutParams.bottomMargin = 0
             container.layoutParams = layoutParams

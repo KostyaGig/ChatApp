@@ -6,6 +6,5 @@ import android.widget.TextView
 interface Bind {
 
     fun bind(view: TextView)
-    fun bindError(view: TextView)
     fun bind(view: TextView,stateImage: ImageView,editImage: ImageView)
 }

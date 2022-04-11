@@ -4,5 +4,5 @@ import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.SnackBar
 
 interface ShowError{
 
-    fun showError(snackBar: SnackBar)
+    fun showError(snackBar: SnackBar<String>)
 }

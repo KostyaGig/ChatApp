@@ -23,8 +23,8 @@ interface SocketConnection : Disconnect<Socket>,HandleActivityConnection {
             }
         }
 
-        override suspend fun handleActivityConnection(socket: Socket, isNotActive: () -> Unit)
-            = activity.handle(socket,isNotActive)
+        override fun handleActivityConnection(socket: Socket, isNotActive: () -> Unit)
+            = activity.handle(socket, isNotActive)
 
         override fun disconnect(socket: Socket) {
             if (socket.isActive) {

@@ -18,7 +18,6 @@ interface MessageField : Action<ActionViewModel<String>> {
                 SnackBar.Base(this,SnackBar.SnackBarVisibility.Empty())
             )
 
-
             override fun doAction(viewModel: ActionViewModel<String>) {
                 messageValid.check(text.toString().trim(),viewModel,this)
                 setText("")

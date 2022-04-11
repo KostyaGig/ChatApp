@@ -1,13 +1,13 @@
 package ru.zinoview.viewmodelmemoryleak.chat.ui.chat.edit
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.chat.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.chat.ui.UiEditChatMessage
 import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.ChatViewModel
+import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.Show
 import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.ViewWrapper
 
-interface EditChatMessageSession : Disconnect<Unit>, EditContent, Show<Unit> {
+interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit> {
 
     fun addMessage(message: UiEditChatMessage)
 
@@ -15,8 +15,9 @@ interface EditChatMessageSession : Disconnect<Unit>, EditContent, Show<Unit> {
 
     class Base(
         private val viewWrapper: ViewWrapper,
-        private val editTextWrapper: ViewWrapper
-    ) : EditChatMessageSession {
+        private val editTextWrapper: ViewWrapper,
+        private val snackBar: SnackBar<Unit>
+    ) : MessageSession {
 
         private var message: UiEditChatMessage = UiEditChatMessage.Empty
 
@@ -36,7 +37,7 @@ interface EditChatMessageSession : Disconnect<Unit>, EditContent, Show<Unit> {
                 if (content.isNotEmpty()) {
                     viewModel.doAction(content)
                 } else {
-//                     TODO SHOW SNACK BAR
+                    snackBar.show(Unit)
                 }
             }
             disconnect(Unit)

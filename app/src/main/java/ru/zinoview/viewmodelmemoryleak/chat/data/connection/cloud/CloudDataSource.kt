@@ -27,19 +27,11 @@ interface CloudDataSource :
             connectionState.subscribe(block)
 
             socket.on(Socket.EVENT_CONNECT) {
-                block.invoke(CloudConnection.Connect)
+                block.invoke(CloudConnection.Success)
             }
 
             socket.on(Socket.EVENT_DISCONNECT) {
                 connectionState.change(false,resourceProvider.string(R.string.waiting_for_server))
-            }
-
-            connection.handleActivityConnection(socket) {
-                block.invoke(
-                    CloudConnection.Disconnect(
-                        resourceProvider.string(R.string.waiting_for_server)
-                    )
-                )
             }
 
             connection.addSocketBranch(Socket.EVENT_DISCONNECT)
@@ -49,7 +41,7 @@ interface CloudDataSource :
         override fun checkNetworkConnection(state: Boolean)
             = connectionState.change(state,resourceProvider.string(R.string.waiting_for_network))
 
-        override suspend fun handleActivityConnection(socket: Socket, isNotActive: () -> Unit)
+        override fun handleActivityConnection(socket: Socket, isNotActive: () -> Unit)
             = connection.handleActivityConnection(socket, isNotActive)
 
     }

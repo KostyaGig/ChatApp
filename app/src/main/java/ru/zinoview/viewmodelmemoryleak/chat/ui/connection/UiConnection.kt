@@ -2,7 +2,6 @@ package ru.zinoview.viewmodelmemoryleak.chat.ui.connection
 
 import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.ChatAdapter
 import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.ChatViewModel
-import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.UiChatMessage
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.ChangeTitle
 import ru.zinoview.viewmodelmemoryleak.chat.ui.core.ToolbarActivity
 
@@ -12,7 +11,7 @@ interface UiConnection : ChangeTitle<ToolbarActivity> {
 
     fun messages(viewModel: ChatViewModel) = Unit
 
-    class Connection(
+    class Success(
         private val message: String
     ) : UiConnection {
 
@@ -22,23 +21,10 @@ interface UiConnection : ChangeTitle<ToolbarActivity> {
             = viewModel.messages()
     }
 
-    class Disconnection(
-        private val message: String
-    ) : UiConnection {
+    class Failure(private val message: String) : UiConnection {
 
         override fun changeTitle(toolbar: ToolbarActivity)
             = toolbar.changeTitle(message)
 
-        override fun showError(adapter: ChatAdapter) {
-            adapter.submitList(listOf(
-                UiChatMessage.Failure(message)
-            ))
-        }
-    }
-
-    class ToolbarConnection(private val message: String) : UiConnection {
-
-        override fun changeTitle(toolbar: ToolbarActivity)
-            = toolbar.changeTitle(message)
     }
 }

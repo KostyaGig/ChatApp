@@ -4,26 +4,18 @@ import ru.zinoview.viewmodelmemoryleak.chat.core.Connection
 
 interface DataConnection : Connection {
 
-    object Connection : DataConnection {
-        override fun <T> map(mapper: ru.zinoview.viewmodelmemoryleak.chat.core.Connection.Mapper<T>): T
-            = mapper.mapConnection()
+    object Success : DataConnection {
+        override fun <T> map(mapper: Connection.Mapper<T>): T
+            = mapper.map()
     }
 
-    class Disconnection(
+    class Failure(
         private val message: String
     ) : DataConnection {
 
-        override fun <T> map(mapper: ru.zinoview.viewmodelmemoryleak.chat.core.Connection.Mapper<T>): T
-            = mapper.mapDisconnection(message)
+        override fun <T> map(mapper: Connection.Mapper<T>): T
+            = mapper.map(message)
 
     }
 
-    class ToolbarConnection(
-        private val message: String
-    ) : DataConnection {
-
-        override fun <T> map(mapper: ru.zinoview.viewmodelmemoryleak.chat.core.Connection.Mapper<T>): T
-            = mapper.mapToolbarConnection(message)
-
-    }
 }

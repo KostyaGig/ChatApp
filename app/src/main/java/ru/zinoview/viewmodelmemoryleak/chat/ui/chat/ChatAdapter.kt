@@ -41,13 +41,14 @@ import java.lang.IllegalStateException
             2 -> BaseViewHolder.Message(
                 LayoutInflater.from(parent.context).inflate(R.layout.received,parent,false),
                 listener
-            )
-            3 -> BaseViewHolder.Progress(
-                LayoutInflater.from(parent.context).inflate(R.layout.progress,parent,false)
-            )
-            4 -> BaseViewHolder.Failure(
+            ) 4 -> BaseViewHolder.Failure(
                 LayoutInflater.from(parent.context).inflate(R.layout.error,parent,false)
             )
+            3 -> {
+                BaseViewHolder.Empty(
+                    LayoutInflater.from(parent.context).inflate(R.layout.empty,parent,false)
+                )
+            }
             else -> throw IllegalStateException("ChatAdapter.onCreateViewHolder else branch")
         }
     }
@@ -58,11 +59,6 @@ import java.lang.IllegalStateException
     abstract class BaseViewHolder(
         view: View
     ) : AbstractViewHolder<UiChatMessage>(view) {
-
-        class Progress(
-            view: View
-        ) : BaseViewHolder(view)
-
 
         class Message(
             view: View,
@@ -80,13 +76,15 @@ import java.lang.IllegalStateException
             }
         }
 
+        class Empty(
+            view: View
+        ) : BaseViewHolder(view)
+
 
         class Failure(
             view: View
         ) : BaseViewHolder(view) {
-            private val errorTv = view.findViewById<TextView>(R.id.error_tv)
-
-            override fun bind(item: UiChatMessage) = item.bindError(errorTv)
+            override fun bind(item: UiChatMessage) = Unit
         }
     }
 

@@ -4,25 +4,24 @@ import ru.zinoview.viewmodelmemoryleak.chat.core.Connection
 
 interface CloudConnection : Connection {
 
-    object Connect : CloudConnection {
+    object Success : CloudConnection {
 
         override fun <T> map(mapper: Connection.Mapper<T>): T
-            = mapper.mapConnection()
+            = mapper.map()
     }
 
-
-    class Disconnect(
+    open class Failure(
         private val message: String
     ) : CloudConnection {
         override fun <T> map(mapper: Connection.Mapper<T>): T
-            = mapper.mapDisconnection(message)
+            = mapper.map(message)
     }
 
-    class ToolBarConnection(
-        private val message: String
-    ) : CloudConnection {
-        override fun <T> map(mapper: Connection.Mapper<T>): T
-            = mapper.mapToolbarConnection(message)
+    class WaitingForServer : Failure(MESSAGE) {
+
+        private companion object {
+            private const val MESSAGE = "Waiting for server..."
+        }
     }
 
 }

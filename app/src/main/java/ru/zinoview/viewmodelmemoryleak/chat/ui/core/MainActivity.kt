@@ -2,6 +2,8 @@ package ru.zinoview.viewmodelmemoryleak.chat.ui.core
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import ru.zinoview.viewmodelmemoryleak.R
@@ -13,7 +15,6 @@ import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.SharedPreferencesReader
 import ru.zinoview.viewmodelmemoryleak.chat.ui.authentication.AuthenticationViewModel
 import ru.zinoview.viewmodelmemoryleak.chat.ui.authentication.AuthenticationViewModelFactory
-import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.ChatFragment
 import ru.zinoview.viewmodelmemoryleak.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity {
@@ -84,6 +85,6 @@ class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity {
     override fun exit() = finish()
 
     override fun changeTitle(title: String) {
-        binding.toolbar.title = title
+        supportActionBar?.title = title
     }
 }
