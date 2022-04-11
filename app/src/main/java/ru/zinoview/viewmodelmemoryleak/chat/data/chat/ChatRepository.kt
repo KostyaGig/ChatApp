@@ -44,7 +44,6 @@ interface ChatRepository : Observe<List<DataMessage>>, Clean, EditMessage {
             try {
                 cloudDataSource.observe {  cloudMessages ->
                     val dataMessages = cloudMessages.map { it.map(mapper) }
-
                     block.invoke(dataMessages)
                 }
             } catch (e: Exception) {

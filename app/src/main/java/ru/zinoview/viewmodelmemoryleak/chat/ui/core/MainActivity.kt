@@ -13,6 +13,7 @@ import ru.zinoview.viewmodelmemoryleak.chat.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.chat.data.cache.SharedPreferencesReader
 import ru.zinoview.viewmodelmemoryleak.chat.ui.authentication.AuthenticationViewModel
 import ru.zinoview.viewmodelmemoryleak.chat.ui.authentication.AuthenticationViewModelFactory
+import ru.zinoview.viewmodelmemoryleak.chat.ui.chat.ChatFragment
 import ru.zinoview.viewmodelmemoryleak.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity {
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity {
                             id,
                         ),
                         id,
+
                         this
                     )
                 )
@@ -47,14 +49,18 @@ class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity {
 
         setSupportActionBar(binding.toolbar)
 
-        viewModel.auth()
+        if (savedInstanceState == null) {
+            viewModel.auth()
+        }
     }
 
     override fun navigateTo(fragment: Fragment) {
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container,fragment)
-            .commit()
+            .commitNow()
+
+        viewModel.clean()
     }
 
     override fun onStart() {

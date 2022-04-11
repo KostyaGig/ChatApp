@@ -19,7 +19,5 @@ interface ConnectionRepository : SuspendObserve<DataConnection>, CheckNetworkCon
 
         override fun checkNetworkConnection(state: Boolean)
             = cloudDataSource.checkNetworkConnection(state)
-
-
     }
 }

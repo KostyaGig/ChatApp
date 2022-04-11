@@ -18,7 +18,6 @@ interface AuthenticationViewModel : CommunicationObserve<UiAuthentication> {
 
         override fun auth() {
             val uiAuth = repository.auth().map(mapper)
-            
             communication.postValue(uiAuth)
         }
 

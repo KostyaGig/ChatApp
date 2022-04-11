@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.chat.ui.core
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -11,6 +12,8 @@ abstract class BaseViewModel<T>(
 ) : ViewModel(), Clean, CommunicationObserve<T> {
 
     override fun clean() = repository.clean()
-    override fun observe(owner: LifecycleOwner, observer: Observer<T>)
-        = communication.observe(owner, observer)
+
+    override fun observe(owner: LifecycleOwner, observer: Observer<T>) =
+        communication.observe(owner, observer)
+
 }

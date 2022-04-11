@@ -7,6 +7,7 @@
         <entry key="app/src/main/res/drawable/ic_close.xml" value="0.29074074074074074" />
         <entry key="app/src/main/res/drawable/ic_edit.xml" value="0.29074074074074074" />
         <entry key="app/src/main/res/drawable/ic_progress.xml" value="0.2898148148148148" />
+        <entry key="app/src/main/res/layout/activity_auth.xml" value="0.275" />
         <entry key="app/src/main/res/layout/activity_chat.xml" value="0.2953703703703704" />
         <entry key="app/src/main/res/layout/activity_chat_fake.xml" value="0.26944444444444443" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.26944444444444443" />

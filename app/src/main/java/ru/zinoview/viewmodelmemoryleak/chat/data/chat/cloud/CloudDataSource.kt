@@ -43,7 +43,7 @@ interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>>, EditMe
 
             connection.connect(socket)
             socket.emit(SEND_MESSAGE,message)
-        }
+            }
 
         // todo support dry
         override suspend fun editMessage(messageId: String, content: String) {
@@ -58,6 +58,7 @@ interface CloudDataSource : Disconnect<Unit>,Observe<List<CloudMessage>>, EditMe
 
             connection.connect(socket)
             socket.emit(EDIT_MESSAGE,message)
+            connection.addSocketBranch(EDIT_MESSAGE)
         }
 
 

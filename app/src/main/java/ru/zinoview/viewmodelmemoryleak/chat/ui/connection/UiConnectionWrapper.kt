@@ -30,10 +30,12 @@ interface UiConnectionWrapper : ObserveConnection, CheckNetworkConnection {
             }
         }
 
-        override fun observeConnection(owner: LifecycleOwner, observer: Observer<UiConnection>)
-            = connectionCommunication.observe(owner, observer)
+        override fun observeConnection(owner: LifecycleOwner, observer: Observer<UiConnection>) {
+            connectionCommunication.observe(owner, observer)
+        }
 
-        override fun checkNetworkConnection(state: Boolean)
-            = connectionRepository.checkNetworkConnection(state)
+        override fun checkNetworkConnection(state: Boolean) {
+            connectionRepository.checkNetworkConnection(state)
+        }
     }
 }

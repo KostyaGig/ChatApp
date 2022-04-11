@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.chat.ui.chat
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,7 +46,7 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
         val prefs = IdSharedPreferences.Base(
             SharedPreferencesReader.Base(id),
             id,
-            requireContext()
+            requireActivity().applicationContext
         )
         val socket = IO.socket("http://10.0.2.2:3000")
         val connection = SocketConnection.Base(
@@ -69,7 +70,9 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
         ConnectionRepository.Base(
             CloudToDataConnectionMapper(),
             ru.zinoview.viewmodelmemoryleak.chat.data.connection.cloud.CloudDataSource.Base(
-                socket, connection, ConnectionState.Base(),ResourceProvider.Base(requireContext())
+                socket, connection, ConnectionState.Base(), ResourceProvider.Base(
+                    requireActivity().applicationContext
+                )
             )
         ))
     }
@@ -127,13 +130,14 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
 //            }
         }
 
+
         viewModel.messages()
         viewModel.connection()
     }
 
     override fun onStart() {
         super.onStart()
-        networkConnectionReceiver.register(requireContext())
+        networkConnectionReceiver.register(requireActivity().applicationContext)
         viewModel.observe(this) { messages ->
             messages.last().changeTitle(requireActivity() as ToolbarActivity)
             adapter.submitList(ArrayList(messages))
@@ -148,7 +152,7 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base,ChatFragmentBinding>(
     override fun onPause() {
         super.onPause()
         viewModel.clean()
-        networkConnectionReceiver.unRegister(requireContext())
+        networkConnectionReceiver.unRegister(requireActivity().applicationContext)
     }
 
     override fun back(navigation: Navigation) = navigation.exit()
