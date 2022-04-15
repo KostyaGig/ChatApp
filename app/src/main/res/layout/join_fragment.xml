@@ -6,7 +6,7 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <view class="ru.zinoview.viewmodelmemoryleak.chat.ui.chat.view.MessageField$Base"
+    <view class="ru.zinoview.viewmodelmemoryleak.ui.chat.view.MessageField$Base"
         android:id="@+id/nickname_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

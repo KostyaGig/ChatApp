@@ -10,6 +10,7 @@
         <entry key="app/src/main/res/layout/activity_auth.xml" value="0.275" />
         <entry key="app/src/main/res/layout/activity_chat.xml" value="0.2953703703703704" />
         <entry key="app/src/main/res/layout/activity_chat_fake.xml" value="0.26944444444444443" />
+        <entry key="app/src/main/res/layout/activity_leak.xml" value="0.16822916666666668" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.26944444444444443" />
         <entry key="app/src/main/res/layout/activity_tap.xml" value="0.26944444444444443" />
         <entry key="app/src/main/res/layout/chat_fragment.xml" value="0.24166666666666667" />

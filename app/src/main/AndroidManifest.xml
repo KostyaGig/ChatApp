@@ -13,18 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ViewModelMemoryLeak"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:name=".core.ChatApp">
         <activity
-            android:name=".chat.ui.authentication.AuthActivity"
-            android:exported="false" />
-        <activity
-            android:name=".abstract_ex.TapActivity"
-            android:exported="true"></activity>
-        <activity
-            android:name=".LeakActivity"
-            android:exported="false"></activity>
-        <activity
-            android:name=".chat.ui.core.MainActivity"
+            android:name=".ui.authentication.AuthActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,9 +24,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.core.MainActivity"
+            android:exported="true"/>
 
         <receiver
-            android:name=".chat.ui.chat.NetworkConnectionReceiver$Base"
+            android:name=".ui.chat.NetworkConnectionReceiver$Base"
             android:exported="true">
             <intent-filter>
                 <action

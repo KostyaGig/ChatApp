@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".chat.ui.authentication.AuthActivity">
+    tools:context=".ui.authentication.AuthActivity">
 
 </androidx.constraintlayout.widget.ConstraintLayout>
