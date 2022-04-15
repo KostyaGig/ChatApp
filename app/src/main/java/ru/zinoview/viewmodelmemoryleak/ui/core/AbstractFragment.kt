@@ -8,17 +8,18 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
+import org.koin.android.ext.android.getKoin
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Back
 import kotlin.reflect.KClass
 
 abstract class AbstractFragment<VM : ViewModel, B: ViewBinding>(
-    viewModelClass: KClass<VM>
+    private val viewModelClass: KClass<VM>,
 ) : Fragment(), Back {
 
-    abstract fun factory() : ViewModelProvider.Factory
 
     protected val viewModel: VM by lazy {
-        ViewModelProvider(requireActivity(),factory()).get(viewModelClass.java)
+        getKoin().get<VM>(clazz = viewModelClass)
     }
 
     abstract fun initBinding(inflater: LayoutInflater,container: ViewGroup?) : B

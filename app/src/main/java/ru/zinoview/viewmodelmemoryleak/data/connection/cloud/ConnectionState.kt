@@ -25,7 +25,7 @@ interface ConnectionState : Subscribe<CloudConnection> {
                 connection.handleActivityConnection(socket) {
                     block.invoke(
                         CloudConnection.Failure(
-                            resourceProvider.string(R.string.waiting_for_server)
+                            resourceProvider.string(R.string.waiting_for_network)
                         ))
                 }
             }

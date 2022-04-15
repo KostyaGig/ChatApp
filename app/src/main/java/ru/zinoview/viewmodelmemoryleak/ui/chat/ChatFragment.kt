@@ -4,22 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
-import com.google.gson.Gson
-import io.socket.client.IO
-import ru.zinoview.viewmodelmemoryleak.data.core.cloud.ActivityConnection
-import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
-import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnection
-import ru.zinoview.viewmodelmemoryleak.data.cache.Id
-import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
-import ru.zinoview.viewmodelmemoryleak.data.cache.SharedPreferencesReader
-import ru.zinoview.viewmodelmemoryleak.data.chat.CloudToDataMessageMapper
-import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
-import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.Data
-import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.MessagesStore
-import ru.zinoview.viewmodelmemoryleak.data.connection.CloudToDataConnectionMapper
-import ru.zinoview.viewmodelmemoryleak.data.connection.ConnectionRepository
-import ru.zinoview.viewmodelmemoryleak.data.connection.cloud.ConnectionState
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession
@@ -39,46 +23,6 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base, ChatFragmentBinding>(
 
     private var adapter: ChatAdapter = ChatAdapter.Empty
     private var networkConnectionReceiver: NetworkConnectionReceiver = NetworkConnectionReceiver.Empty
-
-    override fun factory(): ViewModelProvider.Factory {
-        val id = Id.Base()
-        val prefs = IdSharedPreferences.Base(
-            SharedPreferencesReader.Base(id),
-            id,
-            requireActivity().applicationContext
-        )
-        val socket = IO.socket("http://10.0.2.2:3000")
-        val connection = SocketConnection.Base(
-            ActivityConnection.Base()
-        )
-        val resourceProvider = ru.zinoview.viewmodelmemoryleak.core.ResourceProvider.Base(
-            requireActivity().applicationContext
-        )
-        return ChatViewModelFactory.Base(
-            ru.zinoview.viewmodelmemoryleak.data.chat.ChatRepository.Base(
-                CloudDataSource.Base(
-                    socket,
-                    connection,
-                    Json.Base(),
-                    Gson(),
-                    Data.CloudMessage(),
-                    MessagesStore.Base()
-                ),
-                CloudToDataMessageMapper(
-                    prefs
-                ),
-                prefs
-            ),
-        ConnectionRepository.Base(
-            CloudToDataConnectionMapper(),
-            ru.zinoview.viewmodelmemoryleak.data.connection.cloud.CloudDataSource.Base(
-                socket, connection, ConnectionState.Base(
-                    socket,connection,resourceProvider
-                ),resourceProvider
-            )
-        ))
-    }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -125,9 +69,6 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base, ChatFragmentBinding>(
             val message = binding.messageField.text.toString().trim()
             messageSession.sendMessage(viewModel,message)
         }
-
-        viewModel.messages()
-        viewModel.connection()
     }
 
     override fun onStart() {
