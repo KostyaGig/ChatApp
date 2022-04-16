@@ -41,6 +41,21 @@ interface CloudDataSource : Disconnect<Unit>, AbstractCloudDataSource {
 
             private const val NICKNAME_KEY = "nickname"
         }
+    }
 
+    class Test : CloudDataSource {
+
+        private var id = -1
+
+        override suspend fun joinedUserId(nickname: String): Int {
+            return if (nickname.isEmpty()) {
+                -1
+            } else {
+                id += 1
+                id
+            }
+        }
+
+        override fun disconnect(arg: Unit) = Unit
     }
 }

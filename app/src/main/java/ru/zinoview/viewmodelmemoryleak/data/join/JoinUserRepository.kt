@@ -12,7 +12,7 @@ interface JoinUserRepository : Clean {
    suspend fun joinedUserId(nickname: String) : DataJoin
 
     class Base(
-        private val idSharedPreferences: IdSharedPreferences,
+        private val idSharedPreferences: IdSharedPreferences<Int,Unit>,
         private val cloudDataSource: CloudDataSource,
         private val exceptionMapper: ExceptionMapper
     ) : JoinUserRepository, CleanRepository(cloudDataSource)  {
@@ -28,5 +28,23 @@ interface JoinUserRepository : Clean {
                 DataJoin.Failure(message)
             }
         }
+    }
+
+    class Test(
+        private val cloudDataSource: CloudDataSource
+    ) : JoinUserRepository {
+
+        override suspend fun joinedUserId(nickname: String): DataJoin {
+            val userId = cloudDataSource.joinedUserId(nickname)
+
+            return if (userId == -1) {
+                DataJoin.Failure("User nickname must not be empty")
+            } else {
+                DataJoin.Test(userId)
+            }
+        }
+
+        override fun clean()  = Unit
+
     }
 }
