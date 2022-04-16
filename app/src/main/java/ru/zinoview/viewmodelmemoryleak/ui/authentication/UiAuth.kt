@@ -1,23 +1,24 @@
 package ru.zinoview.viewmodelmemoryleak.ui.authentication
 
-import android.content.Context
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.ui.core.MainActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.Navigate
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.ActivityNavigation
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.TypeFragment
 
-interface UiAuthentication : Navigate<ActivityNavigation> {
+interface UiAuth : Navigate<ActivityNavigation> {
 
     override fun navigate(navigation: ActivityNavigation) = Unit
 
-    object Success : UiAuthentication {
+    object Success : UiAuth {
 
         override fun navigate(navigation: ActivityNavigation)
-            = navigation.navigateTo(MainActivity(), TypeFragment.Chat)
+         = navigation.navigateTo(MainActivity(), TypeFragment.Chat)
+
 
     }
 
-    object Failure : UiAuthentication {
+    object Failure : UiAuth {
         override fun navigate(navigation: ActivityNavigation)
             = navigation.navigateTo(MainActivity(),TypeFragment.Join)
     }

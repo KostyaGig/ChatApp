@@ -35,8 +35,8 @@ class ChatApp : Application() {
 
         val chatUiModule = UiModule()
         val authenticationUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.authentication.UiModule()
-
         val joinUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.join.UiModule()
+        val connectionUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.connection.UiModule()
 
         val modules = mutableListOf<ru.zinoview.viewmodelmemoryleak.ui.di.core.Module>()
 
@@ -54,6 +54,7 @@ class ChatApp : Application() {
         modules.add(chatUiModule)
         modules.add(authenticationUiModule)
         modules.add(joinUiModule)
+        modules.add(connectionUiModule)
 
         val koinModules = mutableListOf<Module>()
         modules.forEach { module ->

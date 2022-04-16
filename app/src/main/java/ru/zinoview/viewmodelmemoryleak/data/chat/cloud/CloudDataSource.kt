@@ -47,7 +47,6 @@ interface CloudDataSource : Disconnect<Unit>,
             socket.emit(SEND_MESSAGE,message)
             }
 
-        // todo support dry
         override suspend fun editMessage(messageId: String, content: String) {
             val message = json.create(
                 Pair(

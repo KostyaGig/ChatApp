@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.util.Log
 
 
 interface NetworkConnectionReceiver {
@@ -14,16 +15,17 @@ interface NetworkConnectionReceiver {
     fun unRegister(context: Context)
 
     class Base(
-        private val viewModel: ru.zinoview.viewmodelmemoryleak.ui.core.Connection
+        private val viewModel: ru.zinoview.viewmodelmemoryleak.ui.core.ConnectionViewModel
     ) : NetworkConnectionReceiver, BroadcastReceiver() {
 
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == ConnectivityManager.CONNECTIVITY_ACTION) {
                 val connectivityManager= context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
                 val networkInfo=connectivityManager.activeNetworkInfo
-                val result = networkInfo!=null && networkInfo.isConnected
+                val isConnected = networkInfo!=null && networkInfo.isConnected
 
-                viewModel.checkNetworkConnection(result)
+                Log.d("zinoviewk","receiver send connection $isConnected")
+                viewModel.updateNetworkState(isConnected,Unit)
             }
         }
 
@@ -32,14 +34,22 @@ interface NetworkConnectionReceiver {
                 ConnectivityManager.CONNECTIVITY_ACTION
             )
             context.registerReceiver(this,filter)
+            Log.d("zinoviewk","reg receiver")
         }
 
-        override fun unRegister(context: Context) = context.unregisterReceiver(this)
+        override fun unRegister(context: Context) {
+            Log.d("zinoviewk","unreg receiver")
+            context.unregisterReceiver(this)
+        }
     }
 
     object Empty : NetworkConnectionReceiver {
-        override fun register(context: Context) = Unit
+        override fun register(context: Context) {
+            Log.d("zinoviewk","reg receiver empty")
+        }
 
-        override fun unRegister(context: Context) = Unit
+        override fun unRegister(context: Context) {
+            Log.d("zinoviewk","unreg receiver empty")
+        }
     }
 }

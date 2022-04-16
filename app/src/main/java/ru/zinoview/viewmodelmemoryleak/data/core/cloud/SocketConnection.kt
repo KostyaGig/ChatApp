@@ -3,9 +3,7 @@ package ru.zinoview.viewmodelmemoryleak.data.core.cloud
 import io.socket.client.Socket
 
 
-interface SocketConnection : Disconnect<Socket>, HandleActivityConnection {
-
-    fun connect(socket: Socket)
+interface SocketConnection : Disconnect<Socket>, Connect<Socket>,ServerState {
 
     fun disconnectBranch(socket: Socket,branch: String)
 
@@ -23,8 +21,8 @@ interface SocketConnection : Disconnect<Socket>, HandleActivityConnection {
             }
         }
 
-        override fun handleActivityConnection(socket: Socket, isNotActive: () -> Unit)
-            = activity.handle(socket, isNotActive)
+        override suspend fun serverState(socket: Socket) : CloudServerState
+            = activity.serverState(socket)
 
         override fun disconnect(socket: Socket) {
             if (socket.isActive) {

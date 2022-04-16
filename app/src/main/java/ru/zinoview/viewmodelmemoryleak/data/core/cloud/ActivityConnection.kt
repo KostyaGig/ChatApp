@@ -1,30 +1,27 @@
 package ru.zinoview.viewmodelmemoryleak.data.core.cloud
 
 import io.socket.client.Socket
-import kotlin.concurrent.thread
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
-interface ActivityConnection {
+interface ActivityConnection : ServerState,ServerActivity {
 
-    fun isNotActive(socket: Socket) : Boolean
+    class Base(
+        private val timer: Timer,
+        private val serverActivity: ServerActivity
+    ) : ActivityConnection {
 
-    fun handle(socket: Socket, isNotActive: () -> Unit)
-
-    class Base : ActivityConnection {
-
-        override fun isNotActive(socket: Socket)
-            = socket.isActive.not() || socket.id() == null
-
-        override fun handle(socket: Socket, isNotActive: () -> Unit) {
-            thread {
-                // todo replace this approach for handle server life after the connection to the internet
-                Thread.sleep(HANDLE_DELAY)
-                if (isNotActive(socket)) {
-                    isNotActive.invoke()
+        override suspend fun serverState(socket: Socket) : CloudServerState = suspendCoroutine {continuation ->
+            timer.start(HANDLE_DELAY) {
+                if (serverActivity.isNotActive(socket)) {
+                    continuation.resume(
+                        CloudServerState.Died
+                    )
                 }
             }
         }
 
-
+        override fun isNotActive(socket: Socket) = serverActivity.isNotActive(socket)
 
         private companion object {
             private const val HANDLE_DELAY = 3000L

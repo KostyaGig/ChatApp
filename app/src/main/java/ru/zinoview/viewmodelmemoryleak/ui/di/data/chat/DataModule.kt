@@ -22,7 +22,7 @@ class DataModule : Module {
             )
         }
 
-        single<ConnectionRepository> {
+        factory<ConnectionRepository> {
             ConnectionRepository.Base(
                 CloudToDataConnectionMapper(),
                 get()

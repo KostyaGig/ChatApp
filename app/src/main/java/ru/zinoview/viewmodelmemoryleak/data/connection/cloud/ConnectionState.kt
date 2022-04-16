@@ -1,14 +1,19 @@
 package ru.zinoview.viewmodelmemoryleak.data.connection.cloud
 
+import android.util.Log
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
+import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Connect
+import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnection
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Subscribe
 
-interface ConnectionState : Subscribe<CloudConnection> {
+interface ConnectionState : Subscribe<CloudConnection>, Disconnect<Unit>, Connect<Unit> {
 
-    fun change(state: Boolean,message: String = "")
+    suspend fun update(isConnected: Boolean)
+
+    fun push(state: CloudConnection)
 
     class Base(
         private val socket: Socket,
@@ -18,18 +23,23 @@ interface ConnectionState : Subscribe<CloudConnection> {
 
         private var block: (CloudConnection) -> Unit = {}
 
-        override fun change(state: Boolean, message: String) {
-            if (!state) {
-                block.invoke(CloudConnection.Failure(message))
+        override fun disconnect(arg: Unit)
+            = push(CloudConnection.Failure(resourceProvider.string(R.string.waiting_for_server)))
+
+        override fun connect(arg: Unit) = push(CloudConnection.Success)
+
+        override suspend fun update(isConnected: Boolean) {
+            if (isConnected) {
+                val serverState = connection.serverState(socket)
+                serverState.update(this,resourceProvider)
             } else {
-                connection.handleActivityConnection(socket) {
-                    block.invoke(
-                        CloudConnection.Failure(
-                            resourceProvider.string(R.string.waiting_for_network)
-                        ))
-                }
+                push(CloudConnection.Failure(
+                    resourceProvider.string(R.string.waiting_for_network)
+                ))
             }
         }
+
+        override fun push(state: CloudConnection) = block.invoke(state)
 
         override fun subscribe(block: (CloudConnection) -> Unit) {
             this.block = block

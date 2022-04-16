@@ -1,8 +1,9 @@
 <resources>
-    <string name="app_name">ViewModelMemoryLeak</string>
+    <string name="app_name">Chat</string>
     <string name="sockket_connection_error">Problems with server</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="waiting_for_server">Waiting for server…</string>
     <string name="waiting_for_network">Waiting for network…</string>
     <string name="field_is_empty_text">The field is empty</string>
+    <string name="join_user_text">Join</string>
 </resources>

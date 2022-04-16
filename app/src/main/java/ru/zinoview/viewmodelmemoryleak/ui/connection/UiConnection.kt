@@ -11,7 +11,7 @@ interface UiConnection : ChangeTitle<ToolbarActivity> {
 
     fun messages(viewModel: ChatViewModel) = Unit
 
-    class Success(
+    data class Success(
         private val message: String
     ) : UiConnection {
 
@@ -21,7 +21,7 @@ interface UiConnection : ChangeTitle<ToolbarActivity> {
             = viewModel.messages()
     }
 
-    class Failure(private val message: String) : UiConnection {
+    data class Failure(private val message: String) : UiConnection {
 
         override fun changeTitle(toolbar: ToolbarActivity)
             = toolbar.changeTitle(message)

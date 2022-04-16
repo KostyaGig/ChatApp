@@ -12,17 +12,16 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBarHeight
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 
-import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractFragment
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
+import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NetworkConnectionFragment
 
 
-class ChatFragment : AbstractFragment<ChatViewModel.Base, ChatFragmentBinding>(
+class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentBinding>(
     ChatViewModel.Base::class
 ) {
 
     private var adapter: ChatAdapter = ChatAdapter.Empty
-    private var networkConnectionReceiver: NetworkConnectionReceiver = NetworkConnectionReceiver.Empty
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -69,12 +68,13 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base, ChatFragmentBinding>(
             val message = binding.messageField.text.toString().trim()
             messageSession.sendMessage(viewModel,message)
         }
+
+        viewModel.messages()
+        viewModel.connection()
     }
 
     override fun onStart() {
         super.onStart()
-        networkConnectionReceiver.register(requireActivity().applicationContext)
-
         viewModel.observe(this) { messages ->
             messages.last().changeTitle(requireActivity() as ToolbarActivity)
             adapter.submitList(messages)
@@ -86,17 +86,16 @@ class ChatFragment : AbstractFragment<ChatViewModel.Base, ChatFragmentBinding>(
             connection.messages(viewModel)
         }
 
-
-    }
-
-    override fun onPause() {
-        super.onPause()
-        viewModel.clean()
-        networkConnectionReceiver.unRegister(requireActivity().applicationContext)
     }
 
     override fun back(navigation: Navigation) = navigation.exit()
 
     override fun initBinding(inflater: LayoutInflater, container: ViewGroup?): ChatFragmentBinding
         = ChatFragmentBinding.inflate(layoutInflater,container,false)
+
+    override fun dependenciesScope() = SCOPE_NAME
+
+    private companion object {
+        private const val SCOPE_NAME = "cufScope"
+    }
 }

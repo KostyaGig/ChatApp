@@ -4,9 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-interface Dispatcher {
-
-    fun doBackground(scope: CoroutineScope,block: suspend () -> Unit)
+interface Dispatcher : DoBackground {
 
     fun doUi(scope: CoroutineScope,block: suspend () -> Unit)
 

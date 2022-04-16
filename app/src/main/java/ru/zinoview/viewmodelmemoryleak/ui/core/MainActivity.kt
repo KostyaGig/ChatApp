@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity {
         fragmentIntent.navigate(intent,this)
     }
 
+
     override fun navigateTo(fragment: Fragment) {
         supportFragmentManager
             .beginTransaction()

@@ -1,16 +1,11 @@
 package ru.zinoview.viewmodelmemoryleak.ui.di.ui.join
 
 import org.koin.dsl.module.module
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatViewModel
-import ru.zinoview.viewmodelmemoryleak.ui.chat.DataToUiMessageMapper
-import ru.zinoview.viewmodelmemoryleak.ui.chat.MessagesCommunication
-import ru.zinoview.viewmodelmemoryleak.ui.connection.ConnectionCommunication
-import ru.zinoview.viewmodelmemoryleak.ui.connection.DataToUiConnectionMapper
-import ru.zinoview.viewmodelmemoryleak.ui.connection.UiConnectionWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
 import ru.zinoview.viewmodelmemoryleak.ui.join.DataToUiJoinMapper
 import ru.zinoview.viewmodelmemoryleak.ui.join.JoinUserCommunication
 import ru.zinoview.viewmodelmemoryleak.ui.join.JoinUserViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.join.JoinWork
 
 
 class UiModule : Module {
@@ -18,13 +13,20 @@ class UiModule : Module {
         modules.add(uiChatModule)
     }
     private val uiChatModule = module {
-        single {
+        scope(SCOPE_NAME) {
             JoinUserViewModel.Base(
                 get(),
-                get(),
+                JoinWork.Base(
+                    get(),
+                    DataToUiJoinMapper()
+                ),
                 JoinUserCommunication(),
-                DataToUiJoinMapper()
+                get()
             )
         }
+    }
+
+    private companion object {
+        private const val SCOPE_NAME = "jufScope"
     }
 }

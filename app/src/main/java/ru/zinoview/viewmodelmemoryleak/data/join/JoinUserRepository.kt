@@ -9,7 +9,7 @@ import java.lang.Exception
 
 interface JoinUserRepository : Clean {
 
-    fun join(nickname: String,block: (DataJoin) -> Unit)
+   suspend fun joinedUserId(nickname: String) : DataJoin
 
     class Base(
         private val idSharedPreferences: IdSharedPreferences,
@@ -18,17 +18,14 @@ interface JoinUserRepository : Clean {
     ) : JoinUserRepository, CleanRepository(cloudDataSource)  {
 
 
-        override fun join(nickname: String, block: (DataJoin) -> Unit) {
-            try {
-                cloudDataSource.join(nickname) { userId ->
-                    idSharedPreferences.save(userId)
-                    block.invoke(DataJoin.Success)
-                }
+        override suspend fun joinedUserId(nickname: String) : DataJoin {
+            return try {
+                val userId = cloudDataSource.joinedUserId(nickname)
+                idSharedPreferences.save(userId)
+                DataJoin.Success
             } catch (e: Exception) {
                 val message = exceptionMapper.map(e)
-                block.invoke(
-                    DataJoin.Failure(message)
-                )
+                DataJoin.Failure(message)
             }
         }
     }

@@ -14,5 +14,4 @@ abstract class BaseViewModel<T>(
 
     override fun observe(owner: LifecycleOwner, observer: Observer<T>) =
         communication.observe(owner, observer)
-
 }

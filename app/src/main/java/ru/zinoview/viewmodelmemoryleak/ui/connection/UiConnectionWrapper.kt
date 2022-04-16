@@ -4,36 +4,40 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import kotlinx.coroutines.CoroutineScope
 import ru.zinoview.viewmodelmemoryleak.data.connection.ConnectionRepository
-import ru.zinoview.viewmodelmemoryleak.ui.core.CheckNetworkConnection
+import ru.zinoview.viewmodelmemoryleak.ui.chat.UpdateNetworkState
 import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
 import ru.zinoview.viewmodelmemoryleak.ui.core.ObserveConnection
 
-interface UiConnectionWrapper : ObserveConnection, CheckNetworkConnection {
+interface UiConnectionWrapper : ObserveConnection, UpdateNetworkState<CoroutineScope> {
 
     fun connection(scope: CoroutineScope)
 
     class Base(
         private val dispatcher: Dispatcher,
-        private val connectionRepository: ConnectionRepository,
-        private val connectionCommunication: ConnectionCommunication,
-        private val connectionMapper: DataToUiConnectionMapper
+        private val work: NetworkConnectionWork,
+        private val repository: ConnectionRepository,
+        private val communication: ConnectionCommunication,
+        private val mapper: DataToUiConnectionMapper
     ) : UiConnectionWrapper {
 
         override fun connection(scope: CoroutineScope) {
-            dispatcher.doBackground(scope) {
-                connectionRepository.observe { data ->
-                    val ui = data.map(connectionMapper)
+
+            work.doBackground(scope) {
+                repository.observe { data ->
+                    val ui = data.map(mapper)
                     dispatcher.doUi(scope) {
-                        connectionCommunication.postValue(ui)
+                        communication.postValue(ui)
                     }
                 }
             }
         }
 
         override fun observeConnection(owner: LifecycleOwner, observer: Observer<UiConnection>)
-            = connectionCommunication.observe(owner, observer)
+            = communication.observe(owner, observer)
 
-        override fun checkNetworkConnection(state: Boolean)
-            = connectionRepository.checkNetworkConnection(state)
+        override fun updateNetworkState(isConnected: Boolean,scope: CoroutineScope)
+            = work.doBackground(scope) {
+                repository.updateNetworkConnection(isConnected)
+            }
     }
 }

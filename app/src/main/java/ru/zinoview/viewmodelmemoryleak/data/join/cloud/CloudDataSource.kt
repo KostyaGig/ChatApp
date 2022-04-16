@@ -5,10 +5,12 @@ import ru.zinoview.viewmodelmemoryleak.data.core.cloud.AbstractCloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnection
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 interface CloudDataSource : Disconnect<Unit>, AbstractCloudDataSource {
 
-    fun join(nickname: String,block: (Int) -> Unit)
+    suspend fun joinedUserId(nickname: String) : Int
 
     class Base(
         private val socket: Socket,
@@ -16,23 +18,22 @@ interface CloudDataSource : Disconnect<Unit>, AbstractCloudDataSource {
         private val json: Json,
     ) : AbstractCloudDataSource.Base(socket, connection), CloudDataSource {
 
-        override fun join(nickname: String, block: (Int) -> Unit) {
+        override suspend fun joinedUserId(nickname: String) = suspendCoroutine<Int> { continuation ->
+            connection.connect(socket)
+            connection.addSocketBranch(JOIN_USER)
 
-                connection.connect(socket)
-                connection.addSocketBranch(JOIN_USER)
-
-                val user = json.create(
-                    Pair(
-                        NICKNAME_KEY,
-                        nickname
-                    )
+            val user = json.create(
+                Pair(
+                    NICKNAME_KEY,
+                    nickname
                 )
+            )
 
-                socket.on(JOIN_USER) { data ->
-                    val id = data.first() as Int
-                    block.invoke(id)
-                }
-                socket.emit(JOIN_USER,user)
+            socket.on(JOIN_USER) { data ->
+                val id = data.first() as Int
+                continuation.resume(id)
+            }
+            socket.emit(JOIN_USER,user)
         }
 
         private companion object {
