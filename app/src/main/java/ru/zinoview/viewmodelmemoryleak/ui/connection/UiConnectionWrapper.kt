@@ -15,7 +15,7 @@ interface UiConnectionWrapper : ObserveConnection, UpdateNetworkState<CoroutineS
     class Base(
         private val dispatcher: Dispatcher,
         private val work: NetworkConnectionWork,
-        private val repository: ConnectionRepository,
+        private val repository: ConnectionRepository<Unit>,
         private val communication: ConnectionCommunication,
         private val mapper: DataToUiConnectionMapper
     ) : UiConnectionWrapper {

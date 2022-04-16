@@ -12,7 +12,7 @@ class DataModule : Module {
 
     private val dataModule = module {
 
-        single<ChatRepository> {
+        single<ChatRepository<Unit>> {
             ChatRepository.Base(
                 get(),
                 CloudToDataMessageMapper(
@@ -22,7 +22,7 @@ class DataModule : Module {
             )
         }
 
-        factory<ConnectionRepository> {
+        factory<ConnectionRepository<Unit>> {
             ConnectionRepository.Base(
                 CloudToDataConnectionMapper(),
                 get()

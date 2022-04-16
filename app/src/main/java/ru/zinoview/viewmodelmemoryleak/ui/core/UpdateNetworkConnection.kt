@@ -1,6 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.core
 
-interface UpdateNetworkConnection {
+interface UpdateNetworkConnection<T> {
 
-    suspend fun updateNetworkConnection(isConnected: Boolean)
+    suspend fun updateNetworkConnection(isConnected: Boolean) : T
 }

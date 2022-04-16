@@ -13,4 +13,5 @@ interface SharedPreferencesReader<T> {
         override fun read(key: String, prefs: SharedPreferences) : Int
             = id.read(key, prefs)
     }
+
 }

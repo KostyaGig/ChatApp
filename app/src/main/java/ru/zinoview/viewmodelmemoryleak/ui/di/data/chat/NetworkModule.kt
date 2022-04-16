@@ -8,7 +8,7 @@ import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.MessagesStore
 class NetworkModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
 
     private val networkModule = module {
-        single<CloudDataSource> {
+        single<CloudDataSource<Unit>> {
             CloudDataSource.Base(
                 get(),
                 get(),

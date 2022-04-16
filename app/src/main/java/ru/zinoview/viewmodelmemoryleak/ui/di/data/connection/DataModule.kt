@@ -13,7 +13,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
 class DataModule : Module {
 
     private val dataModule = module {
-        single<ConnectionRepository> {
+        single<ConnectionRepository<Unit>> {
             ConnectionRepository.Base(
                 CloudToDataConnectionMapper(),
                 get()
