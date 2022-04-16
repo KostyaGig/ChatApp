@@ -16,6 +16,19 @@ interface CloudMessage : Message {
             = mapper.map(id, senderId, content, senderNickname)
     }
 
+    data class Test(
+        private val id: String,
+        private val senderId: Int,
+        private val content: String,
+        private val senderNickname: String
+    ) : CloudMessage {
+
+        override fun <T> map(mapper: Mapper<T>): T
+            = mapper.map(id, senderId, content, senderNickname)
+
+        fun update(content: String) = Test(id,senderId, content, senderNickname)
+    }
+
     data class Failure(
         private val message: String
     ) : CloudMessage {

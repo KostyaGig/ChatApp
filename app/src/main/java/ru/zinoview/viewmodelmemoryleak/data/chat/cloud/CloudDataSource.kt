@@ -9,13 +9,13 @@ import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnection
 
-interface CloudDataSource : Disconnect<Unit>,
+interface CloudDataSource<T> : Disconnect<Unit>,
     Observe<List<CloudMessage>>,
     EditMessage {
 
     suspend fun sendMessage(userId: Int,content: String)
 
-    suspend fun messages(block:(List<CloudMessage>) -> Unit)
+    suspend fun messages(block:(List<CloudMessage>) -> Unit) : T
 
     class Base(
         private val socket: Socket,
@@ -24,7 +24,7 @@ interface CloudDataSource : Disconnect<Unit>,
         private val gson: Gson,
         private val data: Data<List<CloudMessage>>,
         private val messagesStore: MessagesStore
-    ) : AbstractCloudDataSource.Base(socket, connection), CloudDataSource {
+    ) : AbstractCloudDataSource.Base(socket, connection), CloudDataSource<Unit> {
 
         override suspend fun sendMessage(userId: Int,content: String) {
             messagesStore.addMessage(
@@ -106,6 +106,38 @@ interface CloudDataSource : Disconnect<Unit>,
         private const val SENDER_ID_KEY = "senderId"
         private const val MESSAGE_CONTENT_KEY = "content"
         private const val MESSAGE_ID_KEY = "id"
+    }
+
+    class Test : CloudDataSource<List<CloudMessage>> {
+
+        private val messages = mutableListOf<CloudMessage.Test>()
+        private var isSuccess = false
+
+        override suspend fun sendMessage(userId: Int, content: String) {
+            messages.add(CloudMessage.Test(
+                "-1",userId,content,"-1"
+            ))
+        }
+
+        override suspend fun messages(block: (List<CloudMessage>) -> Unit) : List<CloudMessage> {
+            val result = if (isSuccess) {
+                messages
+            } else {
+                listOf(CloudMessage.Failure("Messages are empty"))
+            }
+            isSuccess = !isSuccess
+            return result
+        }
+
+        override fun disconnect(arg: Unit) = messages.clear()
+
+        override fun observe(block: (List<CloudMessage>) -> Unit) = Unit
+
+        override suspend fun editMessage(messageId: String, content: String) {
+            val message = messages[messageId.toInt() - 1]
+            messages[messageId.toInt() - 1]  = message.update(content)
+        }
+
     }
 
 }

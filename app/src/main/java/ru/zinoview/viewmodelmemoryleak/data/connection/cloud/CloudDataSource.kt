@@ -1,24 +1,21 @@
 package ru.zinoview.viewmodelmemoryleak.data.connection.cloud
 
-import android.util.Log
 import io.socket.client.Socket
-import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
 import ru.zinoview.viewmodelmemoryleak.data.core.SuspendObserve
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.AbstractCloudDataSource
-import ru.zinoview.viewmodelmemoryleak.data.core.cloud.HandleActivityConnection
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnection
 import ru.zinoview.viewmodelmemoryleak.ui.core.UpdateNetworkConnection
 
-interface CloudDataSource :
+interface CloudDataSource<T> :
     AbstractCloudDataSource,
     SuspendObserve<CloudConnection>,
-    UpdateNetworkConnection {
+    UpdateNetworkConnection<T> {
 
     class Base(
         private val socket: Socket,
         private val connection: SocketConnection,
         private val connectionState: ConnectionState
-    ) : CloudDataSource, AbstractCloudDataSource.Base(socket, connection){
+    ) : CloudDataSource<Unit>, AbstractCloudDataSource.Base(socket, connection){
 
         override suspend fun observe(block: (CloudConnection) -> Unit) {
             connection.connect(socket)
@@ -38,5 +35,31 @@ interface CloudDataSource :
 
         override suspend fun updateNetworkConnection(isConnected: Boolean)
             = connectionState.update(isConnected)
+    }
+
+    class Test : CloudDataSource<CloudConnection> {
+
+        private var count = 0
+
+        override fun disconnect(arg: Unit) {
+            count = 0
+        }
+
+        override suspend fun observe(block: (CloudConnection) -> Unit) = Unit
+
+        override suspend fun updateNetworkConnection(isConnected: Boolean) : CloudConnection {
+            return if (isConnected) {
+                val result = if (count % 2 == 0) {
+                    CloudConnection.Failure("Waiting for server...")
+                } else {
+                    CloudConnection.Success
+                }
+                count++
+                result
+            } else {
+                CloudConnection.Failure("Waiting for network...")
+            }
+        }
+
     }
 }
