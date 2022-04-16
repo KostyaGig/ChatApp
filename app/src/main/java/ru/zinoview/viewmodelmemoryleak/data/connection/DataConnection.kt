@@ -9,7 +9,7 @@ interface DataConnection : Connection {
             = mapper.map()
     }
 
-    class Failure(
+    data class Failure(
         private val message: String
     ) : DataConnection {
 

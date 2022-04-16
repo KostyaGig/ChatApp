@@ -19,7 +19,7 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
     fun editMessage(messageId: String, content: String)
 
     class Base(
-        private val repository: ChatRepository,
+        private val repository: ChatRepository<Unit>,
         private val work: ChatWork,
         private val dispatcher: Dispatcher,
         private val mapper: DataToUiMessageMapper,
