@@ -40,7 +40,7 @@ class AuthActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        getKoin().getScope(SCOPE_NAME)
+        getKoin().getScope(SCOPE_NAME).close()
     }
 
     private companion object {

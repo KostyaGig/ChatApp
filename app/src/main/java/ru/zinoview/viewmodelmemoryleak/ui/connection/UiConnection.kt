@@ -17,8 +17,9 @@ interface UiConnection : ChangeTitle<ToolbarActivity> {
 
         override fun changeTitle(toolbar: ToolbarActivity) = toolbar.changeTitle(message)
 
-        override fun messages(viewModel: ChatViewModel)
-            = viewModel.messages()
+        override fun messages(viewModel: ChatViewModel) {
+            viewModel.messages()
+        }
     }
 
     data class Failure(private val message: String) : UiConnection {

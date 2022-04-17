@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
@@ -35,9 +36,10 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
         override fun editMessage(messageId: String, content: String)
             = work.doBackground(viewModelScope) {
                 repository.editMessage(messageId, content)
-             }
+            }
 
         override fun messages() {
+            Log.d("zinoviewk","messages viewmodel")
             communication.postValue(listOf(UiChatMessage.Progress))
             work.doBackground(viewModelScope) {
                 repository.messages { data ->

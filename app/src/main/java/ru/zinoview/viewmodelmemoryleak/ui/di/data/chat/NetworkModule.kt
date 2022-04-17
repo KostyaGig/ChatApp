@@ -1,9 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.di.data.chat
 
 import org.koin.dsl.module.module
-import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
-import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.Data
-import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.MessagesStore
+import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.*
 
 class NetworkModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
 
@@ -15,7 +13,10 @@ class NetworkModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
                 get(),
                 get(),
                 Data.CloudMessage(),
-                MessagesStore.Base()
+                MessagesStore.Base(
+                    ListItem.Base(),
+                    ToCloudProfressMessageMapper()
+                )
             )
         }
     }

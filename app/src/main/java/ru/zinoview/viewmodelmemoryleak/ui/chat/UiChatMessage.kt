@@ -10,7 +10,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.*
 
 interface UiChatMessage :
-    DiffSame<UiChatMessage>, Same, Bind, Ui, ChangeTitle<ToolbarActivity>,
+    DiffSame<UiChatMessage>, UiSame, Bind, Ui, ChangeTitle<ToolbarActivity>,
     Message, Show<ViewWrapper> {
 
     override fun isContentTheSame(item: UiChatMessage) = false

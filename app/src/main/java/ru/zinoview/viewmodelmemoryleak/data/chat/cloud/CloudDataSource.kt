@@ -2,7 +2,6 @@ package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
 import com.google.gson.Gson
 import io.socket.client.Socket
-import ru.zinoview.viewmodelmemoryleak.data.core.Observe
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.AbstractCloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
@@ -10,7 +9,6 @@ import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnection
 
 interface CloudDataSource<T> : Disconnect<Unit>,
-    Observe<List<CloudMessage>>,
     EditMessage {
 
     suspend fun sendMessage(userId: Int,content: String)
@@ -26,13 +24,29 @@ interface CloudDataSource<T> : Disconnect<Unit>,
         private val messagesStore: MessagesStore
     ) : AbstractCloudDataSource.Base(socket, connection), CloudDataSource<Unit> {
 
+        override suspend fun messages(block:(List<CloudMessage>) -> Unit) {
+            connection.connect(socket)
+            messagesStore.subscribe(block)
+
+            socket.on(MESSAGES) { cloudData ->
+                val wrapperMessages = gson.toJson(cloudData.first())
+                val modelMessages = gson.fromJson(wrapperMessages, WrapperMessages::class.java).map()
+
+                val messages = data.data(modelMessages)
+
+                messagesStore.addMessages(messages)
+            }
+
+            socket.emit(MESSAGES)
+            connection.addSocketBranch(MESSAGES)
+        }
+
         override suspend fun sendMessage(userId: Int,content: String) {
-            messagesStore.addMessage(
-                CloudMessage.Progress(
-                    userId,
-                    content
-                )
+            val progressMessage = CloudMessage.Progress(
+                userId,
+                content
             )
+            messagesStore.addMessage(progressMessage)
 
             val message = json.create(
                 Pair(
@@ -45,9 +59,11 @@ interface CloudDataSource<T> : Disconnect<Unit>,
 
             connection.connect(socket)
             socket.emit(SEND_MESSAGE,message)
-            }
+        }
 
         override suspend fun editMessage(messageId: String, content: String) {
+            messagesStore.editMessage(messageId, content)
+
             val message = json.create(
                 Pair(
                     MESSAGE_ID_KEY,messageId
@@ -60,40 +76,6 @@ interface CloudDataSource<T> : Disconnect<Unit>,
             connection.connect(socket)
             socket.emit(EDIT_MESSAGE,message)
             connection.addSocketBranch(EDIT_MESSAGE)
-        }
-
-
-        override suspend fun observe(block: (List<CloudMessage>) -> Unit) {
-            connection.connect(socket)
-            messagesStore.subscribe(block)
-            socket.on(SEND_MESSAGE) { data ->
-
-                val wrapperMessages = gson.toJson(data.first())
-                val messages = gson.fromJson(wrapperMessages, WrapperMessages::class.java).map()
-
-                messagesStore.addMessages(messages)
-            }
-            connection.addSocketBranch(SEND_MESSAGE)
-        }
-
-        override suspend fun messages(block:(List<CloudMessage>) -> Unit) {
-            connection.connect(socket)
-            messagesStore.subscribe(block)
-
-            socket.on(MESSAGES) { cloudData ->
-                val wrapperMessages = gson.toJson(cloudData.first())
-                val modelMessages = gson.fromJson(wrapperMessages, WrapperMessages::class.java).map()
-
-                val messages = data.data(modelMessages)
-
-                messagesStore.addMessages(messages)
-
-                connection.disconnectBranch(socket, MESSAGES)
-            }
-            socket.emit(MESSAGES)
-            connection.addSocketBranch(MESSAGES)
-
-            observe(block)
         }
 
     }
@@ -130,8 +112,6 @@ interface CloudDataSource<T> : Disconnect<Unit>,
         }
 
         override fun disconnect(arg: Unit) = messages.clear()
-
-        override suspend fun observe(block: (List<CloudMessage>) -> Unit) = Unit
 
         override suspend fun editMessage(messageId: String, content: String) {
             val message = messages[messageId.toInt() - 1]

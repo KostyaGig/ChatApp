@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.databinding.JoinFragmentBinding
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatFragment
 import ru.zinoview.viewmodelmemoryleak.ui.chat.NetworkConnectionReceiver
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.MessageField
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
@@ -24,9 +23,8 @@ class JoinUserFragment : NetworkConnectionFragment<JoinUserViewModel.Base, JoinF
         networkConnectionReceiver = NetworkConnectionReceiver.Base(viewModel)
 
         binding.joinBtn.setOnClickListener {
-//            val nicknameField = view.findViewById<MessageField.Base>(R.id.nickname_field)
-//            nicknameField.doAction(viewModel)
-            (requireActivity() as Navigation).navigateTo(ChatFragment())
+            val nicknameField = view.findViewById<MessageField.Base>(R.id.nickname_field)
+            nicknameField.doAction(viewModel)
         }
 
         viewModel.connection()

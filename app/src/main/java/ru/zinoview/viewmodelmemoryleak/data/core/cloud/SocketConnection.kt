@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.core.cloud
 
-import android.util.Log
 import io.socket.client.Socket
 
 
@@ -18,9 +17,9 @@ interface SocketConnection : Disconnect<Socket>,ServerState, Connect<Socket> {
 
         override fun connect(socket: Socket) {
             if (activity.isNotActive(socket)) {
-                    socket.connect()
-                }
+                socket.connect()
             }
+        }
 
         override suspend fun serverState(socket: Socket) : CloudServerState
             = activity.serverState(socket)

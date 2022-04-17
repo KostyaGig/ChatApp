@@ -2,8 +2,13 @@ package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
+import ru.zinoview.viewmodelmemoryleak.ui.core.Same
 
-interface CloudMessage : Message {
+interface CloudMessage : Message, Same<String> {
+
+    override fun same(id: String) = false
+
+    fun <T> map(content: String,mapper: Mapper<T>) : T = mapper.map()
 
     data class Base(
         private val id: String,
@@ -14,6 +19,11 @@ interface CloudMessage : Message {
 
         override fun <T> map(mapper: Mapper<T>): T
             = mapper.map(id, senderId, content, senderNickname)
+
+        override fun <T> map(content: String, mapper: Mapper<T>): T
+            = mapper.map(id, senderId, content, senderNickname)
+
+        override fun same(id: String) = this.id == id
     }
 
     data class Test(
