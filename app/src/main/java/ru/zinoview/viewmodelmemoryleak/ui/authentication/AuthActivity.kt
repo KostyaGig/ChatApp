@@ -11,7 +11,7 @@ class AuthActivity : AppCompatActivity() {
 
 
     private val viewModel by lazy {
-        getKoin().createScope(SCOPE_NAME)
+        getKoin().getOrCreateScope(SCOPE_NAME)
         get<AuthenticationViewModel.Base>()
     }
 

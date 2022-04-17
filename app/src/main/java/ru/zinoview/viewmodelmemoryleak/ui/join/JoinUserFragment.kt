@@ -24,8 +24,9 @@ class JoinUserFragment : NetworkConnectionFragment<JoinUserViewModel.Base, JoinF
         networkConnectionReceiver = NetworkConnectionReceiver.Base(viewModel)
 
         binding.joinBtn.setOnClickListener {
-            val nicknameField = view.findViewById<MessageField.Base>(R.id.nickname_field)
-            nicknameField.doAction(viewModel)
+//            val nicknameField = view.findViewById<MessageField.Base>(R.id.nickname_field)
+//            nicknameField.doAction(viewModel)
+            (requireActivity() as Navigation).navigateTo(ChatFragment())
         }
 
         viewModel.connection()

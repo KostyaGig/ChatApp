@@ -1,9 +1,10 @@
 package ru.zinoview.viewmodelmemoryleak.data.core.cloud
 
+import android.util.Log
 import io.socket.client.Socket
 
 
-interface SocketConnection : Disconnect<Socket>, Connect<Socket>,ServerState {
+interface SocketConnection : Disconnect<Socket>,ServerState, Connect<Socket> {
 
     fun disconnectBranch(socket: Socket,branch: String)
 
@@ -17,16 +18,15 @@ interface SocketConnection : Disconnect<Socket>, Connect<Socket>,ServerState {
 
         override fun connect(socket: Socket) {
             if (activity.isNotActive(socket)) {
-                socket.connect()
+                    socket.connect()
+                }
             }
-        }
 
         override suspend fun serverState(socket: Socket) : CloudServerState
             = activity.serverState(socket)
 
         override fun disconnect(socket: Socket) {
             if (socket.isActive) {
-                socket.disconnect()
                 branches.forEach { branch ->
                     disconnectBranch(socket,branch)
                 }

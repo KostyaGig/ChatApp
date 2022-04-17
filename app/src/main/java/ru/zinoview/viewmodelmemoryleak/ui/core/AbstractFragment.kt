@@ -19,7 +19,7 @@ abstract class AbstractFragment<VM : ViewModel, B: ViewBinding>(
     abstract fun dependenciesScope() : String
 
     protected val viewModel: VM by lazy {
-        getKoin().createScope(dependenciesScope())
+        getKoin().getOrCreateScope(dependenciesScope())
         getKoin().get(clazz = viewModelClass)
     }
 

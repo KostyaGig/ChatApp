@@ -8,7 +8,10 @@ interface ServerActivity {
 
     class Base : ServerActivity {
 
-         override fun isNotActive(socket: Socket)
-            = socket.isActive.not() || socket.id() == null
+         override fun isNotActive(socket: Socket) : Boolean{
+             val isActive = socket.isActive
+             val idServer = socket.id()
+             return isActive.not() || idServer == null
+         }
     }
 }

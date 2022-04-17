@@ -18,4 +18,13 @@ interface CloudServerState : Update<ConnectionState,ResourceProvider> {
         }
     }
 
+    object Alive : CloudServerState {
+        override fun update(connectionState: ConnectionState, resourceProvider: ResourceProvider) {
+            connectionState.push(
+                CloudConnection.Success
+            )
+        }
+
+    }
+
 }

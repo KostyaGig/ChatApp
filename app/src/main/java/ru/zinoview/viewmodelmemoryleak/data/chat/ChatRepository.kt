@@ -45,7 +45,7 @@ interface ChatRepository<T> : Observe<List<DataMessage>>,
             }
         }
 
-        override fun observe(block: (List<DataMessage>) -> Unit) {
+        override suspend fun observe(block: (List<DataMessage>) -> Unit) {
             try {
                 cloudDataSource.observe {  cloudMessages ->
                     val dataMessages = cloudMessages.map { it.map(mapper) }
@@ -77,7 +77,7 @@ interface ChatRepository<T> : Observe<List<DataMessage>>,
         override suspend fun messages(block: (List<DataMessage>) -> Unit)
                 = cloudDataSource.messages {}.map { it.map(mapper) }
 
-        override fun observe(block: (List<DataMessage>) -> Unit) = Unit
+        override suspend fun observe(block: (List<DataMessage>) -> Unit) = Unit
 
     }
 }

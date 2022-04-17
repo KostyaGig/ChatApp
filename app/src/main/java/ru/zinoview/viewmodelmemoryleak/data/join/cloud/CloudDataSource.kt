@@ -18,22 +18,23 @@ interface CloudDataSource : Disconnect<Unit>, AbstractCloudDataSource {
         private val json: Json,
     ) : AbstractCloudDataSource.Base(socket, connection), CloudDataSource {
 
-        override suspend fun joinedUserId(nickname: String) = suspendCoroutine<Int> { continuation ->
+        override suspend fun joinedUserId(nickname: String) : Int {
             connection.connect(socket)
-            connection.addSocketBranch(JOIN_USER)
-
-            val user = json.create(
-                Pair(
-                    NICKNAME_KEY,
-                    nickname
+            return suspendCoroutine<Int> { continuation ->
+                connection.addSocketBranch(JOIN_USER)
+                val user = json.create(
+                    Pair(
+                        NICKNAME_KEY,
+                        nickname
+                    )
                 )
-            )
 
-            socket.on(JOIN_USER) { data ->
-                val id = data.first() as Int
-                continuation.resume(id)
+                socket.on(JOIN_USER) { data ->
+                    val id = data.first() as Int
+                    continuation.resume(id)
+                }
+                socket.emit(JOIN_USER,user)
             }
-            socket.emit(JOIN_USER,user)
         }
 
         private companion object {

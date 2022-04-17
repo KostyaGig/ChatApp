@@ -9,10 +9,10 @@ class NetworkModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
         modules.add(networkModule)
     }
     private val networkModule = module {
-        factory<CloudDataSource<Unit>> {
+        single<CloudDataSource<Unit>> {
             CloudDataSource.Base(
                 get(), get(), ConnectionState.Base(
-                    get(),get(),get()
+                    get(),get()
                 )
             )
         }

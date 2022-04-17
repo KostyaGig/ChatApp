@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.connection.cloud
 
-import android.util.Log
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
@@ -11,12 +10,11 @@ import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Subscribe
 
 interface ConnectionState : Subscribe<CloudConnection>, Disconnect<Unit>, Connect<Unit> {
 
-    suspend fun update(isConnected: Boolean)
+    suspend fun update(isConnected: Boolean,socket: Socket)
 
     fun push(state: CloudConnection)
 
     class Base(
-        private val socket: Socket,
         private val connection: SocketConnection,
         private val resourceProvider: ResourceProvider
     ) : ConnectionState {
@@ -28,7 +26,7 @@ interface ConnectionState : Subscribe<CloudConnection>, Disconnect<Unit>, Connec
 
         override fun connect(arg: Unit) = push(CloudConnection.Success)
 
-        override suspend fun update(isConnected: Boolean) {
+        override suspend fun update(isConnected: Boolean,socket: Socket) {
             if (isConnected) {
                 val serverState = connection.serverState(socket)
                 serverState.update(this,resourceProvider)

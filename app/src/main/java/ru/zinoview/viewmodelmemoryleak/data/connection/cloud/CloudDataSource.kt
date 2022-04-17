@@ -34,7 +34,7 @@ interface CloudDataSource<T> :
         }
 
         override suspend fun updateNetworkConnection(isConnected: Boolean)
-            = connectionState.update(isConnected)
+            = connectionState.update(isConnected,socket)
     }
 
     class Test : CloudDataSource<CloudConnection> {

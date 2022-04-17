@@ -63,7 +63,7 @@ interface CloudDataSource<T> : Disconnect<Unit>,
         }
 
 
-        override fun observe(block: (List<CloudMessage>) -> Unit) {
+        override suspend fun observe(block: (List<CloudMessage>) -> Unit) {
             connection.connect(socket)
             messagesStore.subscribe(block)
             socket.on(SEND_MESSAGE) { data ->
@@ -131,7 +131,7 @@ interface CloudDataSource<T> : Disconnect<Unit>,
 
         override fun disconnect(arg: Unit) = messages.clear()
 
-        override fun observe(block: (List<CloudMessage>) -> Unit) = Unit
+        override suspend fun observe(block: (List<CloudMessage>) -> Unit) = Unit
 
         override suspend fun editMessage(messageId: String, content: String) {
             val message = messages[messageId.toInt() - 1]
