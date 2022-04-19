@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,12 +21,16 @@ import java.lang.IllegalStateException
 
     override fun getItemViewType(position: Int): Int {
         return when(getItem(position)) {
-            is UiChatMessage.Sent -> 1
-            is UiChatMessage.Received -> 2
-            is UiChatMessage.Progress -> 3
-            is UiChatMessage.Failure -> 4
-            is UiChatMessage.ProgressMessage -> 5
-            else -> -1
+            is UiChatMessage.Sent.Read -> 1
+            is UiChatMessage.Sent.Unread -> 2
+            is UiChatMessage.ProgressMessage -> 3
+            is UiChatMessage.Received -> 4
+            is UiChatMessage.Progress, UiChatMessage.Empty -> 5
+            is UiChatMessage.Failure -> 6
+            else -> {
+                Log.d("zinoviewk","else ${getItem(position)}")
+                -1
+            }
         }
     }
 
@@ -34,21 +39,29 @@ import java.lang.IllegalStateException
         viewType: Int
     ): BaseViewHolder {
         return when(viewType) {
-            1, 5 -> BaseViewHolder.Message(
-                LayoutInflater.from(parent.context).inflate(R.layout.sent,parent,false),
+            1 -> BaseViewHolder.Message(
+                LayoutInflater.from(parent.context).inflate(R.layout.sent_read,parent,false),
                 listener
             )
             2 -> BaseViewHolder.Message(
+                LayoutInflater.from(parent.context).inflate(R.layout.sent_unread,parent,false),
+                listener
+            )
+            3 -> BaseViewHolder.Message(
+                LayoutInflater.from(parent.context).inflate(R.layout.progress,parent,false),
+                listener
+            )
+            4 -> BaseViewHolder.Message(
                 LayoutInflater.from(parent.context).inflate(R.layout.received,parent,false),
                 listener
-            ) 4 -> BaseViewHolder.Failure(
-                LayoutInflater.from(parent.context).inflate(R.layout.error,parent,false)
             )
-            3 -> {
-                BaseViewHolder.Empty(
+            5 -> BaseViewHolder.Empty(
                     LayoutInflater.from(parent.context).inflate(R.layout.empty,parent,false)
                 )
-            }
+            6 -> BaseViewHolder.Failure(
+                LayoutInflater.from(parent.context).inflate(R.layout.error,parent,false)
+            )
+
             else -> throw IllegalStateException("ChatAdapter.onCreateViewHolder else branch")
         }
     }

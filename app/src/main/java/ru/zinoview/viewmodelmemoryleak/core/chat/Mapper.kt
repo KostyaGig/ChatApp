@@ -23,7 +23,22 @@ interface Mapper<T> {
         senderNickname: String
     ): T
 
+    // todo remove
     fun mapSent(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ) : T
+
+    fun mapRead(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ) : T
+
+    fun mapUnRead(
         id: String,
         senderId: Int,
         content: String,

@@ -1,7 +1,6 @@
-package ru.zinoview.viewmodelmemoryleak.ui
+package ru.zinoview.viewmodelmemoryleak.ui.chat
 
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditContent
 import ru.zinoview.viewmodelmemoryleak.ui.core.Action
 

@@ -2,7 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.di.data.chat
 
 import org.koin.dsl.module.module
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatRepository
-import ru.zinoview.viewmodelmemoryleak.data.chat.CloudToDataMessageMapper
+import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudToDataMessageMapper
 import ru.zinoview.viewmodelmemoryleak.data.connection.CloudToDataConnectionMapper
 import ru.zinoview.viewmodelmemoryleak.data.connection.ConnectionRepository
 import ru.zinoview.viewmodelmemoryleak.data.connection.cloud.ConnectionState
@@ -15,7 +15,7 @@ class DataModule : Module {
         single<ChatRepository<Unit>> {
             ChatRepository.Base(
                 get(),
-                CloudToDataMessageMapper(
+                CloudToDataMessageMapper.Base(
                     get()
                 ),
                 get()

@@ -8,12 +8,12 @@ interface ListItem<T> {
     class Base : ListItem<CloudMessage> {
 
         override fun item(src: List<CloudMessage>, id: String)
-            = src.find{ item -> item.same(id)  } ?: CloudMessage.Empty
+            = src.find{ item -> item.same(id,Unit)  } ?: CloudMessage.Empty
 
         override fun index(src: List<CloudMessage>, id: String): Int {
             var index = -1
             src.forEachIndexed { i,  message ->
-                if (message.same(id)) {
+                if (message.same(id,Unit)) {
                     index = i
                     return@forEachIndexed
                 }

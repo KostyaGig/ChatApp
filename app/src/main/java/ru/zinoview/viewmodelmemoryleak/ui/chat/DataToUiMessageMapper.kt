@@ -10,10 +10,7 @@ class DataToUiMessageMapper : Mapper<UiChatMessage> {
         senderId: Int,
         content: String,
         senderNickname: String
-    ): UiChatMessage
-        = UiChatMessage.Sent(
-            id,content,senderId.toString(),senderNickname
-        )
+    ) = UiChatMessage.Empty
 
     override fun mapFailure(message: String): UiChatMessage
         = UiChatMessage.Failure(message)
@@ -37,5 +34,19 @@ class DataToUiMessageMapper : Mapper<UiChatMessage> {
         content: String,
         senderNickname: String
     ) = UiChatMessage.Empty
+
+    override fun mapRead(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ) = UiChatMessage.Sent.Read(id,content,senderId.toString(),senderNickname)
+
+    override fun mapUnRead(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ) =  UiChatMessage.Sent.Unread(id,content,senderId.toString(),senderNickname)
 
 }

@@ -2,7 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 
-class ToCloudProfressMessageMapper : Mapper<CloudMessage> {
+class ToCloudProgressMessageMapper : Mapper<CloudMessage> {
 
     override fun map(
         id: String,
@@ -21,6 +21,20 @@ class ToCloudProfressMessageMapper : Mapper<CloudMessage> {
         senderNickname: String
     ) = CloudMessage.Empty
     override fun mapSent(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ) = CloudMessage.Empty
+
+    override fun mapRead(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ) = CloudMessage.Empty
+
+    override fun mapUnRead(
         id: String,
         senderId: Int,
         content: String,

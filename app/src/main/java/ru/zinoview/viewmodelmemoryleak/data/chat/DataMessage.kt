@@ -28,15 +28,35 @@ interface DataMessage : Message {
             = mapper.map(id, senderId, content, senderNickname)
     }
 
-    data class Sent(
-        private val id: String,
-        private val senderId: Int,
-        private val content: String,
-        private val senderNickname: String
+    abstract class Sent(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
     ) : Message(id, senderId, content, senderNickname) {
 
-        override fun <T> map(mapper: Mapper<T>): T
-            = mapper.mapSent(id, senderId, content, senderNickname)
+
+        data class Read(
+            private val id: String,
+            private val senderId: Int,
+            private val content: String,
+            private val senderNickname: String
+        ) : Sent(id, senderId, content, senderNickname) {
+
+            override fun <T> map(mapper: Mapper<T>): T
+                = mapper.mapRead(id, senderId, content, senderNickname)
+        }
+
+        data class Unread(
+            private val id: String,
+            private val senderId: Int,
+            private val content: String,
+            private val senderNickname: String
+        ) : Sent(id, senderId, content, senderNickname) {
+
+            override fun <T> map(mapper: Mapper<T>): T
+                = mapper.mapUnRead(id, senderId, content, senderNickname)
+        }
     }
 
     data class Received(

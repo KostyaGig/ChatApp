@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.di.data.chat
 
 import org.koin.dsl.module.module
+import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.*
 
 class NetworkModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
@@ -15,7 +16,10 @@ class NetworkModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
                 Data.CloudMessage(),
                 MessagesStore.Base(
                     ListItem.Base(),
-                    ToCloudProfressMessageMapper()
+                    ToCloudProgressMessageMapper(),
+                    IsNotEmpty.List(),
+                    ListSize.Base(),
+                    get()
                 )
             )
         }

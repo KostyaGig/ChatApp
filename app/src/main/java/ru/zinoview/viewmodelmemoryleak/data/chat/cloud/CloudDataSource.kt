@@ -1,15 +1,17 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
+import android.util.Log
 import com.google.gson.Gson
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
+import ru.zinoview.viewmodelmemoryleak.core.chat.UpdateMessagesState
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.AbstractCloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnection
 
 interface CloudDataSource<T> : Disconnect<Unit>,
-    EditMessage {
+    EditMessage, UpdateMessagesState {
 
     suspend fun sendMessage(userId: Int,content: String)
 
@@ -34,6 +36,8 @@ interface CloudDataSource<T> : Disconnect<Unit>,
 
                 val messages = data.data(modelMessages)
 
+                Log.d("zinoviewk","messages $messages")
+
                 messagesStore.addMessages(messages)
             }
 
@@ -46,6 +50,7 @@ interface CloudDataSource<T> : Disconnect<Unit>,
                 userId,
                 content
             )
+
             messagesStore.addMessage(progressMessage)
 
             val message = json.create(
@@ -78,12 +83,25 @@ interface CloudDataSource<T> : Disconnect<Unit>,
             connection.addSocketBranch(EDIT_MESSAGE)
         }
 
+        override fun updateMessagesState(range: Pair<Int, Int>) {
+            messagesStore.unreadMessageIds(range) { unreadMessageIds ->
+                Log.d("zinoviewk","unread msg ids $unreadMessageIds")
+                val ids = CloudUnreadMessageIds.Base(unreadMessageIds)
+                val jsonIds = gson.toJson(ids)
+
+                socket.emit(UPDATE_MESSAGE,jsonIds)
+            }
+            connection.addSocketBranch(UPDATE_MESSAGE)
+            connection.connect(socket)
+        }
+
     }
 
     private companion object {
         private const val SEND_MESSAGE = "send_message"
         private const val MESSAGES = "messages"
         private const val EDIT_MESSAGE = "edit_message"
+        private const val UPDATE_MESSAGE = "update_message"
 
         private const val SENDER_ID_KEY = "senderId"
         private const val MESSAGE_CONTENT_KEY = "content"
@@ -109,6 +127,10 @@ interface CloudDataSource<T> : Disconnect<Unit>,
             }
             isSuccess = !isSuccess
             return result
+        }
+
+        override fun updateMessagesState(range: Pair<Int, Int>) {
+
         }
 
         override fun disconnect(arg: Unit) = messages.clear()

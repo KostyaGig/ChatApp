@@ -1,29 +1,59 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
+import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
 import ru.zinoview.viewmodelmemoryleak.ui.core.Same
 
-interface CloudMessage : Message, Same<String> {
+interface CloudMessage : Message, Same<String,Unit> {
 
-    override fun same(id: String) = false
+    override fun same(id: String, arg2: Unit): Boolean = false
+    override fun <T> map(mapper: Mapper<T>): T = mapper.map()
 
     fun <T> map(content: String,mapper: Mapper<T>) : T = mapper.map()
+    fun map(mapper: CloudToDataMessageMapper) : DataMessage = DataMessage.Empty
+
+    fun addUnreadMessageId(userId: Int,unreadMessages: MutableList<String>) = Unit
 
     data class Base(
         private val id: String,
         private val senderId: Int,
         private val content: String,
-        private val senderNickname: String
+        private val senderNickname: String,
+        private val isRead: Boolean
     ) : CloudMessage {
-
-        override fun <T> map(mapper: Mapper<T>): T
-            = mapper.map(id, senderId, content, senderNickname)
 
         override fun <T> map(content: String, mapper: Mapper<T>): T
             = mapper.map(id, senderId, content, senderNickname)
 
-        override fun same(id: String) = this.id == id
+        override fun map(mapper: CloudToDataMessageMapper)
+            = mapper.map(id, senderId, content, senderNickname, isRead)
+
+        override fun same(id: String, arg2: Unit) = this.id == id
+
+        override fun addUnreadMessageId(userId: Int, unreadMessages: MutableList<String>) {
+            if (isRead.not() && senderId != userId) {
+                unreadMessages.add(id)
+            }
+        }
+    }
+
+    data class Failure(
+        private val message: String
+    ) : CloudMessage {
+
+        override fun map(mapper: CloudToDataMessageMapper)
+            = mapper.mapFailure(message)
+    }
+
+    class Progress(
+        private val senderId: Int,
+        private val content: String,
+    ) : CloudMessage {
+
+        override fun map(mapper: CloudToDataMessageMapper)
+            = mapper.mapProgress(senderId, content)
     }
 
     data class Test(
@@ -34,25 +64,9 @@ interface CloudMessage : Message, Same<String> {
     ) : CloudMessage {
 
         override fun <T> map(mapper: Mapper<T>): T
-            = mapper.map(id, senderId, content, senderNickname)
+                = mapper.map(id, senderId, content, senderNickname)
 
         fun update(content: String) = Test(id,senderId, content, senderNickname)
-    }
-
-    data class Failure(
-        private val message: String
-    ) : CloudMessage {
-        override fun <T> map(mapper: Mapper<T>): T
-            = mapper.mapFailure(message)
-    }
-
-    class Progress(
-        private val senderId: Int,
-        private val content: String,
-    ) : CloudMessage {
-
-        override fun <T> map(mapper: Mapper<T>): T
-            = mapper.mapProgress(senderId, content)
     }
 
     object Empty : CloudMessage {
@@ -63,8 +77,10 @@ interface CloudMessage : Message, Same<String> {
 
 class Value(
     private val nameValuePairs: CloudMessage.Base
-) : ru.zinoview.viewmodelmemoryleak.core.chat.Mapper<CloudMessage> {
+) : Mapper<CloudMessage> {
 
+
+    // todo move unused methods
     override fun map(
         id: String,
         senderId: Int,
@@ -72,12 +88,26 @@ class Value(
         senderNickname: String
     ) = nameValuePairs
 
-    override fun mapReceived(
+    override fun mapRead(
         id: String,
         senderId: Int,
         content: String,
         senderNickname: String
-    ): CloudMessage = CloudMessage.Base(id, senderId, content, senderNickname)
+    )= CloudMessage.Empty
+
+    override fun mapUnRead(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ): CloudMessage = CloudMessage.Empty
+
+    override fun mapReceived(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String,
+    ): CloudMessage = CloudMessage.Empty
 
     override fun mapSent(
         id: String,
@@ -92,6 +122,7 @@ class Value(
         senderId: Int,
         content: String,
     ): CloudMessage = CloudMessage.Empty
+
 }
 
 class WrapperMessages (
@@ -127,5 +158,20 @@ class WrapperMessages (
     ) : List<CloudMessage> = emptyList()
 
     override fun mapFailure(message: String) : List<CloudMessage> = emptyList()
+    override fun mapRead(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ): List<CloudMessage> = emptyList()
+
+    override fun mapUnRead(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ): List<CloudMessage> {
+        TODO("Not yet implemented")
+    }
 }
 

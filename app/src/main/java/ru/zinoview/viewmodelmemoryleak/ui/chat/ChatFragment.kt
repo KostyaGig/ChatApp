@@ -1,9 +1,13 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.*
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession
@@ -22,13 +26,13 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 ) {
 
     private var adapter: ChatAdapter = ChatAdapter.Empty
+    private var scrollListener: ChatRecyclerViewScrollListener = ChatRecyclerViewScrollListener.Empty
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         networkConnectionReceiver = NetworkConnectionReceiver.Base(viewModel)
 
-        val diffUtil = ChatMessageDiffUtil()
         val editContainer = ViewWrapper.Base(binding.editMessageContainer)
 
         val snackBar = SnackBar.EmptyField(
@@ -46,6 +50,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
             snackBar
         )
 
+        val diffUtil = ChatMessageDiffUtil()
         adapter = ChatAdapter(diffUtil, object : EditMessageListener {
             override fun edit(message: UiChatMessage) {
                 message.show(
@@ -58,7 +63,12 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
                 messageSession.addMessage(editMessage)
             }
         })
+
+        val manager = LinearLayoutManager(requireContext())
+        binding.chatRv.layoutManager = manager
         binding.chatRv.adapter = adapter
+
+        scrollListener = ChatRecyclerViewScrollListener.Base(manager, viewModel)
 
         binding.cancelEditBtn.setOnClickListener {
             messageSession.disconnect(Unit)
@@ -71,6 +81,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
         viewModel.messages()
         viewModel.connection()
+
     }
 
     override fun onStart() {
@@ -78,6 +89,11 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         viewModel.observe(this) { messages ->
             messages.last().changeTitle(requireActivity() as ToolbarActivity)
             adapter.submitList(messages)
+        }
+
+        viewModel.observeScrollCommunication(this) { uiScroll ->
+            Log.d("zinoviewk","OBSERVE SCROLL LISTENER")
+            uiScroll.addScrollListener(binding.chatRv,scrollListener)
         }
 
         viewModel.observeConnection(this) { connection ->

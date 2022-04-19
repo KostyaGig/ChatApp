@@ -1,13 +1,16 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
+import ru.zinoview.viewmodelmemoryleak.core.chat.UpdateMessagesState
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudMessage
+import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudToDataMessageMapper
 import ru.zinoview.viewmodelmemoryleak.data.core.CleanRepository
 
-interface ChatRepository<T> : Clean, EditMessage {
+interface ChatRepository<T> : Clean, EditMessage,UpdateMessagesState {
 
     suspend fun sendMessage(content: String)
 
@@ -30,6 +33,9 @@ interface ChatRepository<T> : Clean, EditMessage {
         override suspend fun editMessage(messageId: String, content: String)
             = cloudDataSource.editMessage(messageId, content)
 
+        override fun updateMessagesState(range: Pair<Int,Int>)
+            = cloudDataSource.updateMessagesState(range)
+
         override suspend fun messages(block: (List<DataMessage>) -> Unit) {
             cloudDataSource.messages { cloud ->
                 val data = cloud.map { it.map(mapper) }
@@ -41,7 +47,7 @@ interface ChatRepository<T> : Clean, EditMessage {
 
     class Test(
         private val cloudDataSource: CloudDataSource<List<CloudMessage>>,
-        private val mapper: CloudToDataMessageMapper.TestCloudToDataMessageMapper
+//        private val mapper: CloudToDataMessageMapper.TestCloudToDataMessageMapper
     ) : ChatRepository<List<DataMessage>> {
         override fun clean() = Unit
 
@@ -56,8 +62,19 @@ interface ChatRepository<T> : Clean, EditMessage {
             count++
         }
 
-        override suspend fun messages(block: (List<DataMessage>) -> Unit)
-                = cloudDataSource.messages {}.map { it.map(mapper) }
+        // todo test
+        override fun updateMessagesState(range: Pair<Int, Int>) {
+
+        }
+
+        // todo test
+
+        override suspend fun messages(block: (List<DataMessage>) -> Unit): List<DataMessage> {
+            return emptyList()
+        }
+
+//        override suspend fun messages(block: (List<DataMessage>) -> Unit)
+//                = cloudDataSource.messages {}.map { it.map(mapper) }
 
     }
 }

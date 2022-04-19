@@ -1,7 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.edit
 
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
-import ru.zinoview.viewmodelmemoryleak.ui.UiEditChatMessage
+import ru.zinoview.viewmodelmemoryleak.ui.chat.UiEditChatMessage
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper

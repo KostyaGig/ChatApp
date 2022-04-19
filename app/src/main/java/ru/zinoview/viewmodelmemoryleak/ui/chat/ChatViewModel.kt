@@ -5,6 +5,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import ru.zinoview.viewmodelmemoryleak.core.Clean
+import ru.zinoview.viewmodelmemoryleak.core.chat.UpdateMessagesState
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatRepository
 import ru.zinoview.viewmodelmemoryleak.ui.connection.UiConnection
 import ru.zinoview.viewmodelmemoryleak.ui.connection.UiConnectionWrapper
@@ -13,11 +14,16 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.BaseViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
 
 interface ChatViewModel : ChatViewModelObserve, Clean,
-    ActionViewModel<String>, ru.zinoview.viewmodelmemoryleak.ui.core.ConnectionViewModel {
+    ActionViewModel<String>,
+    ru.zinoview.viewmodelmemoryleak.ui.core.ConnectionViewModel,
+    UpdateMessagesState {
 
     fun messages()
 
     fun editMessage(messageId: String, content: String)
+
+    // todo move to inteface
+    fun observeScrollCommunication(owner: LifecycleOwner,observer: Observer<UiScroll>)
 
     class Base(
         private val repository: ChatRepository<Unit>,
@@ -25,6 +31,7 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
         private val dispatcher: Dispatcher,
         private val mapper: DataToUiMessageMapper,
         private val communication: MessagesCommunication,
+        private val scrollCommunication: ScrollCommunication,
         private val connectionWrapper: UiConnectionWrapper
     ) : BaseViewModel<List<UiChatMessage>>(repository,communication), ChatViewModel {
 
@@ -39,17 +46,25 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
             }
 
         override fun messages() {
-            Log.d("zinoviewk","messages viewmodel")
+            Log.d("zinoviewk","MESSAGES METHOD CALL")
             communication.postValue(listOf(UiChatMessage.Progress))
             work.doBackground(viewModelScope) {
                 repository.messages { data ->
                     val ui = data.map { it.map(mapper) }
+
                     dispatcher.doUi(viewModelScope) {
+                        val first = ui.first()
+                        Log.d("zinoviewk","FIRST $first")
+                        first.addScroll(scrollCommunication)
                         communication.postValue(ui)
                     }
                 }
             }
         }
+
+        override fun updateMessagesState(
+            range: Pair<Int,Int>
+        ) = repository.updateMessagesState(range)
 
         override fun observeConnection(owner: LifecycleOwner,observer: Observer<UiConnection>)
             = connectionWrapper.observeConnection(owner, observer)
@@ -60,5 +75,10 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
             = work.doBackground(viewModelScope) {
                 connectionWrapper.updateNetworkState(isConnected,viewModelScope)
             }
+
+        override fun observeScrollCommunication(
+            owner: LifecycleOwner,
+            observer: Observer<UiScroll>
+        ) = scrollCommunication.observe(owner, observer)
     }
 }

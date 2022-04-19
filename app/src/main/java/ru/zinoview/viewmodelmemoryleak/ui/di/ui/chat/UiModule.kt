@@ -1,10 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.di.ui.chat
 
 import org.koin.dsl.module.module
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatViewModel
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatWork
-import ru.zinoview.viewmodelmemoryleak.ui.chat.DataToUiMessageMapper
-import ru.zinoview.viewmodelmemoryleak.ui.chat.MessagesCommunication
+import ru.zinoview.viewmodelmemoryleak.ui.chat.*
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
 
 
@@ -23,6 +20,7 @@ class UiModule : Module {
                 get(),
                 DataToUiMessageMapper(),
                 MessagesCommunication(),
+                ScrollCommunication(),
                 get()
             )
         }

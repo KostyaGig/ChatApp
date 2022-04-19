@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -16,7 +17,7 @@ interface UiChatMessage :
     override fun isContentTheSame(item: UiChatMessage) = false
     override fun isItemTheSame(item: UiChatMessage) = false
 
-    override fun same(data: String) = false
+    override fun same(data: String,isRead: Boolean) = false
     override fun sameId(id: String) = false
 
     override fun bind(view: TextView) = Unit
@@ -27,6 +28,8 @@ interface UiChatMessage :
     fun edit(listener: EditMessageListener) = Unit
 
     override fun show(arg: ViewWrapper) = Unit
+
+    fun addScroll(scrollCommunication: ScrollCommunication) = Unit
 
     object Empty : UiChatMessage
 
@@ -49,7 +52,8 @@ interface UiChatMessage :
 
     abstract class Abstract(
         private val id: String,
-        private val content: String
+        private val content: String,
+        private val isRead: Boolean
     ) : UiChatMessage {
 
         override fun bind(view: TextView) {
@@ -62,25 +66,32 @@ interface UiChatMessage :
         }
 
         override fun isItemTheSame(item: UiChatMessage) = item.sameId(id)
-        override fun isContentTheSame(item: UiChatMessage) = item.same(content)
+        override fun isContentTheSame(item: UiChatMessage) = item.same(content,isRead)
 
-        override fun same(data: String) = content == data
+        override fun same(data: String,isRead: Boolean)
+            = content == data && this.isRead == isRead
+
         override fun sameId(id: String) = this.id == id
 
         override fun changeTitle(toolbar: ToolbarActivity)
             = toolbar.changeTitle(TITLE)
+
+        override fun addScroll(scrollCommunication: ScrollCommunication) {
+            scrollCommunication.postValue(UiScroll.Base())
+        }
 
         private companion object {
             private const val TITLE = "Chat"
         }
     }
 
-    data class Sent(
+    abstract class Sent(
         private val id: String,
         private val content: String,
         private val senderId: String,
-        private val senderNickname: String
-    ) : Abstract(id,content) {
+        private val senderNickname: String,
+        private val isRead: Boolean
+    ) : Abstract(id,content,isRead) {
 
         override fun bind(view: TextView, stateImage: ImageView, editImage: ImageView) {
             super.bind(view, stateImage, editImage)
@@ -93,6 +104,21 @@ interface UiChatMessage :
         override fun show(view: ViewWrapper) {
             view.show(Unit,content)
         }
+
+        data class Read(
+            private val id: String,
+            private val content: String,
+            private val senderId: String,
+            private val senderNickname: String
+        ) : Sent(id, content, senderId, senderNickname,true)
+
+
+        data class Unread(
+            private val id: String,
+            private val content: String,
+            private val senderId: String,
+            private val senderNickname: String
+        ) : Sent(id,content, senderId, senderNickname,false)
     }
 
     data class Received(
@@ -100,17 +126,19 @@ interface UiChatMessage :
         private val content: String,
         private val senderId: String,
         private val senderNickname: String
-    ) : Abstract(id,content)
+    ) : Abstract(id,content,false)
 
     class ProgressMessage(
         private val senderId: String,
         private val content: String,
-    ) : Abstract(senderId,content) {
+    ) : Abstract(senderId,content,false) {
 
         override fun bind(view: TextView, stateImage: ImageView,editImage: ImageView) {
             super.bind(view)
             stateImage.visibility = View.VISIBLE
         }
+
+        override fun addScroll(scrollCommunication: ScrollCommunication) = Unit
 
         override fun changeTitle(toolbar: ToolbarActivity) = Unit
     }

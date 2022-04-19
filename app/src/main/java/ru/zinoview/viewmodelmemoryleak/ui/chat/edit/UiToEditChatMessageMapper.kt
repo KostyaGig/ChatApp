@@ -1,7 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.edit
 
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
-import ru.zinoview.viewmodelmemoryleak.ui.UiEditChatMessage
+import ru.zinoview.viewmodelmemoryleak.ui.chat.UiEditChatMessage
 
 class UiToEditChatMessageMapper :
     Mapper<UiEditChatMessage> {
@@ -25,6 +25,20 @@ class UiToEditChatMessageMapper :
     ) = UiEditChatMessage.Empty
 
     override fun mapSent(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ) = UiEditChatMessage.Empty
+
+    override fun mapRead(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ) = UiEditChatMessage.Empty
+
+    override fun mapUnRead(
         id: String,
         senderId: Int,
         content: String,

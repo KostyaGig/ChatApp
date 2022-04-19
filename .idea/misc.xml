@@ -7,6 +7,8 @@
         <entry key="app/src/main/res/drawable/ic_close.xml" value="0.29074074074074074" />
         <entry key="app/src/main/res/drawable/ic_edit.xml" value="0.29074074074074074" />
         <entry key="app/src/main/res/drawable/ic_progress.xml" value="0.2898148148148148" />
+        <entry key="app/src/main/res/drawable/ic_read.xml" value="0.27685185185185185" />
+        <entry key="app/src/main/res/drawable/ic_unread.xml" value="0.13854166666666667" />
         <entry key="app/src/main/res/layout/activity_auth.xml" value="0.275" />
         <entry key="app/src/main/res/layout/activity_chat.xml" value="0.2953703703703704" />
         <entry key="app/src/main/res/layout/activity_chat_fake.xml" value="0.26944444444444443" />
@@ -19,8 +21,11 @@
         <entry key="app/src/main/res/layout/error.xml" value="0.13333333333333333" />
         <entry key="app/src/main/res/layout/join_fragment.xml" value="0.375" />
         <entry key="app/src/main/res/layout/progress.xml" value="0.13333333333333333" />
+        <entry key="app/src/main/res/layout/progress_message.xml" value="0.2898148148148148" />
         <entry key="app/src/main/res/layout/received.xml" value="0.2953703703703704" />
         <entry key="app/src/main/res/layout/sent.xml" value="0.2953703703703704" />
+        <entry key="app/src/main/res/layout/sent_read.xml" value="0.2898148148148148" />
+        <entry key="app/src/main/res/layout/sent_unread.xml" value="0.2898148148148148" />
         <entry key="app/src/main/res/layout/tap_fragment.xml" value="0.22685185185185186" />
       </map>
     </option>

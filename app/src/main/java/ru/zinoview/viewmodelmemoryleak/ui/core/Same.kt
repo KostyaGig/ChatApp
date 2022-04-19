@@ -1,6 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.core
 
-interface Same<T> {
+interface Same<T,E> {
 
-    fun same(data: T) : Boolean
+    fun same(arg1: T,arg2: E) : Boolean
 }

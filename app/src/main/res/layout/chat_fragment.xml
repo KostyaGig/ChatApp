@@ -15,7 +15,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/write_message_container"
             android:id="@+id/chat_rv"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/edit_message_container"
