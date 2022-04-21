@@ -47,14 +47,14 @@ interface ChatRepository<T> : Clean, EditMessage,UpdateMessagesState {
 
     class Test(
         private val cloudDataSource: CloudDataSource<List<CloudMessage>>,
-//        private val mapper: CloudToDataMessageMapper.TestCloudToDataMessageMapper
+        private val mapper: CloudToDataMessageMapper
     ) : ChatRepository<List<DataMessage>> {
         override fun clean() = Unit
 
         private var count = 0
 
         override suspend fun editMessage(messageId: String, content: String)
-                = cloudDataSource.editMessage(messageId, content)
+            = cloudDataSource.editMessage(messageId, content)
 
         override suspend fun sendMessage(content: String) {
             val userId = if (count % 2 == 0 ) 1 else 2
@@ -62,19 +62,11 @@ interface ChatRepository<T> : Clean, EditMessage,UpdateMessagesState {
             count++
         }
 
-        // todo test
-        override fun updateMessagesState(range: Pair<Int, Int>) {
+        override fun updateMessagesState(range: Pair<Int, Int>)
+            = cloudDataSource.updateMessagesState(range)
 
-        }
-
-        // todo test
-
-        override suspend fun messages(block: (List<DataMessage>) -> Unit): List<DataMessage> {
-            return emptyList()
-        }
-
-//        override suspend fun messages(block: (List<DataMessage>) -> Unit)
-//                = cloudDataSource.messages {}.map { it.map(mapper) }
+        override suspend fun messages(block: (List<DataMessage>) -> Unit)
+            = cloudDataSource.messages {}.map { it.map(mapper) }
 
     }
 }

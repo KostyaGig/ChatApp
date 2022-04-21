@@ -115,7 +115,7 @@ interface CloudDataSource<T> : Disconnect<Unit>,
 
         override suspend fun sendMessage(userId: Int, content: String) {
             messages.add(CloudMessage.Test(
-                "-1",userId,content,"-1"
+                "-1",userId,content,false,"-1"
             ))
         }
 
@@ -130,7 +130,10 @@ interface CloudDataSource<T> : Disconnect<Unit>,
         }
 
         override fun updateMessagesState(range: Pair<Int, Int>) {
-
+            for (index in range.first..range.second) {
+                val message = messages[index]
+                messages[index] = message.read()
+            }
         }
 
         override fun disconnect(arg: Unit) = messages.clear()
