@@ -3,14 +3,10 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 
 
-class DataToUiMessageMapper : Mapper<UiChatMessage> {
+class DataToUiMessageMapper : Mapper.Base<UiChatMessage>(
+    UiChatMessage.Empty
+) {
 
-    override fun mapSent(
-        id: String,
-        senderId: Int,
-        content: String,
-        senderNickname: String
-    ) = UiChatMessage.Empty
 
     override fun mapFailure(message: String): UiChatMessage
         = UiChatMessage.Failure(message)
@@ -27,13 +23,6 @@ class DataToUiMessageMapper : Mapper<UiChatMessage> {
 
     override fun mapProgress(senderId: Int, content: String)
         = UiChatMessage.ProgressMessage(senderId.toString(),content)
-
-    override fun map(
-        id: String,
-        senderId: Int,
-        content: String,
-        senderNickname: String
-    ) = UiChatMessage.Empty
 
     override fun mapRead(
         id: String,

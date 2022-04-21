@@ -11,6 +11,10 @@ interface Communication<T> : CommunicationObserve<T> {
 
     object Empty : Communication<Unit>
 
+    interface SingleCommunication<T> : Communication<T> {
+        fun unSubscribe()
+    }
+
     abstract class Base<T> : Communication<T> {
         private val liveData = MutableLiveData<T>()
 
@@ -20,5 +24,23 @@ interface Communication<T> : CommunicationObserve<T> {
         override fun postValue(value: T) {
             liveData.value = value
         }
+    }
+
+    abstract class Single<T> : SingleCommunication<T> {
+
+        protected val liveData = MutableLiveData<T>()
+        private var observer: Observer<T>? = null
+
+        override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
+            liveData.observe(owner, observer)
+            this.observer = observer
+        }
+
+        override fun postValue(value: T) {
+            liveData.value = value
+            unSubscribe()
+        }
+
+        override fun unSubscribe() = liveData.removeObserver(observer!!)
     }
 }

@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
@@ -55,19 +54,15 @@ interface MessagesStore : Subscribe<List<CloudMessage>>, EditMessage {
             val unreadMessageIds = mutableListOf<String>()
 
             if (isNotEmpty.isNotEmpty(messages)) {
-                if (listSize.isLessThen(2,messages)) {
-                    Log.d("zinoviewk","less than 2, ${messages.first()}")
+                if (listSize.isLessThen(MIN_SIZE_LIST,messages)) {
                     val message = messages.first()
                     message.addUnreadMessageId(userId,unreadMessageIds)
                 } else {
-                    Log.d("zinoviewk","list is not empty")
                     for (index in range.first..range.second) {
                         val message = messages[index]
                         message.addUnreadMessageId(userId,unreadMessageIds)
                     }
                 }
-            } else {
-                Log.d("zinoviewk","messages list is empty")
             }
             block.invoke(unreadMessageIds)
         }
@@ -75,6 +70,10 @@ interface MessagesStore : Subscribe<List<CloudMessage>>, EditMessage {
 
         override fun subscribe(block: (List<CloudMessage>) -> Unit) {
             this.block = block
+        }
+
+        private companion object {
+            private const val MIN_SIZE_LIST = 2
         }
     }
 }
