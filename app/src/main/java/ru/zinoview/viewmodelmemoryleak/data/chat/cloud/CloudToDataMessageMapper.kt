@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
@@ -15,44 +14,9 @@ interface CloudToDataMessageMapper : Mapper<DataMessage> {
         isRead: Boolean
     ) : DataMessage
 
-    override fun map(
-        id: String,
-        senderId: Int,
-        content: String,
-        senderNickname: String
-    ) = DataMessage.Empty
-
-    override fun mapRead(
-        id: String,
-        senderId: Int,
-        content: String,
-        senderNickname: String
-    ) = DataMessage.Empty
-
-    override fun mapSent(
-        id: String,
-        senderId: Int,
-        content: String,
-        senderNickname: String
-    ) = DataMessage.Empty
-
-    override fun mapReceived(
-        id: String,
-        senderId: Int,
-        content: String,
-        senderNickname: String
-    ) = DataMessage.Empty
-
-    override fun mapUnRead(
-        id: String,
-        senderId: Int,
-        content: String,
-        senderNickname: String
-    ) = DataMessage.Empty
-
     class Base(
         private val idSharedPreferences: IdSharedPreferences<Int, Unit>
-    ) : CloudToDataMessageMapper {
+    ) : CloudToDataMessageMapper,Mapper.Base<DataMessage>(DataMessage.Empty) {
 
         override fun map(
             id: String,
@@ -75,10 +39,7 @@ interface CloudToDataMessageMapper : Mapper<DataMessage> {
         override fun mapFailure(message: String)
             = DataMessage.Failure(message)
 
-        override fun mapProgress(senderId: Int, content: String) : DataMessage {
-            Log.d("zinoviewk","map progress cloud to data")
-            return DataMessage.Progress(senderId, content)
-        }
-
+        override fun mapProgress(senderId: Int, content: String)
+            = DataMessage.Progress(senderId, content)
     }
 }

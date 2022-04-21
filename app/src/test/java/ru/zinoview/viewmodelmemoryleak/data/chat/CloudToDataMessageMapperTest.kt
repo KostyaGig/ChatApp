@@ -5,16 +5,16 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
+import ru.zinoview.viewmodelmemoryleak.ui.chat.UiChatMessage
 
 /**
  * Test for [ru.zinoview.viewmodelmemoryleak.core.chat.Mapper]
  * */
 
 
-// todo rewrite the tests
 class CloudToDataMessageMapperTest {
-
     private var mapper: DataToUiTestMessageMapper? = null
+
 
     @Before
     fun setUp() {
@@ -63,19 +63,21 @@ class CloudToDataMessageMapperTest {
         mapper = null
     }
 
-    private inner class DataToUiTestMessageMapper : Mapper<UiTestMessage> {
+
+
+    private inner class DataToUiTestMessageMapper : Mapper.Base<UiTestMessage>(
+        UiTestMessage.Empty
+    ) {
+
+        override fun mapFailure(message: String): UiTestMessage
+            = UiTestMessage.Failure(message)
+
         override fun map(
             id: String,
             senderId: Int,
             content: String,
             senderNickname: String
-        ): UiTestMessage = UiTestMessage.Empty
-
-        override fun mapFailure(message: String): UiTestMessage
-            = UiTestMessage.Failure(message)
-
-        override fun mapProgress(senderId: Int, content: String): UiTestMessage
-             = UiTestMessage.Empty
+        ): UiTestMessage = UiTestMessage.Sent(id, senderId, content, senderNickname)
 
         override fun mapReceived(
             id: String,
@@ -84,15 +86,9 @@ class CloudToDataMessageMapperTest {
             senderNickname: String
         ): UiTestMessage = UiTestMessage.Received(id, senderId, content, senderNickname)
 
-        override fun mapSent(
-            id: String,
-            senderId: Int,
-            content: String,
-            senderNickname: String
-        ): UiTestMessage = UiTestMessage.Sent(id, senderId, content, senderNickname)
     }
 
-    private interface DataTestMessage {
+    interface DataTestMessage {
 
         fun <T> map(mapper: Mapper<T>) : T
 
@@ -103,7 +99,7 @@ class CloudToDataMessageMapperTest {
             private val senderNickname: String
         ) : DataTestMessage {
             override fun <T> map(mapper: Mapper<T>): T
-                = mapper.mapSent(id, senderId, content, senderNickname)
+                = mapper.map(id, senderId, content, senderNickname)
         }
 
         class Received(
@@ -130,6 +126,7 @@ class CloudToDataMessageMapperTest {
     }
 
     private interface UiTestMessage {
+
         fun <T> map(mapper: Mapper<T>) : T
 
         data class Sent(
@@ -139,7 +136,7 @@ class CloudToDataMessageMapperTest {
             private val senderNickname: String
         ) : UiTestMessage {
             override fun <T> map(mapper: Mapper<T>): T
-                = mapper.mapSent(id, senderId, content, senderNickname)
+                = mapper.map(id, senderId, content, senderNickname)
         }
 
         data class Received(
@@ -165,39 +162,22 @@ class CloudToDataMessageMapperTest {
         }
     }
 
-    class TestCloudToDataMessageMapper : Mapper<DataMessage> {
+    class TestCloudToDataMessageMapper : Mapper.Base<DataTestMessage>(DataTestMessage.Empty) {
+
         override fun map(
             id: String,
             senderId: Int,
             content: String,
             senderNickname: String
-        ): DataMessage {
+        ): DataTestMessage {
             return if (senderId == 1) {
-                DataMessage.Sent(id, senderId, content, senderNickname)
+                DataTestMessage.Sent(id, senderId, content, senderNickname)
             } else {
-                DataMessage.Received(id, senderId, content, senderNickname)
+                DataTestMessage.Received(id, senderId, content, senderNickname)
             }
         }
 
-        override fun mapFailure(message: String): DataMessage
-                = DataMessage.Failure(message)
-
-        override fun mapProgress(senderId: Int, content: String)
-                = DataMessage.Empty
-
-        override fun mapReceived(
-            id: String,
-            senderId: Int,
-            content: String,
-            senderNickname: String
-        ): DataMessage = DataMessage.Empty
-
-        override fun mapSent(
-            id: String,
-            senderId: Int,
-            content: String,
-            senderNickname: String
-        ): DataMessage  = DataMessage.Empty
-
+        override fun mapFailure(message: String): DataTestMessage
+            = DataTestMessage.Failure(message)
     }
 }
