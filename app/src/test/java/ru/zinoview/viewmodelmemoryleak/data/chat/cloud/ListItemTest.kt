@@ -76,29 +76,29 @@ class ListItemTest {
         testItem = null
     }
 
-    private interface User : Same<String> {
+    private interface User : Same<String,Unit> {
 
         data class Base(
             private val name: String,
             private val surname: String
         ) : User {
-            override fun same(data: String) = name == data
+            override fun same(data: String,arg2: Unit) = name == data
         }
 
         object Empty : User {
-            override fun same(data: String) = false
+            override fun same(data: String,arg2: Unit) = false
         }
     }
 
     private inner class TestListItem : ListItem<User>{
 
         override fun item(src: List<User>, name: String)
-            = src.find { user -> user.same(name) } ?: User.Empty
+            = src.find { user -> user.same(name,Unit) } ?: User.Empty
 
         override fun index(src: List<User>, name: String): Int {
             var index = -1
             src.forEachIndexed { i,  user ->
-                if (user.same(name)) {
+                if (user.same(name,Unit)) {
                     index = i
                 }
             }
