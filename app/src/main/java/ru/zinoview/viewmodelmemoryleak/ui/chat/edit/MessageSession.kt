@@ -3,15 +3,27 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat.edit
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.ui.chat.UiEditChatMessage
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.chat.UiChatMessage
+import ru.zinoview.viewmodelmemoryleak.ui.chat.state.ToUiStateMessageSessionMapper
+import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiState
+import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStateMessageSession
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.Show
 
 interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit> {
 
-    fun addMessage(message: UiEditChatMessage)
+    fun addMessage(message: UiEditChatMessage) = Unit
 
-    fun sendMessage(viewModel: ChatViewModel, content: String)
+    // todo rewrite
+    fun addOldMessage(message: UiChatMessage) = Unit
+    fun messageSessionState(): UiState.MessageSession = UiState.MessageSession()
+
+    fun sendMessage(viewModel: ChatViewModel, content: String) = Unit
+
+    override fun show(arg: Unit) = Unit
+    override fun editContent(content: String) = Unit
+    override fun disconnect(arg: Unit) = Unit
 
     class Base(
         private val viewWrapper: ViewWrapper,
@@ -20,10 +32,18 @@ interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit> {
     ) : MessageSession {
 
         private var message: UiEditChatMessage = UiEditChatMessage.Empty
+        private var oldMessage: UiChatMessage = UiChatMessage.Empty
 
         override fun addMessage(message: UiEditChatMessage) {
             this.message = message
         }
+
+        override fun addOldMessage(message: UiChatMessage) {
+            this.oldMessage = message
+        }
+
+        override fun messageSessionState()
+            = oldMessage.messageSessionState()
 
         override fun editContent(content: String) = message.editContent(content)
 
@@ -50,4 +70,6 @@ interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit> {
             viewWrapper.disconnect(Unit)
         }
     }
+
+    object Empty : MessageSession
 }

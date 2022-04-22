@@ -7,6 +7,7 @@ import android.widget.TextView
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
+import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiState
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.*
 
@@ -30,6 +31,10 @@ interface UiChatMessage :
     override fun show(arg: ViewWrapper) = Unit
 
     fun addScroll(scrollCommunication: ScrollCommunication) = Unit
+
+    //todo remove
+    fun mapToOldMessage() : UiChatMessage = Empty
+    fun messageSessionState(): UiState.MessageSession = UiState.MessageSession()
 
     object Empty : UiChatMessage
 
@@ -105,6 +110,8 @@ interface UiChatMessage :
             view.show(Unit,content)
         }
 
+        override fun mapToOldMessage() = OldMessage(id, content)
+
         data class Read(
             private val id: String,
             private val content: String,
@@ -143,4 +150,13 @@ interface UiChatMessage :
         override fun changeTitle(toolbar: ToolbarActivity) = Unit
     }
 
+    class OldMessage(
+        private val id: String,
+        private val content: String
+    ) :UiChatMessage {
+
+        override fun show(view: ViewWrapper) = view.show(Unit,content)
+        override fun messageSessionState()
+            = UiState.MessageSession(content,id)
+    }
 }

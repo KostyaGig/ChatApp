@@ -29,7 +29,7 @@ class ChatRepositoryTest {
 
     @Test
     fun test_receive_empty_messages() = runBlocking {
-        val expected = emptyList<String>()
+        val expected = listOf(DataMessage.Failure("Messages are empty"))
         val actual = repository?.messages {}
 
         assertEquals(expected, actual)

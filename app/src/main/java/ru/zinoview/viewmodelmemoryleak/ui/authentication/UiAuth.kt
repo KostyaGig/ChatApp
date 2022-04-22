@@ -14,12 +14,12 @@ interface UiAuth : Navigate<ActivityNavigation> {
 
         override fun navigate(navigation: ActivityNavigation)
          = navigation.navigateTo(MainActivity(), TypeFragment.Chat)
-
-
     }
 
     object Failure : UiAuth {
-        override fun navigate(navigation: ActivityNavigation)
-            = navigation.navigateTo(MainActivity(),TypeFragment.Join)
+        override fun navigate(navigation: ActivityNavigation) {
+            Log.d("zinoviewk","type join ")
+            navigation.navigateTo(MainActivity(),TypeFragment.Join)
+        }
     }
 }

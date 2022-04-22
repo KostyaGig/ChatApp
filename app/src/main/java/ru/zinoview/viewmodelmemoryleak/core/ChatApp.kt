@@ -23,6 +23,7 @@ class ChatApp : Application() {
         val connectionNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.connection.NetworkModule()
 
         val chatDataModule = DataModule()
+        val uiStateDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.state.DataModule(this)
         val chatNetworkModule = NetworkModule()
 
         val coreDataModule = CoreDataModule()
@@ -34,7 +35,8 @@ class ChatApp : Application() {
         val coreUiModule = CoreUiModule()
 
         val chatUiModule = UiModule()
-        val authenticationUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.authentication.UiModule()
+        val uiStateModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.chat.state.UiModule()
+        val authenticationUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.authentication.UiModule(this)
         val joinUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.join.UiModule()
         val connectionUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.connection.UiModule()
 
@@ -45,6 +47,7 @@ class ChatApp : Application() {
         modules.add(coreModule)
         modules.add(coreDataModule)
         modules.add(chatDataModule)
+        modules.add(uiStateDataModule)
         modules.add(chatNetworkModule)
         modules.add(joinDataModule)
         modules.add(joinNetworkModule)
@@ -52,6 +55,7 @@ class ChatApp : Application() {
         modules.add(connectionNetworkModule)
         modules.add(coreUiModule)
         modules.add(chatUiModule)
+        modules.add(uiStateModule)
         modules.add(authenticationUiModule)
         modules.add(joinUiModule)
         modules.add(connectionUiModule)

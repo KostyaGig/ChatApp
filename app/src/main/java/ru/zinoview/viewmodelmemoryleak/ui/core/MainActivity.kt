@@ -3,6 +3,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.core
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.databinding.ActivityMainBinding
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.*
@@ -14,13 +15,7 @@ class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity {
         checkNotNull(_binding)
     }
 
-    private val fragmentIntent by lazy {
-        Intent.Fragment(
-            ExtraToTypeFragmentMapper.Base(
-                StringFragment.Base()
-            )
-        )
-    }
+    private val fragmentIntent = getKoin().get<Intent<String>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,11 +23,17 @@ class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity {
         setContentView(_binding?.root)
 
         setSupportActionBar(binding.toolbar)
-        fragmentIntent.navigate(intent,this)
+
+        if (savedInstanceState != null) {
+            fragmentIntent.navigate(this)
+        } else {
+            fragmentIntent.navigate(intent,this)
+        }
     }
 
 
     override fun navigateTo(fragment: Fragment) {
+        fragmentIntent.saveFragment(fragment)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container,fragment)

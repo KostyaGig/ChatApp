@@ -2,6 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.authentication
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.R
@@ -28,6 +29,10 @@ class AuthActivity : AppCompatActivity() {
         setContentView(R.layout.activity_auth)
 
         viewModel.auth()
+
+        Log.d("zinoviewk","oncreate auth activity")
+        Log.d("zinoviewk","auth actiivty $savedInstanceState")
+
     }
 
     override fun onStart() {
@@ -36,6 +41,7 @@ class AuthActivity : AppCompatActivity() {
         viewModel.observe(this) { uiAuth ->
             uiAuth.navigate(navigation)
         }
+
     }
 
     override fun onDestroy() {

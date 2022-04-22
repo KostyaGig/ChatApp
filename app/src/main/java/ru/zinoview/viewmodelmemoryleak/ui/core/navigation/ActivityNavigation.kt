@@ -1,8 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.core.navigation
 
 import android.app.Activity
-import android.content.Context
-import android.util.Log
 
 interface ActivityNavigation {
 

@@ -24,13 +24,6 @@ class UiToEditChatMessageMapper :
         senderNickname: String
     ) = UiEditChatMessage.Empty
 
-    override fun mapSent(
-        id: String,
-        senderId: Int,
-        content: String,
-        senderNickname: String
-    ) = UiEditChatMessage.Empty
-
     override fun mapRead(
         id: String,
         senderId: Int,

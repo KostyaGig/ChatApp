@@ -53,7 +53,7 @@ interface MessagesStore : Subscribe<List<CloudMessage>>, EditMessage {
             val userId = idSharedPreferences.read(Unit)
             val unreadMessageIds = mutableListOf<String>()
 
-            if (isNotEmpty.isNotEmpty(messages)) {
+            if (isNotEmpty.isNotEmpty(messages) && range.first != -1) {
                 if (listSize.isLessThen(MIN_SIZE_LIST,messages)) {
                     val message = messages.first()
                     message.addUnreadMessageId(userId,unreadMessageIds)

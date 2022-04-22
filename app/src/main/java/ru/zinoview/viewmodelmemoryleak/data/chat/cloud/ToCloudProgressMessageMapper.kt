@@ -20,12 +20,6 @@ class ToCloudProgressMessageMapper : Mapper<CloudMessage> {
         content: String,
         senderNickname: String
     ) = CloudMessage.Empty
-    override fun mapSent(
-        id: String,
-        senderId: Int,
-        content: String,
-        senderNickname: String
-    ) = CloudMessage.Empty
 
     override fun mapRead(
         id: String,
