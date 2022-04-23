@@ -4,16 +4,21 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
+import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditContent
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
+import ru.zinoview.viewmodelmemoryleak.ui.chat.state.SaveState
 import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiState
+import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStateViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStates
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.*
 
 interface UiChatMessage :
     DiffSame<UiChatMessage>, UiSame, Bind, Ui, ChangeTitle<ToolbarActivity>,
-    Message, Show<ViewWrapper> {
+    Message, Show<ViewWrapper>{
 
     override fun isContentTheSame(item: UiChatMessage) = false
     override fun isItemTheSame(item: UiChatMessage) = false
@@ -31,10 +36,6 @@ interface UiChatMessage :
     override fun show(arg: ViewWrapper) = Unit
 
     fun addScroll(scrollCommunication: ScrollCommunication) = Unit
-
-    //todo remove
-    fun mapToOldMessage() : UiChatMessage = Empty
-    fun messageSessionState(): UiState.MessageSession = UiState.MessageSession()
 
     object Empty : UiChatMessage
 
@@ -104,13 +105,10 @@ interface UiChatMessage :
         }
 
         override fun edit(listener: EditMessageListener) = listener.edit(this)
-        override fun <T> map(mapper: Mapper<T>): T = mapper.map(id)
+        override fun <T> map(mapper: Mapper<T>)
+            = mapper.map(id,senderId.toInt(),content, senderNickname)
 
-        override fun show(view: ViewWrapper) {
-            view.show(Unit,content)
-        }
-
-        override fun mapToOldMessage() = OldMessage(id, content)
+        override fun show(view: ViewWrapper) = view.show(Unit,content)
 
         data class Read(
             private val id: String,
@@ -150,13 +148,63 @@ interface UiChatMessage :
         override fun changeTitle(toolbar: ToolbarActivity) = Unit
     }
 
-    class OldMessage(
-        private val id: String,
-        private val content: String
-    ) :UiChatMessage {
+    interface OldMessage : UiChatMessage, SaveState {
 
-        override fun show(view: ViewWrapper) = view.show(Unit,content)
-        override fun messageSessionState()
-            = UiState.MessageSession(content,id)
+        class Base(
+            private val id: String,
+            private val content: String
+        ) : OldMessage {
+
+            override fun show(view: ViewWrapper) = view.show(Unit,content)
+
+            override fun <T> map(mapper: Mapper<T>)
+                = mapper.map(id,content = content)
+
+            override fun saveState(viewModel: UiStateViewModel, editText: UiState.EditText) {
+                Log.d("zinoviewk","saveO")
+                viewModel.save(UiStates.Base(
+                    editText,
+                    UiState.MessageSession(content,id)
+                ))
+            }
+        }
+
+        object Empty : OldMessage {
+            override fun saveState(viewModel: UiStateViewModel, editText: UiState.EditText) {
+                viewModel.save(UiStates.Base(
+                    editText,UiState.MessageSession()
+                ))
+            }
+        }
     }
+
+
+
+    interface EditedMessage : UiChatMessage, EditContent, Action<ChatViewModel>, IsNotEmpty<Unit> {
+
+        class Base(
+            private val id: String
+
+        ) : EditedMessage {
+            private var content = ""
+
+            override fun editContent(content: String) {
+                this.content = content
+            }
+
+            override fun doAction(viewModel: ChatViewModel)
+                = viewModel.editMessage(id, content)
+
+            override fun isNotEmpty(arg: Unit) = true
+        }
+
+        object Empty : EditedMessage {
+            override fun editContent(content: String) = Unit
+
+            override fun doAction(arg: ChatViewModel) = Unit
+            override fun isNotEmpty(arg: Unit) = false
+        }
+    }
+
+
 }

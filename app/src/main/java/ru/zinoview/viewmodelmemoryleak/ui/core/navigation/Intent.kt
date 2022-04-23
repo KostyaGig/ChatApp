@@ -2,15 +2,13 @@ package ru.zinoview.viewmodelmemoryleak.ui.core.navigation
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
+import ru.zinoview.viewmodelmemoryleak.core.Save
 
-interface Intent<T>  {
+interface Intent<T> : Navigate {
 
     fun start(currentActivity: Activity,activity: Activity,data: T)
 
     fun navigate(intent: Intent,navigation: Navigation)
-
-    fun navigate(navigation: Navigation)
 
     fun saveFragment(fragment: androidx.fragment.app.Fragment)
 
@@ -32,7 +30,6 @@ interface Intent<T>  {
             val fragment = mapper.map(data)
             fragment.navigate(navigation)
 
-            Log.d("zinoviewk","navigate save $data")
             fragmentStore.save(data)
         }
 
@@ -48,14 +45,9 @@ interface Intent<T>  {
         }
     }
 
-    interface FragmentStore {
-
-        fun save(stringFragment: String)
+    interface FragmentStore : Navigate, Save<String> {
 
         fun save(fragment: androidx.fragment.app.Fragment)
-
-        // todo move
-        fun navigate(navigation: Navigation)
 
         class Base(
             private val stringFragment: StringFragment,

@@ -9,10 +9,10 @@ import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession
-import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.UiToEditChatMessageMapper
+import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.ToEditedMessageMapper
+import ru.zinoview.viewmodelmemoryleak.ui.chat.state.ToOldMessageMapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiState
 import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStateViewModel
-import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStates
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBarHeight
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
@@ -61,25 +61,19 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
             ViewWrapper.EditText(
                 binding.messageField
             ),
-            snackBar
+            snackBar,
+            ToEditedMessageMapper(),
+            ToOldMessageMapper()
         )
 
         val diffUtil = ChatMessageDiffUtil()
         adapter = ChatAdapter(diffUtil, object : EditMessageListener {
             override fun edit(message: UiChatMessage) {
-                message.show(
-                    ViewWrapper.Text(
-                        binding.oldMessageTv
-                    )
-                )
-
-                messageSession.addOldMessage(
-                    message.mapToOldMessage()
-                )
+                val text = ViewWrapper.Text(binding.oldMessageTv)
+                message.show(text)
 
                 messageSession.show(Unit)
-                val editMessage = message.map(UiToEditChatMessageMapper())
-                messageSession.addMessage(editMessage)
+                messageSession.addMessage(message)
             }
         })
 
@@ -100,7 +94,6 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
         viewModel.messages()
         viewModel.connection()
-
     }
 
     override fun onStart() {
@@ -120,13 +113,12 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
             connection.messages(viewModel)
         }
 
+
+        val editText = ViewWrapper.EditText(binding.messageField)
+        val text = ViewWrapper.Text(binding.oldMessageTv)
         uiStateViewModel.observe(this) { states ->
             states.forEach { state ->
-                state.recover(binding.messageField,messageSession,
-                    ViewWrapper.Text(
-                        binding.oldMessageTv
-                    )
-                )
+                state.recover(editText,text,messageSession)
             }
         }
 
@@ -134,13 +126,9 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
     override fun onPause() {
         super.onPause()
-        val messageSessionState = messageSession.messageSessionState()
-        uiStateViewModel.save(
-            UiStates.Base(
-                UiState.EditText(binding.messageField.text.toString()),
-                messageSessionState
-            )
-        )
+
+        val editTextState = UiState.EditText(binding.messageField.text.toString())
+        messageSession.saveState(uiStateViewModel,editTextState)
     }
 
     override fun back(navigation: Navigation) = navigation.exit()

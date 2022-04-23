@@ -5,6 +5,7 @@ import org.koin.dsl.module.module
 import ru.zinoview.viewmodelmemoryleak.data.cache.Id
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.cache.SharedPreferencesReader
+import ru.zinoview.viewmodelmemoryleak.data.core.EmptyString
 
 
 class CoreCacheModule(
@@ -28,6 +29,9 @@ class CoreCacheModule(
             )
         }
 
+        single<EmptyString> {
+            EmptyString.Base()
+        }
 
     }
 }

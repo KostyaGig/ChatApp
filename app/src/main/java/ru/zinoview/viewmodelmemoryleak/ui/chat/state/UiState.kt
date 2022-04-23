@@ -1,30 +1,28 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.state
 
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
-import ru.zinoview.viewmodelmemoryleak.ui.chat.UiEditChatMessage
+import ru.zinoview.viewmodelmemoryleak.ui.chat.UiChatMessage
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 
 interface UiState : IsNotEmpty<Unit> {
 
-    fun recover(editText: android.widget.EditText, messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession, viewWrapper: ViewWrapper)
+    fun recover(editText: ViewWrapper, viewWrapper: ViewWrapper, messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession)
 
-    class EditText(
+    data class EditText(
         private val text: String = ""
     ) : UiState {
 
         override fun recover(
-            editText: android.widget.EditText,
-            messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession,
-            viewWrapper: ViewWrapper
+            editText: ViewWrapper,
+            viewWrapper: ViewWrapper,
+            messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession
         ) {
-            editText.setText(text)
-
+            editText.show(Unit,text)
         }
 
         override fun isNotEmpty(arg: Unit)
             = text.isNotEmpty()
     }
-
 
     data class MessageSession(
         private val oldMessageText: String = "",
@@ -32,21 +30,32 @@ interface UiState : IsNotEmpty<Unit> {
     ) : UiState {
 
         override fun recover(
-            editText: android.widget.EditText,
+            editText: ViewWrapper,
+            viewWrapper: ViewWrapper,
             messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession,
-            viewWrapper: ViewWrapper
         ) {
             viewWrapper.show(Unit,oldMessageText)
 
-            // todo rewrite
-            val editMessage = UiEditChatMessage.Base(messageId)
-            messageSession.addMessage(editMessage)
+            val uiChatMessage = UiChatMessage.OldMessage.Base(messageId,oldMessageText)
+            messageSession.addMessage(uiChatMessage)
 
             messageSession.show(Unit)
         }
 
+
         override fun isNotEmpty(arg: Unit)
             = oldMessageText.isNotEmpty() && messageId.isNotEmpty()
+    }
+
+    object Empty : UiState {
+
+        override fun recover(
+            editText: ViewWrapper,
+            viewWrapper: ViewWrapper,
+            messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession
+        ) = Unit
+
+        override fun isNotEmpty(arg: Unit) = false
     }
 
 }

@@ -16,7 +16,9 @@ class DataModule(
             UiStateRepository.Base(
                 UiStateSharedPreferences.Base(
                     context,
-                    SharedPreferencesReader.String(),
+                    SharedPreferencesReader.String(
+                        get()
+                    ),
                     get()
                 )
             )

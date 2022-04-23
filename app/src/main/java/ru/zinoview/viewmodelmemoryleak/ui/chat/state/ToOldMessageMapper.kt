@@ -1,12 +1,15 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.state
 
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
+import ru.zinoview.viewmodelmemoryleak.ui.chat.UiChatMessage
 
-class ToUiStateMessageSessionMapper : Mapper.Base<UiState>(UiState.Empty) {
+class ToOldMessageMapper : Mapper.Base<UiChatMessage.OldMessage>(UiChatMessage.OldMessage.Empty) {
+
     override fun map(
         id: String,
         senderId: Int,
         content: String,
         senderNickname: String
-    ) = UiState.MessageSession(content,id)
+    ) = UiChatMessage.OldMessage.Base(id,content)
+
 }

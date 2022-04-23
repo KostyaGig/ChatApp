@@ -21,13 +21,12 @@ interface UiStateRepository : Save<UiStates>, Read<UiStates,Unit> {
 
     class Test : UiStateRepository {
 
-        // todo test
+        private var uiState: UiStates = UiStates.Test.Empty
+
         override fun save(state: UiStates) {
-
+            uiState = state
         }
 
-        override fun read(key: Unit): UiStates {
-            return UiStates.Base()
-        }
+        override fun read(key: Unit) = (uiState as UiStates.Test).map()
     }
 }

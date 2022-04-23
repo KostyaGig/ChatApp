@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.data.cache
 
 import android.content.SharedPreferences
+import ru.zinoview.viewmodelmemoryleak.data.core.EmptyString
 
 interface SharedPreferencesReader<T> {
 
@@ -14,11 +15,12 @@ interface SharedPreferencesReader<T> {
             = id.read(key, prefs)
     }
 
-    class String : SharedPreferencesReader<kotlin.String> {
+    class String(
+        private val emptyString: EmptyString
+    ) : SharedPreferencesReader<kotlin.String> {
 
-        // todo empty
         override fun read(key: kotlin.String, prefs: SharedPreferences)
-            = prefs.getString(key,"") ?: ""
+            = emptyString.string(prefs.getString(key,""))
     }
 
 }

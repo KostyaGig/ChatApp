@@ -42,6 +42,10 @@ interface ViewWrapper : Disconnect<Unit>, Show<Unit>, ShowMore<Unit,String> {
         override fun disconnect(arg: Unit) {
             editText.setText("")
         }
+
+        override fun show(arg: Unit, arg2: String) {
+            editText.setText(arg2)
+        }
     }
 
     object Empty : ViewWrapper
