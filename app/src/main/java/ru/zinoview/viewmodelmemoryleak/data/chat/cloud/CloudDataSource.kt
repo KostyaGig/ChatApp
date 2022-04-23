@@ -1,19 +1,17 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
-import android.util.Log
 import com.google.gson.Gson
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.core.chat.UpdateMessagesState
+import ru.zinoview.viewmodelmemoryleak.data.chat.SendMessage
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.AbstractCloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnection
 
 interface CloudDataSource<T> : Disconnect<Unit>,
-    EditMessage, UpdateMessagesState {
-
-    suspend fun sendMessage(userId: Int,content: String)
+    SendMessage,EditMessage, UpdateMessagesState {
 
     suspend fun messages(block:(List<CloudMessage>) -> Unit) : T
 
@@ -36,8 +34,6 @@ interface CloudDataSource<T> : Disconnect<Unit>,
 
                 val messages = data.data(modelMessages)
 
-                Log.d("zinoviewk","messages $messages")
-
                 messagesStore.addMessages(messages)
             }
 
@@ -45,14 +41,7 @@ interface CloudDataSource<T> : Disconnect<Unit>,
             connection.addSocketBranch(MESSAGES)
         }
 
-        override suspend fun sendMessage(userId: Int,content: String) {
-            val progressMessage = CloudMessage.Progress(
-                userId,
-                content
-            )
-
-            messagesStore.addMessage(progressMessage)
-
+        override suspend fun sendMessage(userId: String,content: String) {
             val message = json.create(
                 Pair(
                     SENDER_ID_KEY,userId
@@ -67,8 +56,6 @@ interface CloudDataSource<T> : Disconnect<Unit>,
         }
 
         override suspend fun editMessage(messageId: String, content: String) {
-            messagesStore.editMessage(messageId, content)
-
             val message = json.create(
                 Pair(
                     MESSAGE_ID_KEY,messageId
@@ -79,13 +66,14 @@ interface CloudDataSource<T> : Disconnect<Unit>,
             )
 
             connection.connect(socket)
-            socket.emit(EDIT_MESSAGE,message)
             connection.addSocketBranch(EDIT_MESSAGE)
+
+
+            socket.emit(EDIT_MESSAGE,message)
         }
 
         override fun updateMessagesState(range: Pair<Int, Int>) {
             messagesStore.unreadMessageIds(range) { unreadMessageIds ->
-                Log.d("zinoviewk","unread msg ids $unreadMessageIds")
                 val ids = CloudUnreadMessageIds.Base(unreadMessageIds)
                 val jsonIds = gson.toJson(ids)
 
@@ -108,12 +96,34 @@ interface CloudDataSource<T> : Disconnect<Unit>,
         private const val MESSAGE_ID_KEY = "id"
     }
 
+    class Update(private val messagesStore: MessagesStore) : CloudDataSource<Unit> {
+
+        override suspend fun sendMessage(userId: String, content: String) {
+            val progressMessage = CloudMessage.Progress(
+                userId,
+                content
+            )
+
+            messagesStore.addMessage(progressMessage)
+        }
+
+        override suspend fun editMessage(messageId: String, content: String)
+            = messagesStore.editMessage(messageId, content)
+
+
+        override fun updateMessagesState(range: Pair<Int, Int>) = Unit
+        override suspend fun messages(block: (List<CloudMessage>) -> Unit) = Unit
+        override fun disconnect(arg: Unit) = Unit
+
+    }
+
     class Test : CloudDataSource<List<CloudMessage>> {
 
         private val messages = mutableListOf<CloudMessage.Test>()
         private var isSuccess = false
 
-        override suspend fun sendMessage(userId: Int, content: String) {
+        // todo test check
+        override suspend fun sendMessage(userId: String, content: String) {
             messages.add(CloudMessage.Test(
                 "-1",userId,content,false,"-1"
             ))

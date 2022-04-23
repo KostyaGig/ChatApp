@@ -1,6 +1,8 @@
 package ru.zinoview.viewmodelmemoryleak.core
 
 import android.app.Application
+import androidx.work.Configuration
+import androidx.work.WorkManager
 import org.koin.android.ext.android.startKoin
 import org.koin.dsl.module.Module
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.CoreModule
@@ -12,7 +14,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.di.data.core.CoreDataModule
 import ru.zinoview.viewmodelmemoryleak.ui.di.ui.chat.UiModule
 import ru.zinoview.viewmodelmemoryleak.ui.di.ui.core.CoreUiModule
 
-class ChatApp : Application() {
+class ChatApp : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
@@ -22,7 +24,7 @@ class ChatApp : Application() {
         val coreModule = CoreModule(this)
         val connectionNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.connection.NetworkModule()
 
-        val chatDataModule = DataModule()
+        val chatDataModule = DataModule(this)
         val uiStateDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.state.DataModule(this)
         val chatNetworkModule = NetworkModule()
 
@@ -65,6 +67,11 @@ class ChatApp : Application() {
             module.add(koinModules)
         }
 
+
         startKoin(this,koinModules)
+        WorkManager.initialize(this,workManagerConfiguration)
     }
+
+    override fun getWorkManagerConfiguration()
+        = ru.zinoview.viewmodelmemoryleak.core.WorkManager.Base().workManager(this)
 }

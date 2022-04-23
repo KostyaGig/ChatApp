@@ -16,21 +16,32 @@ interface ChatRepository<T> : Clean, EditMessage,UpdateMessagesState {
     suspend fun messages(block: (List<DataMessage>) -> Unit) : T
 
     class Base(
-        private val cloudDataSource: CloudDataSource<Unit>,
+        private val updateChatCloudDataSource: CloudDataSource.Update,
+        private val cloudDataSource: CloudDataSource.Base,
         private val mapper: CloudToDataMessageMapper,
-        private val prefs: IdSharedPreferences<Int,Unit>
+        private val prefs: IdSharedPreferences<Int,Unit>,
+        private val worker: Worker,
+        private val sendMessageAction: ChatAction,
+        private val editMessageAction: ChatAction
     ) : ChatRepository<Unit>,
         CleanRepository(cloudDataSource) {
 
         // todo process try catch
 
         override suspend fun sendMessage(content: String) {
-            val userId = prefs.read(Unit)
-            cloudDataSource.sendMessage(userId,content)
+            val userId = prefs.read(Unit).toString()
+            val data = listOf(userId,content)
+
+            updateChatCloudDataSource.sendMessage(userId, content)
+            sendMessageAction.executeWorker(worker, data)
         }
 
-        override suspend fun editMessage(messageId: String, content: String)
-            = cloudDataSource.editMessage(messageId, content)
+        override suspend fun editMessage(messageId: String, content: String) {
+            updateChatCloudDataSource.editMessage(messageId, content)
+            val data = listOf(messageId,content)
+
+            editMessageAction.executeWorker(worker, data)
+        }
 
         override fun updateMessagesState(range: Pair<Int,Int>)
             = cloudDataSource.updateMessagesState(range)
@@ -41,7 +52,6 @@ interface ChatRepository<T> : Clean, EditMessage,UpdateMessagesState {
                 block.invoke(data)
             }
         }
-
     }
 
     class Test(
@@ -57,7 +67,7 @@ interface ChatRepository<T> : Clean, EditMessage,UpdateMessagesState {
 
         override suspend fun sendMessage(content: String) {
             val userId = if (count % 2 == 0 ) 1 else 2
-            cloudDataSource.sendMessage(userId,content)
+            cloudDataSource.sendMessage(userId.toString(),content)
             count++
         }
 

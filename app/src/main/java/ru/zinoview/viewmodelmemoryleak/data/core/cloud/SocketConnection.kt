@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.core.cloud
 
+import android.util.Log
 import io.socket.client.Socket
 
 
@@ -27,6 +28,7 @@ interface SocketConnection : Disconnect<Socket>,ServerState, Connect<Socket> {
         override fun disconnect(socket: Socket) {
             if (socket.isActive) {
                 branches.forEach { branch ->
+                    Log.d("zinoviewk","disconnect branch $branch")
                     disconnectBranch(socket,branch)
                 }
             }

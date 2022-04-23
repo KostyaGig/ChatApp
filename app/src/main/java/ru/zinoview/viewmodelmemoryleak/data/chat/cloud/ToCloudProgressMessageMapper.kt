@@ -9,7 +9,7 @@ class ToCloudProgressMessageMapper : Mapper<CloudMessage> {
         senderId: Int,
         content: String,
         senderNickname: String
-    ) = CloudMessage.Progress(senderId, content)
+    ) = CloudMessage.Progress(senderId.toString(), content)
 
     override fun mapFailure(message: String) = CloudMessage.Empty
     override fun mapProgress(senderId: Int, content: String) = CloudMessage.Empty

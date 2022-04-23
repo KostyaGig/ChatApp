@@ -47,27 +47,27 @@ interface CloudMessage : Message, Same<String,Unit> {
     }
 
     class Progress(
-        private val senderId: Int,
+        private val senderId: String,
         private val content: String,
     ) : CloudMessage {
 
         override fun map(mapper: CloudToDataMessageMapper)
-            = mapper.mapProgress(senderId, content)
+            = mapper.mapProgress(senderId.toInt(), content)
     }
 
     data class Test(
         private val id: String,
-        private val senderId: Int,
+        private val senderId: String,
         private val content: String,
         private val isRead: Boolean,
         private val senderNickname: String
     ) : CloudMessage {
 
         override fun <T> map(mapper: Mapper<T>): T
-                = mapper.map(id, senderId, content, senderNickname)
+                = mapper.map(id, senderId.toInt(), content, senderNickname)
 
         override fun map(mapper: CloudToDataMessageMapper)
-             = mapper.map(id, senderId, content, senderNickname, isRead)
+             = mapper.map(id, senderId.toInt(), content, senderNickname, isRead)
 
         fun update(content: String) = Test(id,senderId, content,    isRead ,senderNickname)
 

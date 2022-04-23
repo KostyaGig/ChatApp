@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.*
 import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
@@ -116,6 +117,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
         val editText = ViewWrapper.EditText(binding.messageField)
         val text = ViewWrapper.Text(binding.oldMessageTv)
+
         uiStateViewModel.observe(this) { states ->
             states.forEach { state ->
                 state.recover(editText,text,messageSession)
