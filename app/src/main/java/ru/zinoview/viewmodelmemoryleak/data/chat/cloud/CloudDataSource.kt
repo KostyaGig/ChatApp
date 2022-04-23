@@ -122,7 +122,6 @@ interface CloudDataSource<T> : Disconnect<Unit>,
         private val messages = mutableListOf<CloudMessage.Test>()
         private var isSuccess = false
 
-        // todo test check
         override suspend fun sendMessage(userId: String, content: String) {
             messages.add(CloudMessage.Test(
                 "-1",userId,content,false,"-1"

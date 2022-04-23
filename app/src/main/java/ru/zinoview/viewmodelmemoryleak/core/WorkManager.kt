@@ -8,7 +8,8 @@ import ru.zinoview.viewmodelmemoryleak.data.cache.Id
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.cache.SharedPreferencesReader
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatAction
-import ru.zinoview.viewmodelmemoryleak.data.chat.SendMessageWorker
+import ru.zinoview.viewmodelmemoryleak.data.chat.ChatWorkerFactory
+import ru.zinoview.viewmodelmemoryleak.data.chat.Worker
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.*
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.Data
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.*
@@ -45,33 +46,16 @@ interface WorkManager {
                     )
                 )
             )
-
-            val factory = ChatFactory(cloudDataSource, ChatAction.SendMessage(),ChatAction.EditMessage())
+            val workManager = androidx.work.WorkManager.getInstance(context)
+            val worker = Worker.Chat(workManager)
+            val factory = ChatWorkerFactory(
+                cloudDataSource, ChatAction.SendMessage(worker),
+                ChatAction.EditMessage(worker)
+            )
 
             return Configuration.Builder()
                 .setWorkerFactory(factory)
                 .build()
-        }
-    }
-
-    class ChatFactory(
-        private val cloudDataSource: CloudDataSource<Unit>,
-        private val sendMessageAction: ChatAction,
-        private val editMessageAction: ChatAction
-    ) : WorkerFactory() {
-
-        override fun createWorker(
-            appContext: Context,
-            workerClassName: String,
-            workerParameters: WorkerParameters
-        ): ListenableWorker? {
-            return when(workerClassName) {
-                EditMessageWorker::class.java.name -> {
-                    EditMessageWorker(appContext,workerParameters,cloudDataSource,editMessageAction)
-                }
-
-                else -> SendMessageWorker(appContext,workerParameters,cloudDataSource,sendMessageAction)
-            }
         }
     }
 

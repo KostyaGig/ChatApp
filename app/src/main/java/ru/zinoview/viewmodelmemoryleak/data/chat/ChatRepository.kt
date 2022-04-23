@@ -20,7 +20,6 @@ interface ChatRepository<T> : Clean, EditMessage,UpdateMessagesState {
         private val cloudDataSource: CloudDataSource.Base,
         private val mapper: CloudToDataMessageMapper,
         private val prefs: IdSharedPreferences<Int,Unit>,
-        private val worker: Worker,
         private val sendMessageAction: ChatAction,
         private val editMessageAction: ChatAction
     ) : ChatRepository<Unit>,
@@ -33,14 +32,14 @@ interface ChatRepository<T> : Clean, EditMessage,UpdateMessagesState {
             val data = listOf(userId,content)
 
             updateChatCloudDataSource.sendMessage(userId, content)
-            sendMessageAction.executeWorker(worker, data)
+            sendMessageAction.executeWorker(data)
         }
 
         override suspend fun editMessage(messageId: String, content: String) {
             updateChatCloudDataSource.editMessage(messageId, content)
             val data = listOf(messageId,content)
 
-            editMessageAction.executeWorker(worker, data)
+            editMessageAction.executeWorker(data)
         }
 
         override fun updateMessagesState(range: Pair<Int,Int>)

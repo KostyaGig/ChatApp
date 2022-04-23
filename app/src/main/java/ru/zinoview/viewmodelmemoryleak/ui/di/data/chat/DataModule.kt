@@ -18,7 +18,9 @@ class DataModule(
     private val dataModule = module {
 
         single<ChatRepository<Unit>> {
-            val workManager = WorkManager.getInstance(context)
+            val worker = Worker.Chat(
+                WorkManager.getInstance(context)
+            )
             ChatRepository.Base(
                 get(),
                 get(),
@@ -26,11 +28,8 @@ class DataModule(
                     get()
                 ),
                 get(),
-                Worker.Chat(
-                    workManager
-                ),
-                ChatAction.SendMessage(),
-                ChatAction.EditMessage()
+                ChatAction.SendMessage(worker),
+                ChatAction.EditMessage(worker)
             )
         }
 
