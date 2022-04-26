@@ -21,14 +21,12 @@ interface UiStateSharedPreferences : Save<UiStates>, Read<UiStates,Unit> {
 
         override fun save(data: UiStates) {
             val dataString = gson.toJson(data)
-            Log.d("zinoviewk","prefs save state $dataString")
             prefs.edit().putString(KEY,dataString).apply()
         }
 
 
         override fun read(key: Unit): UiStates {
             val stringData = reader.read(KEY,prefs)
-            Log.d("zinoviewk","prefs read state $stringData")
             return gson.fromJson(stringData, UiStates.Base::class.java)
         }
 

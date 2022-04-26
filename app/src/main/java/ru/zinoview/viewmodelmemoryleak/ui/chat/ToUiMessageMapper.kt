@@ -3,7 +3,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 
 
-class DataToUiMessageMapper : Mapper.Base<UiChatMessage>(
+class ToUiMessageMapper : Mapper.Base<UiChatMessage>(
     UiChatMessage.Empty
 ) {
 

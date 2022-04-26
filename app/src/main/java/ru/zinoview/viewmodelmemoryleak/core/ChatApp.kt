@@ -5,6 +5,7 @@ import androidx.work.Configuration
 import androidx.work.WorkManager
 import org.koin.android.ext.android.startKoin
 import org.koin.dsl.module.Module
+import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.MessagesNotification
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.CoreModule
 import ru.zinoview.viewmodelmemoryleak.ui.di.data.cache.CoreCacheModule
 import ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.DataModule
@@ -16,8 +17,12 @@ import ru.zinoview.viewmodelmemoryleak.ui.di.ui.core.CoreUiModule
 
 class ChatApp : Application(), Configuration.Provider {
 
+    private var notification: MessagesNotification = MessagesNotification.Empty
+
     override fun onCreate() {
         super.onCreate()
+
+        notification = MessagesNotification.Base(this)
 
         val coreNetworkModule = CoreNetworkModule()
         val coreCacheModule = CoreCacheModule(this)
@@ -28,7 +33,7 @@ class ChatApp : Application(), Configuration.Provider {
         val uiStateDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.state.DataModule(this)
         val chatNetworkModule = NetworkModule()
 
-        val coreDataModule = CoreDataModule()
+        val coreDataModule = CoreDataModule(notification)
         val joinDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.join.DataModule()
         val joinNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.join.NetworkModule()
 
@@ -73,5 +78,5 @@ class ChatApp : Application(), Configuration.Provider {
     }
 
     override fun getWorkManagerConfiguration()
-        = ru.zinoview.viewmodelmemoryleak.core.WorkManager.Base().workManager(this)
+        = ru.zinoview.viewmodelmemoryleak.core.WorkManager.Base(notification).workManager(this)
 }

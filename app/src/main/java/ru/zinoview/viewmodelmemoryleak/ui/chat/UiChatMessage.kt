@@ -161,7 +161,6 @@ interface UiChatMessage :
                 = mapper.map(id,content = content)
 
             override fun saveState(viewModel: UiStateViewModel, editText: UiState.EditText) {
-                Log.d("zinoviewk","saveO")
                 viewModel.save(UiStates.Base(
                     editText,
                     UiState.MessageSession(content,id)

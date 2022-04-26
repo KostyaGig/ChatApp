@@ -2,10 +2,11 @@ package ru.zinoview.viewmodelmemoryleak.data.chat
 
 import androidx.work.Data
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
+import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.MessagesNotification
 
 interface ChatAction {
 
-    fun executeWorker(data: List<String>)
+    fun executeWorker(worker: Worker,data: List<String>)
 
     suspend fun sendMessage(data: Data,cloudDataSource: CloudDataSource<Unit>) = Unit
     suspend fun editMessage(data: Data,cloudDataSource: CloudDataSource<Unit>) = Unit
@@ -13,9 +14,9 @@ interface ChatAction {
     abstract class Abstract : ChatAction {
 
         abstract fun keys() : List<String>
-        abstract fun doAction(workerData: List<Pair<String,String>>)
+        abstract fun doAction(worker: Worker,workerData: List<Pair<String,String>>)
 
-        override fun executeWorker(data: List<String>) {
+        override fun executeWorker(worker: Worker,data: List<String>) {
             val workerData = mutableListOf<Pair<String,String>>()
             val keys = keys()
 
@@ -24,23 +25,25 @@ interface ChatAction {
                 workerData.add(data)
             }
 
-            doAction(workerData)
+            doAction(worker,workerData)
         }
     }
 
     class SendMessage(
-        private val worker: Worker
+        private val notification: MessagesNotification
     ) : Abstract() {
 
         override suspend fun sendMessage(data: Data, cloudDataSource: CloudDataSource<Unit>) {
             val userId = data.getString(USER_ID_KEY)
             val content = data.getString(MESSAGE_CONTENT_KEY)
             cloudDataSource.sendMessage(userId!!,content!!)
+
+            notification.disconnect(content)
         }
 
         override fun keys() = listOf(USER_ID_KEY, MESSAGE_CONTENT_KEY)
 
-        override fun doAction(workerData: List<Pair<String, String>>)
+        override fun doAction(worker: Worker,workerData: List<Pair<String, String>>)
             = worker.sendMessage(workerData)
 
         private companion object {
@@ -49,9 +52,7 @@ interface ChatAction {
         }
     }
 
-    class EditMessage(
-        private val worker: Worker
-    ) : Abstract() {
+    class EditMessage : Abstract() {
 
         override suspend fun editMessage(data: Data, cloudDataSource: CloudDataSource<Unit>) {
             val messageId = data.getString(MESSAGE_ID_KEY)
@@ -62,7 +63,7 @@ interface ChatAction {
 
         override fun keys() = listOf(MESSAGE_ID_KEY, MESSAGE_CONTENT_KEY)
 
-        override fun doAction(workerData: List<Pair<String, String>>)
+        override fun doAction(worker: Worker,workerData: List<Pair<String, String>>)
             = worker.editMessage(workerData)
 
         private companion object {

@@ -5,15 +5,19 @@ import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.core.chat.UpdateMessagesState
 import ru.zinoview.viewmodelmemoryleak.data.chat.SendMessage
+import ru.zinoview.viewmodelmemoryleak.data.chat.state.UiStateSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.AbstractCloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnection
+import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStates
 
 interface CloudDataSource<T> : Disconnect<Unit>,
     SendMessage,EditMessage, UpdateMessagesState {
 
     suspend fun messages(block:(List<CloudMessage>) -> Unit) : T
+
+    fun saveMessages(prefs: UiStateSharedPreferences,state: UiStates) = Unit
 
     class Base(
         private val socket: Socket,
@@ -21,7 +25,8 @@ interface CloudDataSource<T> : Disconnect<Unit>,
         private val json: Json,
         private val gson: Gson,
         private val data: Data<List<CloudMessage>>,
-        private val messagesStore: MessagesStore
+        private val messagesStore: MessagesStore,
+        private val processingMessages: ProcessingMessages
     ) : AbstractCloudDataSource.Base(socket, connection), CloudDataSource<Unit> {
 
         override suspend fun messages(block:(List<CloudMessage>) -> Unit) {
@@ -33,6 +38,7 @@ interface CloudDataSource<T> : Disconnect<Unit>,
                 val modelMessages = gson.fromJson(wrapperMessages, WrapperMessages::class.java).map()
 
                 val messages = data.data(modelMessages)
+                processingMessages.update(messages)
 
                 messagesStore.addMessages(messages)
             }
@@ -96,20 +102,30 @@ interface CloudDataSource<T> : Disconnect<Unit>,
         private const val MESSAGE_ID_KEY = "id"
     }
 
-    class Update(private val messagesStore: MessagesStore) : CloudDataSource<Unit> {
+    class Update(
+        private val messagesStore: MessagesStore,
+        private val processingMessages: ProcessingMessages
+        ) : CloudDataSource<Unit>, ru.zinoview.viewmodelmemoryleak.core.chat.state.SaveState {
 
         override suspend fun sendMessage(userId: String, content: String) {
             val progressMessage = CloudMessage.Progress(
                 userId,
-                content
+                content,
             )
 
-            messagesStore.addMessage(progressMessage)
+            messagesStore.add(progressMessage)
+            processingMessages.add(progressMessage)
         }
 
-        override suspend fun editMessage(messageId: String, content: String)
-            = messagesStore.editMessage(messageId, content)
+        override suspend fun editMessage(messageId: String, content: String) {
+            messagesStore.editMessage(messageId, content)
+            messagesStore.updateProcessingMessages(processingMessages,messageId, content)
+        }
 
+        override fun saveState(prefs: UiStateSharedPreferences, state: UiStates)
+            = messagesStore.saveState(prefs,state)
+
+        fun showProcessMessages() = processingMessages.show(Unit)
 
         override fun updateMessagesState(range: Pair<Int, Int>) = Unit
         override suspend fun messages(block: (List<CloudMessage>) -> Unit) = Unit

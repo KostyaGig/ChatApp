@@ -8,8 +8,8 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.UpdateNetworkConnection
 interface ConnectionRepository<T> : SuspendObserve<DataConnection>, UpdateNetworkConnection<T> {
 
     class Base(
-            private val mapper: CloudToDataConnectionMapper,
-            private val cloudDataSource: CloudDataSource<Unit>
+        private val mapper: CloudToDataConnectionMapper,
+        private val cloudDataSource: CloudDataSource<Unit>
         ) : ConnectionRepository<Unit> {
 
 

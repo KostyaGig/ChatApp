@@ -3,28 +3,36 @@ package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
+import ru.zinoview.viewmodelmemoryleak.data.chat.state.UiStateSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Subscribe
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ToUiMessageMapper
+import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStates
 
-interface MessagesStore : Subscribe<List<CloudMessage>>, EditMessage {
-
-    fun addMessage(cloudMessage: CloudMessage)
-
-    fun addMessages(messages: List<CloudMessage>)
+interface MessagesStore :
+    Subscribe<List<CloudMessage>>,
+    EditMessage,
+    // todo remove save state if it isn't used
+    ru.zinoview.viewmodelmemoryleak.core.chat.state.SaveState,
+    MessageStoreAdd {
 
     fun unreadMessageIds(range: Pair<Int, Int>, block: (List<String>) -> Unit)
+
+    // todo move to update interface
+    fun updateProcessingMessages(processingMessages: ProcessingMessages, messageId: String, content: String)
 
     class Base(
         private val listItem: ListItem<CloudMessage>,
         private val mapper: ToCloudProgressMessageMapper,
         private val isNotEmpty: IsNotEmpty<List<CloudMessage>>,
         private val listSize: ListSize,
-        private val idSharedPreferences: IdSharedPreferences<Int,Unit>
+        private val idSharedPreferences: IdSharedPreferences<Int,Unit>,
+        private val uiMessageMapper: ToUiMessageMapper
     ) : MessagesStore {
 
         private val messages = ArrayList<CloudMessage>()
         private var block : (List<CloudMessage>) -> Unit = {}
 
-        override fun addMessage(cloudMessage: CloudMessage) {
+        override fun add(cloudMessage: CloudMessage) {
             messages.add(cloudMessage)
             block.invoke(
                 ArrayList(messages)
@@ -49,6 +57,17 @@ interface MessagesStore : Subscribe<List<CloudMessage>>, EditMessage {
             block.invoke(ArrayList(messages))
         }
 
+        override fun updateProcessingMessages(
+            processingMessages: ProcessingMessages,
+            messageId: String,
+            content: String
+        ) {
+            val messageById = listItem.item(messages,messageId)
+            val editedMessageById = messageById.map(content,mapper)
+
+            processingMessages.add(editedMessageById)
+        }
+
         override fun unreadMessageIds(range: Pair<Int, Int>, block: (List<String>) -> Unit) {
             val userId = idSharedPreferences.read(Unit)
             val unreadMessageIds = mutableListOf<String>()
@@ -67,6 +86,10 @@ interface MessagesStore : Subscribe<List<CloudMessage>>, EditMessage {
             block.invoke(unreadMessageIds)
         }
 
+        override fun saveState(prefs: UiStateSharedPreferences, state: UiStates) {
+            val newState = state.map(uiMessageMapper,messages)
+            prefs.save(newState)
+        }
 
         override fun subscribe(block: (List<CloudMessage>) -> Unit) {
             this.block = block

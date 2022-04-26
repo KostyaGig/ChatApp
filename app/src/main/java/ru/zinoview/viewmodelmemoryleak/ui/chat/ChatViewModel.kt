@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
@@ -22,15 +23,22 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
 
     fun editMessage(messageId: String, content: String)
 
+    // todo move to interface
+    fun showProcessingMessages()
+
     class Base(
         private val repository: ChatRepository<Unit>,
         private val work: ChatWork,
         private val dispatcher: Dispatcher,
-        private val mapper: DataToUiMessageMapper,
+        private val mapper: ToUiMessageMapper,
         private val communication: MessagesCommunication,
         private val scrollCommunication: ScrollCommunication,
         private val connectionWrapper: UiConnectionWrapper
     ) : BaseViewModel<List<UiChatMessage>>(repository,communication), ChatViewModel {
+
+        init {
+            Log.d("zinoviewk","CHAT VIEW MODEL INIT")
+        }
 
         override fun doAction(content: String)
             = work.doBackground(viewModelScope) {
@@ -60,6 +68,8 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
         override fun updateMessagesState(
             range: Pair<Int,Int>
         ) = repository.updateMessagesState(range)
+
+        override fun showProcessingMessages() = repository.showProcessingMessages()
 
         override fun observeConnection(owner: LifecycleOwner,observer: Observer<UiConnection>)
             = connectionWrapper.observeConnection(owner, observer)

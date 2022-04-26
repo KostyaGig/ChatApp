@@ -3,6 +3,7 @@ package ru.zinoview.viewmodelmemoryleak.data.connection.cloud
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
+import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.ProcessingMessages
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Connect
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnection
@@ -16,7 +17,8 @@ interface ConnectionState : Subscribe<CloudConnection>, Disconnect<Unit>, Connec
 
     class Base(
         private val connection: SocketConnection,
-        private val resourceProvider: ResourceProvider
+        private val resourceProvider: ResourceProvider,
+        private val processingMessages: ProcessingMessages
     ) : ConnectionState {
 
         private var block: (CloudConnection) -> Unit = {}
@@ -34,6 +36,7 @@ interface ConnectionState : Subscribe<CloudConnection>, Disconnect<Unit>, Connec
                 push(CloudConnection.Failure(
                     resourceProvider.string(R.string.waiting_for_network)
                 ))
+                processingMessages.show(Unit)
             }
         }
 

@@ -9,7 +9,7 @@ interface ChatWork : Work<List<DataMessage>,List<UiChatMessage>> {
 
     class Base(
         private val dispatcher: Dispatcher,
-        private val mapper: DataToUiMessageMapper
+        private val mapper: ToUiMessageMapper
         ) : ChatWork, Work.Abstract<List<DataMessage>,List<UiChatMessage>>(dispatcher) {
 
         override fun execute(

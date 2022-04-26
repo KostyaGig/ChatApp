@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.edit
 
+import ru.zinoview.viewmodelmemoryleak.core.Add
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.UiChatMessage
@@ -11,13 +12,11 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.Show
 
-interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit>, SaveState {
-
-    fun addMessage(message: UiChatMessage) = Unit
+interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit>, SaveState, Add<UiChatMessage> {
 
     fun sendMessage(viewModel: ChatViewModel, content: String) = Unit
 
-
+    override fun add(data: UiChatMessage) = Unit
     override fun show(arg: Unit) = Unit
     override fun editContent(content: String) = Unit
     override fun disconnect(arg: Unit) = Unit
@@ -34,7 +33,7 @@ interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit>, SaveState 
         private var editedMessage: UiChatMessage.EditedMessage = UiChatMessage.EditedMessage.Empty
         private var oldMessage: UiChatMessage.OldMessage = UiChatMessage.OldMessage.Empty
 
-        override fun addMessage(message: UiChatMessage) {
+        override fun add(message: UiChatMessage) {
             this.editedMessage = message.map(editedMapper)
             this.oldMessage = message.map(oldMapper)
         }

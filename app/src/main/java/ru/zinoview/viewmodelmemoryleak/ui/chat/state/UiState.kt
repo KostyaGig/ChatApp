@@ -1,12 +1,18 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.state
 
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatAdapter
 import ru.zinoview.viewmodelmemoryleak.ui.chat.UiChatMessage
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 
 interface UiState : IsNotEmpty<Unit> {
 
-    fun recover(editText: ViewWrapper, viewWrapper: ViewWrapper, messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession)
+    fun recover(
+        editText: ViewWrapper,
+        viewWrapper: ViewWrapper,
+        messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession,
+        adapter: ChatAdapter
+    )
 
     data class EditText(
         private val text: String = ""
@@ -15,7 +21,8 @@ interface UiState : IsNotEmpty<Unit> {
         override fun recover(
             editText: ViewWrapper,
             viewWrapper: ViewWrapper,
-            messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession
+            messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession,
+            adapter: ChatAdapter
         ) {
             editText.show(Unit,text)
         }
@@ -33,11 +40,12 @@ interface UiState : IsNotEmpty<Unit> {
             editText: ViewWrapper,
             viewWrapper: ViewWrapper,
             messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession,
+            adapter: ChatAdapter
         ) {
             viewWrapper.show(Unit,oldMessageText)
 
             val uiChatMessage = UiChatMessage.OldMessage.Base(messageId,oldMessageText)
-            messageSession.addMessage(uiChatMessage)
+            messageSession.add(uiChatMessage)
 
             messageSession.show(Unit)
         }
@@ -47,12 +55,33 @@ interface UiState : IsNotEmpty<Unit> {
             = oldMessageText.isNotEmpty() && messageId.isNotEmpty()
     }
 
+    class Messages(
+        private val readMessages: List<UiChatMessage.Sent.Read> = emptyList(),
+        private val unReadMessages: List<UiChatMessage.Sent.Unread> = emptyList(),
+        private val receivedMessages: List<UiChatMessage.Received> = emptyList(),
+        private val progressMessages: List<UiChatMessage.ProgressMessage> = emptyList(),
+    ) : UiState {
+
+        override fun recover(
+            editText: ViewWrapper,
+            viewWrapper: ViewWrapper,
+            messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession,
+            adapter: ChatAdapter
+        ) {
+
+        }
+
+
+        override fun isNotEmpty(arg: Unit) = false
+    }
+
     object Empty : UiState {
 
         override fun recover(
             editText: ViewWrapper,
             viewWrapper: ViewWrapper,
-            messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession
+            messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession,
+            adapter: ChatAdapter
         ) = Unit
 
         override fun isNotEmpty(arg: Unit) = false

@@ -25,7 +25,9 @@ interface Worker {
                 .setConstraints(constraints)
                 .build()
 
-            workManager.enqueue(worker)
+            // todo constant
+            val continuation = workManager.beginUniqueWork("sequence",ExistingWorkPolicy.APPEND,worker)
+            continuation.enqueue()
         }
 
         override fun editMessage(pairs: List<Pair<String,String>>) {

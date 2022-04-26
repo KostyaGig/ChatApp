@@ -37,6 +37,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         if (savedInstanceState != null) {
             uiStateViewModel.read(Unit)
         }
@@ -73,7 +74,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
                 message.show(text)
 
                 messageSession.show(Unit)
-                messageSession.addMessage(message)
+                messageSession.add(message)
             }
         })
 
@@ -119,7 +120,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
         uiStateViewModel.observe(this) { states ->
             states.forEach { state ->
-                state.recover(editText,text,messageSession)
+                state.recover(editText,text,messageSession,adapter)
             }
         }
 
@@ -130,6 +131,8 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
         val editTextState = UiState.EditText(binding.messageField.text.toString())
         messageSession.saveState(uiStateViewModel,editTextState)
+
+        viewModel.showProcessingMessages()
     }
 
     override fun back(navigation: Navigation) = navigation.exit()

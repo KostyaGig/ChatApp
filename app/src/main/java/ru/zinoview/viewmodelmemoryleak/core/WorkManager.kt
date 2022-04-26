@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.core
 
+import android.app.Notification
 import android.content.Context
 import androidx.work.*
 import com.google.gson.Gson
@@ -9,16 +10,19 @@ import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.cache.SharedPreferencesReader
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatAction
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatWorkerFactory
-import ru.zinoview.viewmodelmemoryleak.data.chat.Worker
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.*
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.Data
+import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.ProcessingMessages
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.*
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ToUiMessageMapper
 
 interface WorkManager {
 
     fun workManager(context: Context) : Configuration
 
-    class Base : WorkManager {
+    class Base(
+        private val notification: MessagesNotification
+    ) : WorkManager {
         override fun workManager(context: Context): Configuration {
 
             val cloudDataSource = CloudDataSource.Base(
@@ -43,14 +47,15 @@ interface WorkManager {
                         ),
                         Id.Base(),
                         context
-                    )
-                )
+                    ),
+                    ToUiMessageMapper()
+                ),
+                ProcessingMessages.Empty
             )
-            val workManager = androidx.work.WorkManager.getInstance(context)
-            val worker = Worker.Chat(workManager)
             val factory = ChatWorkerFactory(
-                cloudDataSource, ChatAction.SendMessage(worker),
-                ChatAction.EditMessage(worker)
+                cloudDataSource,
+                ChatAction.SendMessage(notification),
+                ChatAction.EditMessage()
             )
 
             return Configuration.Builder()
