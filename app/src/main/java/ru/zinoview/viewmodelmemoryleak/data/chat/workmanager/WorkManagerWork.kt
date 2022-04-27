@@ -24,7 +24,7 @@ interface WorkManagerWork {
     ) : Abstract(workManager,ID_WORK) {
 
         private companion object {
-            private const val ID_WORK = "send process message"
+            private const val ID_WORK = "SMID"
         }
     }
 
@@ -33,7 +33,7 @@ interface WorkManagerWork {
     ) : Abstract(workManager,ID_WORK) {
 
         private companion object {
-            private const val ID_WORK = "edit process message"
+            private const val ID_WORK = "EMID"
         }
     }
 

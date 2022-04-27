@@ -8,13 +8,13 @@ interface NotificationMapper {
     fun mapEdit(content: String) : NotificationWrapper = NotificationWrapper.Empty
 
     class Base(
-        private val channel: Channel
+        private val channelId: GroupId
     ) : NotificationMapper {
 
         override fun mapEdit(content: String)
-            = channel.notification(R.drawable.ic_edit_notification,content)
+            = channelId.editMessageNotification(R.drawable.ic_edit_notification,content)
 
         override fun mapSend(content: String)
-            = channel.notification(R.drawable.ic_send_notification,content)
+            = channelId.sendMessageNotification(R.drawable.ic_send_notification,content)
     }
 }
