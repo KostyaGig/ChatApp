@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
@@ -62,6 +63,7 @@ interface MessagesStore :
             messageId: String,
             content: String
         ) {
+
             val messageById = listItem.item(messages,messageId)
             val editedMessageById = messageById.map(content,mapper)
 

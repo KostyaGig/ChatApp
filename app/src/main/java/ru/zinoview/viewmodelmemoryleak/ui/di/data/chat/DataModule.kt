@@ -7,7 +7,6 @@ import ru.zinoview.viewmodelmemoryleak.data.chat.ChatAction
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatRepository
 import ru.zinoview.viewmodelmemoryleak.data.chat.Worker
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudToDataMessageMapper
-import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.MessagesNotification
 import ru.zinoview.viewmodelmemoryleak.data.connection.CloudToDataConnectionMapper
 import ru.zinoview.viewmodelmemoryleak.data.connection.ConnectionRepository
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
@@ -32,7 +31,7 @@ class DataModule(
                 ChatAction.SendMessage(
                     get()
                 ),
-                ChatAction.EditMessage(),
+                ChatAction.EditMessage(get()),
                 worker
             )
         }

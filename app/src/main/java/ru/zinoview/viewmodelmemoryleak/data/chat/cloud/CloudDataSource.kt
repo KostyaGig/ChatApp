@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
+import android.util.Log
 import com.google.gson.Gson
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
@@ -38,6 +39,9 @@ interface CloudDataSource<T> : Disconnect<Unit>,
                 val modelMessages = gson.fromJson(wrapperMessages, WrapperMessages::class.java).map()
 
                 val messages = data.data(modelMessages)
+
+                Log.d("zinoviewk","messages from server $messages")
+
                 processingMessages.update(messages)
 
                 messagesStore.addMessages(messages)
@@ -118,8 +122,8 @@ interface CloudDataSource<T> : Disconnect<Unit>,
         }
 
         override suspend fun editMessage(messageId: String, content: String) {
-            messagesStore.editMessage(messageId, content)
             messagesStore.updateProcessingMessages(processingMessages,messageId, content)
+            messagesStore.editMessage(messageId, content)
         }
 
         override fun saveState(prefs: UiStateSharedPreferences, state: UiStates)

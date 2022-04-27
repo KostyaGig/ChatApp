@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.core
 
-import android.app.Notification
 import android.content.Context
 import androidx.work.*
 import com.google.gson.Gson
@@ -55,7 +54,8 @@ interface WorkManager {
             val factory = ChatWorkerFactory(
                 cloudDataSource,
                 ChatAction.SendMessage(notification),
-                ChatAction.EditMessage()
+                ChatAction.EditMessage(
+                    notification)
             )
 
             return Configuration.Builder()
