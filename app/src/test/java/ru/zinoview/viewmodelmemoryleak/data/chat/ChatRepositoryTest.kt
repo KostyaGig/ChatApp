@@ -115,7 +115,7 @@ class ChatRepositoryTest {
             DataMessage.Received("-1",2,"I'm fine","-1"),
         )
 
-        repository?.updateMessagesState(Pair(0,3))
+        repository?.readMessages(Pair(0,3))
         repository?.messages {}
         actual = repository?.messages {}
         assertEquals(expected, actual)

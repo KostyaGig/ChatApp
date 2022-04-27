@@ -27,22 +27,22 @@ class ConnectionRepositoryTest {
     @Test
     fun test_success_connection() = runBlocking {
         val expected = DataConnection.Success
-        repository?.updateNetworkConnection(true)
-        val actual = repository?.updateNetworkConnection(true)
+        repository?.connection(true)
+        val actual = repository?.connection(true)
         assertEquals(expected,actual)
     }
 
     @Test
     fun test_failure_connection_waiting_for_network() = runBlocking {
         val expected = DataConnection.Failure("Waiting for network...")
-        val actual = repository?.updateNetworkConnection(false)
+        val actual = repository?.connection(false)
         assertEquals(expected,actual)
     }
 
     @Test
     fun test_failure_connection_waiting_for_server() = runBlocking {
         val expected = DataConnection.Failure("Waiting for server...")
-        val actual = repository?.updateNetworkConnection(true)
+        val actual = repository?.connection(true)
         assertEquals(expected,actual)
     }
 
