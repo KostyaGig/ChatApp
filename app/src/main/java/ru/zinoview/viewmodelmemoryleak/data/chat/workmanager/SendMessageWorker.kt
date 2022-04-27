@@ -1,10 +1,10 @@
-package ru.zinoview.viewmodelmemoryleak.data.chat
+package ru.zinoview.viewmodelmemoryleak.data.chat.workmanager
 
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import ru.zinoview.viewmodelmemoryleak.data.chat.ChatAction
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
-import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.MessagesNotification
 
 class SendMessageWorker(
     context: Context,

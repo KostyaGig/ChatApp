@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.core.chat
 
-interface UpdateMessagesState {
+import ru.zinoview.viewmodelmemoryleak.core.Update
 
-    fun updateMessagesState(range: Pair<Int,Int>)
-}
+interface UpdateMessagesState : Update<Pair<Int,Int>>

@@ -37,7 +37,7 @@ interface UiConnectionWrapper : ObserveConnection, UpdateNetworkState<CoroutineS
 
         override fun updateNetworkState(isConnected: Boolean,scope: CoroutineScope)
             = work.doBackground(scope) {
-                repository.updateNetworkConnection(isConnected)
+                repository.connection(isConnected)
             }
     }
 }

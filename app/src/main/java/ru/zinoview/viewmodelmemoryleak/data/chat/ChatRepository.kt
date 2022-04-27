@@ -2,6 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.data.chat
 
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
+import ru.zinoview.viewmodelmemoryleak.core.chat.ShowProcessingMessages
 import ru.zinoview.viewmodelmemoryleak.core.chat.UpdateMessagesState
 import ru.zinoview.viewmodelmemoryleak.core.chat.state.SaveState
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
@@ -9,10 +10,12 @@ import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudMessage
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudToDataMessageMapper
 import ru.zinoview.viewmodelmemoryleak.data.chat.state.UiStateSharedPreferences
+import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.Worker
 import ru.zinoview.viewmodelmemoryleak.data.core.CleanRepository
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
 import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStates
 
-interface ChatRepository<T> : Clean, EditMessage,UpdateMessagesState, SaveState {
+interface ChatRepository<T> : Clean, EditMessage,ReadMessages, SaveState, ShowProcessingMessages {
 
     suspend fun sendMessage(content: String)
 
@@ -20,7 +23,7 @@ interface ChatRepository<T> : Clean, EditMessage,UpdateMessagesState, SaveState 
 
     override fun saveState(prefs: UiStateSharedPreferences, state: UiStates) = Unit
 
-    fun showProcessingMessages() = Unit
+    override fun showProcessingMessages() = Unit
 
     class Base(
         private val updateChatCloudDataSource: CloudDataSource.Update,
@@ -48,8 +51,8 @@ interface ChatRepository<T> : Clean, EditMessage,UpdateMessagesState, SaveState 
             editMessageAction.executeWorker(worker,data)
         }
 
-        override fun updateMessagesState(range: Pair<Int,Int>)
-            = cloudDataSource.updateMessagesState(range)
+        override fun readMessages(range: Pair<Int,Int>)
+            = cloudDataSource.readMessages(range)
 
         override suspend fun messages(block: (List<DataMessage>) -> Unit) {
             cloudDataSource.messages { cloud ->
@@ -58,7 +61,8 @@ interface ChatRepository<T> : Clean, EditMessage,UpdateMessagesState, SaveState 
             }
         }
 
-        override fun showProcessingMessages() = updateChatCloudDataSource.showProcessMessages()
+        override fun showProcessingMessages()
+            = updateChatCloudDataSource.showProcessingMessages()
 
         override fun saveState(prefs: UiStateSharedPreferences, state: UiStates)
             = updateChatCloudDataSource.saveState(prefs,state)
@@ -82,8 +86,8 @@ interface ChatRepository<T> : Clean, EditMessage,UpdateMessagesState, SaveState 
             count++
         }
 
-        override fun updateMessagesState(range: Pair<Int, Int>)
-            = cloudDataSource.updateMessagesState(range)
+        override fun readMessages(range: Pair<Int, Int>)
+            = cloudDataSource.readMessages(range)
 
         override suspend fun messages(block: (List<DataMessage>) -> Unit)
             = cloudDataSource.messages {}.map { it.map(mapper) }

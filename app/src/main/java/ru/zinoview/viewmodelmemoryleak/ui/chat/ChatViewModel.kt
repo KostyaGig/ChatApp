@@ -1,11 +1,10 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import ru.zinoview.viewmodelmemoryleak.core.Clean
-import ru.zinoview.viewmodelmemoryleak.core.chat.UpdateMessagesState
+import ru.zinoview.viewmodelmemoryleak.core.chat.ShowProcessingMessages
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatRepository
 import ru.zinoview.viewmodelmemoryleak.ui.connection.UiConnection
 import ru.zinoview.viewmodelmemoryleak.ui.connection.UiConnectionWrapper
@@ -16,15 +15,13 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
 interface ChatViewModel : ChatViewModelObserve, Clean,
     ActionViewModel<String>,
     ru.zinoview.viewmodelmemoryleak.ui.core.ConnectionViewModel,
-    UpdateMessagesState,
-    ObserveScrollCommunication {
+    ReadMessages,
+    ObserveScrollCommunication,
+    ShowProcessingMessages {
 
     fun messages()
 
     fun editMessage(messageId: String, content: String)
-
-    // todo move to interface
-    fun showProcessingMessages()
 
     class Base(
         private val repository: ChatRepository<Unit>,
@@ -35,10 +32,6 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
         private val scrollCommunication: ScrollCommunication,
         private val connectionWrapper: UiConnectionWrapper
     ) : BaseViewModel<List<UiChatMessage>>(repository,communication), ChatViewModel {
-
-        init {
-            Log.d("zinoviewk","CHAT VIEW MODEL INIT")
-        }
 
         override fun doAction(content: String)
             = work.doBackground(viewModelScope) {
@@ -65,9 +58,7 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
             }
         }
 
-        override fun updateMessagesState(
-            range: Pair<Int,Int>
-        ) = repository.updateMessagesState(range)
+        override fun readMessages(range: Pair<Int, Int>) = repository.readMessages(range)
 
         override fun showProcessingMessages() = repository.showProcessingMessages()
 

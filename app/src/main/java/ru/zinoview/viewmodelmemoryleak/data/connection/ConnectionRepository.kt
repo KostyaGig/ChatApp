@@ -3,9 +3,9 @@ package ru.zinoview.viewmodelmemoryleak.data.connection
 import ru.zinoview.viewmodelmemoryleak.data.connection.cloud.CloudConnection
 import ru.zinoview.viewmodelmemoryleak.data.connection.cloud.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.core.SuspendObserve
-import ru.zinoview.viewmodelmemoryleak.ui.core.UpdateNetworkConnection
+import ru.zinoview.viewmodelmemoryleak.ui.core.NetworkConnection
 
-interface ConnectionRepository<T> : SuspendObserve<DataConnection>, UpdateNetworkConnection<T> {
+interface ConnectionRepository<T> : SuspendObserve<DataConnection>, NetworkConnection<T> {
 
     class Base(
         private val mapper: CloudToDataConnectionMapper,
@@ -20,8 +20,8 @@ interface ConnectionRepository<T> : SuspendObserve<DataConnection>, UpdateNetwor
             }
         }
 
-        override suspend fun updateNetworkConnection(isConnected: Boolean)
-            = cloudDataSource.updateNetworkConnection(isConnected)
+        override suspend fun connection(isConnected: Boolean)
+            = cloudDataSource.connection(isConnected)
     }
 
     class Test(
@@ -33,8 +33,8 @@ interface ConnectionRepository<T> : SuspendObserve<DataConnection>, UpdateNetwor
 
         }
 
-        override suspend fun updateNetworkConnection(isConnected: Boolean): DataConnection {
-            val cloud = cloudDataSource.updateNetworkConnection(isConnected)
+        override suspend fun connection(isConnected: Boolean): DataConnection {
+            val cloud = cloudDataSource.connection(isConnected)
             return cloud.map(mapper)
         }
 

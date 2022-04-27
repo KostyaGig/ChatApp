@@ -1,7 +1,6 @@
-package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
+package ru.zinoview.viewmodelmemoryleak.data.chat.workmanager
 
 import android.content.Context
-import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatAction

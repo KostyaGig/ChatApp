@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 
 interface Filter<T> {
@@ -15,8 +14,7 @@ interface Filter<T> {
             src: List<CloudMessage>,
             coming: List<CloudMessage>
         ): List<CloudMessage> {
-            return if (isNotEmpty.isNotEmpty(src)) {
-                Log.d("zinoviewk","src is not empty $src , coming $coming")
+            if (isNotEmpty.isNotEmpty(src)) {
                 val indexes = mutableListOf<Int>()
 
                 src.forEachIndexed { index, srcMessage ->
@@ -29,9 +27,7 @@ interface Filter<T> {
                 }
 
                 val newList = ArrayList(src)
-                Log.d("zinoviewk","indexes $indexes, src $newList")
 
-                // todo refator
                 indexes.forEach { index ->
                     if (newList.size - 1 >= index) {
                         if (newList[index] != null) {

@@ -1,11 +1,11 @@
-package ru.zinoview.viewmodelmemoryleak.data.chat
+package ru.zinoview.viewmodelmemoryleak.data.chat.workmanager
 
 import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
+import ru.zinoview.viewmodelmemoryleak.data.chat.ChatAction
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
-import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.EditMessageWorker
 
 class ChatWorkerFactory(
     private val cloudDataSource: CloudDataSource<Unit>,

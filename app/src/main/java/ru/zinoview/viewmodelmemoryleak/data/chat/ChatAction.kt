@@ -2,25 +2,26 @@ package ru.zinoview.viewmodelmemoryleak.data.chat
 
 import androidx.work.Data
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
-import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.MessagesNotification
+import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.Worker
+import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.ShowNotification
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 
 interface ChatAction {
 
-    fun executeWorker(worker: Worker,data: List<String>)
+    fun executeWorker(worker: Worker, data: List<String>)
 
     suspend fun sendMessage(data: Data,cloudDataSource: CloudDataSource<Unit>) = Unit
     suspend fun editMessage(data: Data,cloudDataSource: CloudDataSource<Unit>) = Unit
 
     abstract class Abstract(
-        private val notification: MessagesNotification
+        private val notification: ShowNotification
     ) : ChatAction, Disconnect<String> {
 
         abstract fun keys() : List<String>
-        abstract fun doAction(worker: Worker,workerData: List<Pair<String,String>>)
+        abstract fun doAction(worker: Worker, workerData: List<Pair<String,String>>)
 
 
-        override fun executeWorker(worker: Worker,data: List<String>) {
+        override fun executeWorker(worker: Worker, data: List<String>) {
             val workerData = mutableListOf<Pair<String,String>>()
             val keys = keys()
 
@@ -37,7 +38,7 @@ interface ChatAction {
     }
 
     class SendMessage(
-        notification: MessagesNotification
+        notification: ShowNotification
     ) : Abstract(notification) {
 
         override suspend fun sendMessage(data: Data, cloudDataSource: CloudDataSource<Unit>) {
@@ -50,7 +51,7 @@ interface ChatAction {
 
         override fun keys() = listOf(USER_ID_KEY, MESSAGE_CONTENT_KEY)
 
-        override fun doAction(worker: Worker,workerData: List<Pair<String, String>>)
+        override fun doAction(worker: Worker, workerData: List<Pair<String, String>>)
             = worker.sendMessage(workerData)
 
         private companion object {
@@ -60,7 +61,7 @@ interface ChatAction {
     }
 
     class EditMessage(
-        notification: MessagesNotification
+        notification: ShowNotification
     ): Abstract(notification) {
 
         override suspend fun editMessage(data: Data, cloudDataSource: CloudDataSource<Unit>) {
@@ -73,7 +74,7 @@ interface ChatAction {
 
         override fun keys() = listOf(MESSAGE_ID_KEY, MESSAGE_CONTENT_KEY)
 
-        override fun doAction(worker: Worker,workerData: List<Pair<String, String>>)
+        override fun doAction(worker: Worker, workerData: List<Pair<String, String>>)
             = worker.editMessage(workerData)
 
         private companion object {

@@ -5,8 +5,10 @@ import androidx.work.WorkManager
 import org.koin.dsl.module.module
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatAction
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatRepository
-import ru.zinoview.viewmodelmemoryleak.data.chat.Worker
+import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.Worker
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudToDataMessageMapper
+import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.WorkManagerWork
+import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.WorkRequest
 import ru.zinoview.viewmodelmemoryleak.data.connection.CloudToDataConnectionMapper
 import ru.zinoview.viewmodelmemoryleak.data.connection.ConnectionRepository
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
@@ -18,8 +20,12 @@ class DataModule(
     private val dataModule = module {
 
         single<ChatRepository<Unit>> {
+            val workManager = WorkManager.getInstance(context)
             val worker = Worker.Chat(
-                WorkManager.getInstance(context)
+                WorkRequest.Network.Send(),
+                WorkRequest.Network.Edit(),
+                WorkManagerWork.Send(workManager),
+                WorkManagerWork.Edit(workManager)
             )
             ChatRepository.Base(
                 get(),

@@ -19,9 +19,8 @@ abstract class ChatRecyclerViewScrollListener : RecyclerView.OnScrollListener() 
 
             Log.d("zinoviewk","first $firstVisibleItemPosition, last $lastVisibleItemPosition")
 
-            viewModel.updateMessagesState(
-                Pair(firstVisibleItemPosition,lastVisibleItemPosition)
-            )
+            val range = Pair(firstVisibleItemPosition,lastVisibleItemPosition)
+            viewModel.readMessages(range)
         }
     }
     object Empty : ChatRecyclerViewScrollListener()

@@ -11,7 +11,7 @@ class NetworkModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
         single<MessagesStore> {
             MessagesStore.Base(
                 ListItem.Base(),
-                ToCloudProgressMessageMapper(),
+                ToProgressEditMessageMapper(),
                 IsNotEmpty.List(),
                 ListSize.Base(),
                 get(),

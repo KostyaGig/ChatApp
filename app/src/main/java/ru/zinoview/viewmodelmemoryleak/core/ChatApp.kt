@@ -5,7 +5,7 @@ import androidx.work.Configuration
 import androidx.work.WorkManager
 import org.koin.android.ext.android.startKoin
 import org.koin.dsl.module.Module
-import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.MessagesNotification
+import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.*
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.CoreModule
 import ru.zinoview.viewmodelmemoryleak.ui.di.data.cache.CoreCacheModule
 import ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.DataModule
@@ -17,12 +17,16 @@ import ru.zinoview.viewmodelmemoryleak.ui.di.ui.core.CoreUiModule
 
 class ChatApp : Application(), Configuration.Provider {
 
-    private var notification: MessagesNotification = MessagesNotification.Empty
+    private var notification: ShowNotification = ShowNotification.Empty
 
     override fun onCreate() {
         super.onCreate()
 
-        notification = MessagesNotification.Base(this)
+        val resourceProvider = ResourceProvider.Base(this)
+        val channel = Channel.Base(this,resourceProvider, NotificationId.Base())
+        notification = ShowNotification.Base(this,
+            Notification.Base(channel, NotificationMapper.Base(channel),this)
+        )
 
         val coreNetworkModule = CoreNetworkModule()
         val coreCacheModule = CoreCacheModule(this)

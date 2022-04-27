@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
@@ -12,18 +11,16 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStates
 interface MessagesStore :
     Subscribe<List<CloudMessage>>,
     EditMessage,
-    // todo remove save state if it isn't used
     ru.zinoview.viewmodelmemoryleak.core.chat.state.SaveState,
     MessageStoreAdd {
 
     fun unreadMessageIds(range: Pair<Int, Int>, block: (List<String>) -> Unit)
 
-    // todo move to update interface
     fun updateProcessingMessages(processingMessages: ProcessingMessages, messageId: String, content: String)
 
     class Base(
         private val listItem: ListItem<CloudMessage>,
-        private val mapper: ToCloudProgressMessageMapper,
+        private val mapper: ToProgressEditMessageMapper,
         private val isNotEmpty: IsNotEmpty<List<CloudMessage>>,
         private val listSize: ListSize,
         private val idSharedPreferences: IdSharedPreferences<Int,Unit>,
@@ -67,7 +64,9 @@ interface MessagesStore :
             val messageById = listItem.item(messages,messageId)
             val editedMessageById = messageById.map(content,mapper)
 
-            processingMessages.add(editedMessageById)
+            val progressEditMessage = editedMessageById.map(mapper)
+
+            processingMessages.add(progressEditMessage)
         }
 
         override fun unreadMessageIds(range: Pair<Int, Int>, block: (List<String>) -> Unit) {
