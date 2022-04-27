@@ -23,9 +23,12 @@ class ChatApp : Application(), Configuration.Provider {
         super.onCreate()
 
         val resourceProvider = ResourceProvider.Base(this)
-        val channel = Channel.Base(this,resourceProvider, NotificationId.Base())
+        val channelId = GroupId.Base(this)
+        val channel = Channel.Base(this,resourceProvider, NotificationId.Base(),channelId)
         notification = ShowNotification.Base(this,
-            Notification.Base(channel, NotificationMapper.Base(channel),this)
+            Notification.Base(channel, NotificationMapper.Base(
+                GroupId.Notification(channel)
+            ),this)
         )
 
         val coreNetworkModule = CoreNetworkModule()

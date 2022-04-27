@@ -1,7 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.notification
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -10,27 +8,25 @@ import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
 
 interface Channel : CreateChannel {
-    fun notification(iconRes: Int, content: String) : NotificationWrapper
+    fun notification(iconRes: Int, content: String,id: String) : NotificationWrapper
 
     class Base(
         private val context: Context,
         private val resourceProvider: ResourceProvider,
-        private val notificationId: NotificationId
+        private val notificationId: NotificationId,
+        private val channelId: GroupId
     ) : Channel {
 
         @RequiresApi(Build.VERSION_CODES.O)
-        override fun createChannel() {
-            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val channel = NotificationChannel(ID, NAME, NotificationManager.IMPORTANCE_DEFAULT)
-            manager.createNotificationChannel(channel)
-        }
+        override fun createChannel() = channelId.createChannel()
 
-        override fun notification(iconRes: Int, content: String) : NotificationWrapper {
+        override fun notification(iconRes: Int, content: String,id: String) : NotificationWrapper {
             val notification = NotificationCompat.Builder(context, ID)
                 .setContentTitle(resourceProvider.string(R.string.waiting_for_network))
                 .setContentText(content)
                 .setSmallIcon(iconRes)
-                .setChannelId(ID)
+                .setChannelId(id)
+                .setGroup(id)
                 .build()
 
             return NotificationWrapper.Base(notificationId.id(), notification)
@@ -38,7 +34,6 @@ interface Channel : CreateChannel {
 
         private companion object {
             private const val ID = "messages"
-            private const val NAME = "chat app"
         }
     }
 }
