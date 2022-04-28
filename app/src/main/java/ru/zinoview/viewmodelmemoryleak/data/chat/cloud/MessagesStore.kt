@@ -2,7 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
-import ru.zinoview.viewmodelmemoryleak.core.chat.state.Messages
+import ru.zinoview.viewmodelmemoryleak.core.chat.ui_state.Messages
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Subscribe
 

@@ -1,17 +1,16 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
-import com.google.gson.Gson
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.core.chat.ShowProcessingMessages
 import ru.zinoview.viewmodelmemoryleak.data.chat.SendMessage
-import ru.zinoview.viewmodelmemoryleak.data.chat.state.UiStateSharedPreferences
+import ru.zinoview.viewmodelmemoryleak.data.chat.ui_state.UiStateSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.AbstractCloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnection
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
-import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStates
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStates
 
 interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadMessages {
 
@@ -24,7 +23,6 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
         private val socket: Socket,
         private val connection: SocketConnection,
         private val json: Json,
-        private val gson: Gson,
         private val data: Data<List<CloudMessage>>,
         private val messagesStore: MessagesStore,
         private val processingMessages: ProcessingMessages
@@ -35,8 +33,8 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
             messagesStore.subscribe(block)
 
             socket.on(MESSAGES) { cloudData ->
-                val wrapperMessages = gson.toJson(cloudData.first())
-                val modelMessages = gson.fromJson(wrapperMessages, WrapperMessages::class.java).map()
+                val wrapperMessages = json.json(cloudData.first())
+                val modelMessages = json.objectFromJson(wrapperMessages,WrapperMessages::class.java).map()
 
                 val messages = data.data(modelMessages)
 
@@ -50,7 +48,7 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
         }
 
         override suspend fun sendMessage(userId: String,content: String) {
-            val message = json.create(
+            val message = json.json(
                 Pair(
                     SENDER_ID_KEY,userId
                 ),
@@ -64,7 +62,7 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
         }
 
         override suspend fun editMessage(messageId: String, content: String) {
-            val message = json.create(
+            val message = json.json(
                 Pair(
                     MESSAGE_ID_KEY,messageId
                 ),
@@ -83,7 +81,7 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
         override fun readMessages(range: Pair<Int, Int>) {
             messagesStore.unreadMessageIds(range) { unreadMessageIds ->
                 val ids = CloudUnreadMessageIds.Base(unreadMessageIds)
-                val jsonIds = gson.toJson(ids)
+                val jsonIds = json.json(ids)
 
                 socket.emit(UPDATE_MESSAGE,jsonIds)
             }

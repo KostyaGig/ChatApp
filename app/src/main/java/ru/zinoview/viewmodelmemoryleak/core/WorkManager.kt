@@ -33,8 +33,9 @@ interface WorkManager {
                         ServerActivity.Base()
                     )
                 ),
-                Json.Base(),
-                Gson(),
+                Json.Base(
+                    Gson()
+                ),
                 Data.CloudMessage(),
                 MessagesStore.Base(
                     ListItem.Base(),

@@ -24,7 +24,6 @@ class NetworkModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
                 get(),
                 get(),
                 get(),
-                get(),
                 Data.CloudMessage(),
                 get(),
                 get()

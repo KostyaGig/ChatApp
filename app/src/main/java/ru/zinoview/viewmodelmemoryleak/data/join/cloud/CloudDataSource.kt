@@ -22,7 +22,7 @@ interface CloudDataSource : Disconnect<Unit>, AbstractCloudDataSource {
             connection.connect(socket)
             return suspendCoroutine<Int> { continuation ->
                 connection.addSocketBranch(JOIN_USER)
-                val user = json.create(
+                val user = json.json(
                     Pair(
                         NICKNAME_KEY,
                         nickname

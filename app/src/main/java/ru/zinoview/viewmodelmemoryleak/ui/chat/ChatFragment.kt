@@ -10,9 +10,10 @@ import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.ToEditedMessageMapper
-import ru.zinoview.viewmodelmemoryleak.ui.chat.state.ToOldMessageMapper
-import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiState
-import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStateViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.ToOldMessageMapper
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiState
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStateViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.chat.user_status.UserStatusViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBarHeight
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
@@ -33,6 +34,10 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
     private val uiStateViewModel by lazy {
         getKoin().get<UiStateViewModel.Base>()
+    }
+
+    private val userStatusViewModel by lazy {
+        getKoin().get<UserStatusViewModel.Base>()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,6 +104,8 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
     override fun onStart() {
         super.onStart()
+        userStatusViewModel.offline()
+
         viewModel.observe(this) { messages ->
             messages.last().changeTitle(requireActivity() as ToolbarActivity)
             adapter.submitList(messages)
@@ -133,6 +140,8 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         messageSession.saveState(uiStateViewModel,editTextState)
 
         viewModel.showProcessingMessages()
+        userStatusViewModel.offline()
+        userStatusViewModel.clean()
     }
 
     override fun back(navigation: Navigation) = navigation.exit()

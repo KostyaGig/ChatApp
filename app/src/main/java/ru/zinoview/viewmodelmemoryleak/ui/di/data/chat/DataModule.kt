@@ -7,6 +7,7 @@ import ru.zinoview.viewmodelmemoryleak.data.chat.ChatAction
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatRepository
 import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.Worker
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudToDataMessageMapper
+import ru.zinoview.viewmodelmemoryleak.data.chat.user_status.UserStatusWrapper
 import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.WorkManagerWork
 import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.WorkRequest
 import ru.zinoview.viewmodelmemoryleak.data.connection.CloudToDataConnectionMapper
@@ -51,6 +52,10 @@ class DataModule(
             CloudToDataMessageMapper.Base(
                 get()
             )
+        }
+
+        single<UserStatusWrapper> {
+            UserStatusWrapper.Base()
         }
     }
 

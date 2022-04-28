@@ -4,10 +4,10 @@ import ru.zinoview.viewmodelmemoryleak.core.Add
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.UiChatMessage
-import ru.zinoview.viewmodelmemoryleak.ui.chat.state.SaveState
-import ru.zinoview.viewmodelmemoryleak.ui.chat.state.ToOldMessageMapper
-import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiState
-import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStateViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.SaveState
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.ToOldMessageMapper
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiState
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStateViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.Show

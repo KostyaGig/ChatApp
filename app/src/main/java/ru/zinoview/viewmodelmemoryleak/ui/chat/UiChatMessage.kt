@@ -8,10 +8,10 @@ import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditContent
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
-import ru.zinoview.viewmodelmemoryleak.ui.chat.state.SaveState
-import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiState
-import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStateViewModel
-import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStates
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.SaveState
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiState
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStateViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStates
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.*
 

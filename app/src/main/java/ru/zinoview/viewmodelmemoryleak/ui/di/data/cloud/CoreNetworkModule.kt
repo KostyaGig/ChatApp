@@ -23,10 +23,10 @@ class CoreNetworkModule : Module {
         }
 
         single<Json> {
-            Json.Base()
+            Json.Base(get())
         }
 
-        single<Gson> {
+        single {
             Gson()
         }
     }

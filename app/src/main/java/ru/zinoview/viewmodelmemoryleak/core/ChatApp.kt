@@ -41,22 +41,27 @@ class ChatApp : Application(), Configuration.Provider {
         val connectionNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.connection.NetworkModule()
 
         val chatDataModule = DataModule(this)
-        val uiStateDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.state.DataModule(this)
+        val uiStateDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.ui_state.DataModule(this)
         val chatNetworkModule = NetworkModule()
 
         val coreDataModule = CoreDataModule(notification)
         val joinDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.join.DataModule()
         val joinNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.join.NetworkModule()
 
+        val notificationDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.notification.DataModule()
+        val notificationNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.notification.NetworkModule()
+        val userStatusDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.user_status.DataModule()
+
         val authenticationDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.authentication.DataModule()
 
         val coreUiModule = CoreUiModule()
 
         val chatUiModule = UiModule()
-        val uiStateModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.chat.state.UiModule()
+        val uiStateModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.chat.ui_state.UiModule()
         val authenticationUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.authentication.UiModule(this)
         val joinUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.join.UiModule()
         val connectionUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.connection.UiModule()
+        val userStatusUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.chat.user_status.UiModule()
 
         val modules = mutableListOf<ru.zinoview.viewmodelmemoryleak.ui.di.core.Module>()
 
@@ -69,6 +74,9 @@ class ChatApp : Application(), Configuration.Provider {
         modules.add(chatNetworkModule)
         modules.add(joinDataModule)
         modules.add(joinNetworkModule)
+        modules.add(userStatusDataModule)
+        modules.add(notificationDataModule)
+        modules.add(notificationNetworkModule)
         modules.add(authenticationDataModule)
         modules.add(connectionNetworkModule)
         modules.add(coreUiModule)
@@ -77,6 +85,7 @@ class ChatApp : Application(), Configuration.Provider {
         modules.add(authenticationUiModule)
         modules.add(joinUiModule)
         modules.add(connectionUiModule)
+        modules.add(userStatusUiModule)
 
         val koinModules = mutableListOf<Module>()
         modules.forEach { module ->

@@ -3,16 +3,13 @@ package ru.zinoview.viewmodelmemoryleak.data.chat
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.core.chat.ShowProcessingMessages
-import ru.zinoview.viewmodelmemoryleak.core.chat.state.SaveState
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudMessage
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudToDataMessageMapper
-import ru.zinoview.viewmodelmemoryleak.data.chat.state.UiStateSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.Worker
 import ru.zinoview.viewmodelmemoryleak.data.core.CleanRepository
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
-import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStates
 
 interface ChatRepository<T> : Clean, EditMessage,ReadMessages,ShowProcessingMessages {
 
