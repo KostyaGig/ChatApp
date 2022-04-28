@@ -9,9 +9,9 @@ import androidx.annotation.RequiresApi
 
 interface GroupId : CreateChannel {
 
-    fun sendMessageNotification(iconId: Int,content: String) : NotificationWrapper = NotificationWrapper.Empty
+    fun sendMessageNotification(iconId: Int,content: String,time: String) : NotificationWrapper = NotificationWrapper.Empty
 
-    fun editMessageNotification(iconId: Int,content: String) : NotificationWrapper = NotificationWrapper.Empty
+    fun editMessageNotification(iconId: Int,content: String,time: String) : NotificationWrapper = NotificationWrapper.Empty
 
     abstract class Abstract : GroupId {
 
@@ -23,11 +23,11 @@ interface GroupId : CreateChannel {
 
     class Notification(private val channel: Channel) : Abstract() {
 
-        override fun sendMessageNotification(iconId: Int, content: String)
-            = channel.notification(iconId,content,SM_GROUP_ID)
+        override fun sendMessageNotification(iconId: Int, content: String,time: String)
+            = channel.notification(iconId,content,SM_GROUP_ID,time)
 
-        override fun editMessageNotification(iconId: Int, content: String)
-            = channel.notification(iconId,content, EM_GROUP_ID)
+        override fun editMessageNotification(iconId: Int, content: String,time: String)
+            = channel.notification(iconId,content, EM_GROUP_ID,time)
 
         override fun createChannel()  = Unit
     }
@@ -43,7 +43,6 @@ interface GroupId : CreateChannel {
                 NotificationChannel(SM_GROUP_ID, SM_GROUP_ID, NotificationManager.IMPORTANCE_DEFAULT),
                 NotificationChannel(EM_GROUP_ID, EM_GROUP_ID, NotificationManager.IMPORTANCE_DEFAULT)
             )
-
 
             manager.createNotificationChannelGroups(
                 listOf(

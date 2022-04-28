@@ -30,9 +30,7 @@ class DataModule(
             ChatRepository.Base(
                 get(),
                 get(),
-                CloudToDataMessageMapper.Base(
-                    get()
-                ),
+                get(),
                 get(),
                 ChatAction.SendMessage(
                     get()
@@ -45,6 +43,12 @@ class DataModule(
         factory<ConnectionRepository<Unit>> {
             ConnectionRepository.Base(
                 CloudToDataConnectionMapper(),
+                get()
+            )
+        }
+
+        single<CloudToDataMessageMapper> {
+            CloudToDataMessageMapper.Base(
                 get()
             )
         }

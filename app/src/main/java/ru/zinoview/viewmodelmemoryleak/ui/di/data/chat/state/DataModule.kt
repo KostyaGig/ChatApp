@@ -21,6 +21,7 @@ class DataModule(
                     ),
                     get()
                 ),
+                get(),
                 get()
             )
         }

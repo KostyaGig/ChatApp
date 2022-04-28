@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView

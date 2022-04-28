@@ -24,11 +24,15 @@ class ChatApp : Application(), Configuration.Provider {
 
         val resourceProvider = ResourceProvider.Base(this)
         val channelId = GroupId.Base(this)
-        val channel = Channel.Base(this,resourceProvider, NotificationId.Base(),channelId)
-        notification = ShowNotification.Base(this,
-            Notification.Base(channel, NotificationMapper.Base(
-                GroupId.Notification(channel)
-            ),this)
+        val channel = Channel.Base(channelId,UniqueNotification.Base(
+            this,resourceProvider, NotificationId.Base(), Date.Notification()))
+        val service = NotificationService.Base(this)
+        notification = ShowNotification.Base(
+            Notification.Base(
+                channel,
+                NotificationMapper.Base(GroupId.Notification(channel))
+            ),
+            service
         )
 
         val coreNetworkModule = CoreNetworkModule()
@@ -83,6 +87,7 @@ class ChatApp : Application(), Configuration.Provider {
         startKoin(this,koinModules)
         WorkManager.initialize(this,workManagerConfiguration)
     }
+
 
     override fun getWorkManagerConfiguration()
         = ru.zinoview.viewmodelmemoryleak.core.WorkManager.Base(notification).workManager(this)

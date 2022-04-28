@@ -4,6 +4,7 @@ import org.koin.dsl.module.module
 import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStateCommunication
 import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStateViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStateWork
+import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStatesMapper
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
 
 class UiModule : Module {
@@ -15,7 +16,9 @@ class UiModule : Module {
             UiStateViewModel.Base(
                 UiStateWork(get()),
                 get(),
-                UiStateCommunication()
+                UiStateCommunication(),
+                get(),
+                UiStatesMapper.Base()
             )
         }
     }

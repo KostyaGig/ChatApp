@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.notification
 
-import android.content.Context
 import android.os.Build
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudMessage
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
@@ -9,8 +8,8 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.Show
 interface ShowNotification : Show<List<CloudMessage>>, Disconnect<String> {
 
     class Base(
-        private val context: Context,
         private val notification: Notification,
+        private val service: NotificationService,
     ) : ShowNotification {
 
         override fun show(messages: List<CloudMessage>) {
@@ -21,11 +20,11 @@ interface ShowNotification : Show<List<CloudMessage>>, Disconnect<String> {
             val notifications = notification.notifications(messages)
 
             notifications.forEach { notification ->
-                notification.show(context)
+                notification.show(service)
             }
         }
 
-        override fun disconnect(content: String) = notification.disconnect(content)
+        override fun disconnect(content: String) = notification.disconnect(service, content)
     }
 
     object Empty : ShowNotification {

@@ -15,14 +15,18 @@ class UiModule : Module {
                 get(),
                 ChatWork.Base(
                     get(),
-                    ToUiMessageMapper(),
+                    get(),
                 ),
                 get(),
-                ToUiMessageMapper(),
+                get(),
                 MessagesCommunication(),
                 ScrollCommunication(),
                 get()
             )
+        }
+
+        single {
+            ToUiMessageMapper()
         }
     }
 

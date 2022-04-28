@@ -76,19 +76,21 @@ interface CloudMessage : Message, CloudSame {
         class Send(
             senderId: String,
             private val content: String,
+            private val time: String
         ) : Base(senderId, content) {
 
             override fun mapNotification(mapper: NotificationMapper)
-                = mapper.mapSend(content)
+                = mapper.mapSend(content,time)
         }
 
         class Edit(
             senderId: String,
             private val content: String,
+            private val time: String
         ) : Base(senderId, content) {
 
             override fun mapNotification(mapper: NotificationMapper)
-                = mapper.mapEdit(content)
+                = mapper.mapEdit(content,time)
         }
 
     }

@@ -21,9 +21,7 @@ class ChatRepositoryTest {
     fun setUp() {
         repository = ChatRepository.Test(
             CloudDataSource.Test(),
-            TestCloudToDataMessageMapper(
-                1
-            )
+            TestCloudToDataMessageMapper(1)
         )
     }
 
@@ -152,4 +150,6 @@ class ChatRepositoryTest {
         override fun mapFailure(message: String)
             = DataMessage.Failure(message)
     }
+
+
 }

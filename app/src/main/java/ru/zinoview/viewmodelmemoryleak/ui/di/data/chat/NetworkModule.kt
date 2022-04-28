@@ -2,8 +2,8 @@ package ru.zinoview.viewmodelmemoryleak.ui.di.data.chat
 
 import org.koin.dsl.module.module
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
+import ru.zinoview.viewmodelmemoryleak.core.Time
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.*
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ToUiMessageMapper
 
 class NetworkModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
 
@@ -11,11 +11,12 @@ class NetworkModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
         single<MessagesStore> {
             MessagesStore.Base(
                 ListItem.Base(),
-                ToProgressEditMessageMapper(),
+                ToProgressEditMessageMapper(
+                    Time.String()
+                ),
                 IsNotEmpty.List(),
                 ListSize.Base(),
-                get(),
-                ToUiMessageMapper()
+                get()
             )
         }
         single {

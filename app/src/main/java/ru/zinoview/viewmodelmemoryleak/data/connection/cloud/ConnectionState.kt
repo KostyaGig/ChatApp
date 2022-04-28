@@ -17,8 +17,7 @@ interface ConnectionState : Subscribe<CloudConnection>, Disconnect<Unit>, Connec
 
     class Base(
         private val connection: SocketConnection,
-        private val resourceProvider: ResourceProvider,
-        private val processingMessages: ProcessingMessages
+        private val resourceProvider: ResourceProvider
     ) : ConnectionState {
 
         private var block: (CloudConnection) -> Unit = {}
@@ -36,7 +35,6 @@ interface ConnectionState : Subscribe<CloudConnection>, Disconnect<Unit>, Connec
                 push(CloudConnection.Failure(
                     resourceProvider.string(R.string.waiting_for_network)
                 ))
-                processingMessages.show(Unit)
             }
         }
 

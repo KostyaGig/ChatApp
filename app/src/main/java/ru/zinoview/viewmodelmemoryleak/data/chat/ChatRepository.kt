@@ -3,7 +3,6 @@ package ru.zinoview.viewmodelmemoryleak.data.chat
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.core.chat.ShowProcessingMessages
-import ru.zinoview.viewmodelmemoryleak.core.chat.UpdateMessagesState
 import ru.zinoview.viewmodelmemoryleak.core.chat.state.SaveState
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
@@ -15,13 +14,11 @@ import ru.zinoview.viewmodelmemoryleak.data.core.CleanRepository
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
 import ru.zinoview.viewmodelmemoryleak.ui.chat.state.UiStates
 
-interface ChatRepository<T> : Clean, EditMessage,ReadMessages, SaveState, ShowProcessingMessages {
+interface ChatRepository<T> : Clean, EditMessage,ReadMessages,ShowProcessingMessages {
 
     suspend fun sendMessage(content: String)
 
     suspend fun messages(block: (List<DataMessage>) -> Unit) : T
-
-    override fun saveState(prefs: UiStateSharedPreferences, state: UiStates) = Unit
 
     override fun showProcessingMessages() = Unit
 
@@ -63,10 +60,6 @@ interface ChatRepository<T> : Clean, EditMessage,ReadMessages, SaveState, ShowPr
 
         override fun showProcessingMessages()
             = updateChatCloudDataSource.showProcessingMessages()
-
-        override fun saveState(prefs: UiStateSharedPreferences, state: UiStates)
-            = updateChatCloudDataSource.saveState(prefs,state)
-
     }
 
     class Test(

@@ -38,7 +38,9 @@ interface WorkManager {
                 Data.CloudMessage(),
                 MessagesStore.Base(
                     ListItem.Base(),
-                    ToProgressEditMessageMapper(),
+                    ToProgressEditMessageMapper(
+                        Time.String()
+                    ),
                     IsNotEmpty.List(),
                     ListSize.Base(),
                     IdSharedPreferences.Base(
@@ -47,8 +49,7 @@ interface WorkManager {
                         ),
                         Id.Base(),
                         context
-                    ),
-                    ToUiMessageMapper()
+                    )
                 ),
                 ProcessingMessages.Empty
             )
