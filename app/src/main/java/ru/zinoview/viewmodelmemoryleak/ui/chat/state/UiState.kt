@@ -56,10 +56,7 @@ interface UiState : IsNotEmpty<Unit> {
     }
 
     class Messages(
-        private val readMessages: List<UiChatMessage.Sent.Read> = emptyList(),
-        private val unReadMessages: List<UiChatMessage.Sent.Unread> = emptyList(),
-        private val receivedMessages: List<UiChatMessage.Received> = emptyList(),
-        private val progressMessages: List<UiChatMessage.ProgressMessage> = emptyList(),
+        private val messages: List<UiChatMessage> = emptyList()
     ) : UiState {
 
         override fun recover(
@@ -67,12 +64,9 @@ interface UiState : IsNotEmpty<Unit> {
             viewWrapper: ViewWrapper,
             messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession,
             adapter: ChatAdapter
-        ) {
+        ) = adapter.submitList(messages)
 
-        }
-
-
-        override fun isNotEmpty(arg: Unit) = false
+        override fun isNotEmpty(arg: Unit): Boolean = messages.isNotEmpty()
     }
 
     object Empty : UiState {
