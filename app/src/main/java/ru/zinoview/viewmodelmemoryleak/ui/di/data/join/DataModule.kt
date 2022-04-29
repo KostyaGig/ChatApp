@@ -12,6 +12,7 @@ class DataModule : Module {
             JoinUserRepository.Base(
                 get(),
                 get(),
+                get(),
                 get()
             )
         }

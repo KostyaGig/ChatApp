@@ -2,12 +2,10 @@ package ru.zinoview.viewmodelmemoryleak.data.cache
 
 import android.content.Context
 import ru.zinoview.viewmodelmemoryleak.core.IsEmpty
+import ru.zinoview.viewmodelmemoryleak.core.Read
+import ru.zinoview.viewmodelmemoryleak.core.Save
 
-interface IdSharedPreferences<T,K> : IsEmpty<Unit>{
-
-    fun save(id: T)
-
-    fun read(key: K) : T
+interface IdSharedPreferences<T,K> : IsEmpty<Unit>, Save<T>, Read<T,K> {
 
     class Base(
         private val reader: SharedPreferencesReader<Int>,
@@ -19,9 +17,8 @@ interface IdSharedPreferences<T,K> : IsEmpty<Unit>{
 
         override fun read(arg: Unit): Int = reader.read(KEY,prefs)
 
-        override fun save(id: Int) {
-            prefs.edit().putInt(KEY,id).apply()
-        }
+        override fun save(id: Int)
+            = prefs.edit().putInt(KEY,id).apply()
 
         override fun isEmpty(arg: Unit) = id.isEmpty(read(Unit))
 

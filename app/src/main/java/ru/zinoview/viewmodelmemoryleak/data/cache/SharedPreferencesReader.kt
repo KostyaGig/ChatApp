@@ -7,11 +7,11 @@ interface SharedPreferencesReader<T> {
 
     fun read(key: kotlin.String, prefs: SharedPreferences) : T
 
-    class Id(
-        private val id: ru.zinoview.viewmodelmemoryleak.data.cache.Id
-    ) : SharedPreferencesReader<Int> {
+    class Int(
+        private val id: Id
+    ) : SharedPreferencesReader<kotlin.Int> {
 
-        override fun read(key: kotlin.String, prefs: SharedPreferences) : Int
+        override fun read(key: kotlin.String, prefs: SharedPreferences) : kotlin.Int
             = id.read(key, prefs)
     }
 

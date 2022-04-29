@@ -1,9 +1,10 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.core.chat.ShowProcessingMessages
-import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
+import ru.zinoview.viewmodelmemoryleak.data.cache.UserSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudMessage
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudToDataMessageMapper
@@ -20,10 +21,11 @@ interface ChatRepository<T> : Clean, EditMessage,ReadMessages,ShowProcessingMess
     override fun showProcessingMessages() = Unit
 
     class Base(
+        // todo move
         private val updateChatCloudDataSource: CloudDataSource.Update,
         private val cloudDataSource: CloudDataSource.Base,
         private val mapper: CloudToDataMessageMapper,
-        private val prefs: IdSharedPreferences<Int,Unit>,
+        private val userSharedPreferences: UserSharedPreferences,
         private val sendMessageAction: ChatAction,
         private val editMessageAction: ChatAction,
         private val worker: Worker
@@ -31,10 +33,11 @@ interface ChatRepository<T> : Clean, EditMessage,ReadMessages,ShowProcessingMess
         CleanRepository(cloudDataSource) {
 
         override suspend fun sendMessage(content: String) {
-            val userId = prefs.read(Unit).toString()
-            val data = listOf(userId,content)
+            val userId = userSharedPreferences.id().toString()
+            val userNickName = userSharedPreferences.nickName()
+            val data = listOf(userId,userNickName,content)
 
-            updateChatCloudDataSource.sendMessage(userId, content)
+            updateChatCloudDataSource.sendMessage(userId,userNickName,content)
             sendMessageAction.executeWorker(worker,data)
         }
 
@@ -72,7 +75,7 @@ interface ChatRepository<T> : Clean, EditMessage,ReadMessages,ShowProcessingMess
 
         override suspend fun sendMessage(content: String) {
             val userId = if (count % 2 == 0 ) 1 else 2
-            cloudDataSource.sendMessage(userId.toString(),content)
+            cloudDataSource.sendMessage(userId.toString(),"fake nick name",content)
             count++
         }
 

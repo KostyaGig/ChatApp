@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
+import android.util.Log
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.core.chat.ShowProcessingMessages
@@ -47,14 +48,17 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
             connection.addSocketBranch(MESSAGES)
         }
 
-        override suspend fun sendMessage(userId: String,content: String) {
+        override suspend fun sendMessage(userId: String,nickName: String,content: String) {
             val message = json.json(
                 Pair(
                     SENDER_ID_KEY,userId
                 ),
                 Pair(
+                    SENDER_NICK_NAME,nickName
+                ),
+                Pair(
                     MESSAGE_CONTENT_KEY,content
-                )
+                ),
             )
 
             connection.connect(socket)
@@ -83,9 +87,9 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
                 val ids = CloudUnreadMessageIds.Base(unreadMessageIds)
                 val jsonIds = json.json(ids)
 
-                socket.emit(UPDATE_MESSAGE,jsonIds)
+                socket.emit(READ_MESSAGE,jsonIds)
             }
-            connection.addSocketBranch(UPDATE_MESSAGE)
+            connection.addSocketBranch(READ_MESSAGE)
             connection.connect(socket)
         }
 
@@ -96,9 +100,10 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
         private const val SEND_MESSAGE = "send_message"
         private const val MESSAGES = "messages"
         private const val EDIT_MESSAGE = "edit_message"
-        private const val UPDATE_MESSAGE = "update_message"
+        private const val READ_MESSAGE = "read_message"
 
         private const val SENDER_ID_KEY = "senderId"
+        private const val SENDER_NICK_NAME = "senderNickName"
         private const val MESSAGE_CONTENT_KEY = "content"
         private const val MESSAGE_ID_KEY = "id"
     }
@@ -109,7 +114,7 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
         ) : CloudDataSource<Unit>,
             ShowProcessingMessages {
 
-        override suspend fun sendMessage(userId: String, content: String) {
+        override suspend fun sendMessage(userId: String, nickName: String, content: String) {
             val progressMessage = CloudMessage.Progress.Send(
                 userId,
                 content,
@@ -135,7 +140,7 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
         private val messages = mutableListOf<CloudMessage.Test>()
         private var isSuccess = false
 
-        override suspend fun sendMessage(userId: String, content: String) {
+        override suspend fun sendMessage(userId: String, nickName: String ,content: String) {
             messages.add(CloudMessage.Test(
                 "-1",userId,content,false,"-1"
             ))

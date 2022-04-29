@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat
 
+import android.util.Log
 import androidx.work.Data
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.Worker
@@ -43,19 +44,21 @@ interface ChatAction {
 
         override suspend fun sendMessage(data: Data, cloudDataSource: CloudDataSource<Unit>) {
             val userId = data.getString(USER_ID_KEY)
+            val userNickName = data.getString(USER_NICK_NAME_KEY)
             val content = data.getString(MESSAGE_CONTENT_KEY)
-            cloudDataSource.sendMessage(userId!!,content!!)
+            cloudDataSource.sendMessage(userId!!,userNickName!!,content!!)
 
             disconnect(content)
         }
 
-        override fun keys() = listOf(USER_ID_KEY, MESSAGE_CONTENT_KEY)
+        override fun keys() = listOf(USER_ID_KEY,USER_NICK_NAME_KEY ,MESSAGE_CONTENT_KEY)
 
         override fun doAction(worker: Worker, workerData: List<Pair<String, String>>)
             = worker.sendMessage(workerData)
 
         private companion object {
             private const val USER_ID_KEY = "userId"
+            private const val USER_NICK_NAME_KEY = "userNickName"
             private const val MESSAGE_CONTENT_KEY = "message_content"
         }
     }

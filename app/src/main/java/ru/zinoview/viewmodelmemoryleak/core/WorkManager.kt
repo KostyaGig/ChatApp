@@ -13,7 +13,6 @@ import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.*
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.Data
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.ProcessingMessages
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.*
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ToUiMessageMapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.ShowNotification
 
 interface WorkManager {
@@ -45,7 +44,7 @@ interface WorkManager {
                     IsNotEmpty.List(),
                     ListSize.Base(),
                     IdSharedPreferences.Base(
-                        SharedPreferencesReader.Id(
+                        SharedPreferencesReader.Int(
                             Id.Base()
                         ),
                         Id.Base(),

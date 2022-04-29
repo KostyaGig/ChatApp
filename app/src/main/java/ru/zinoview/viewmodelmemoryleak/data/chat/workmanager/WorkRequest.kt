@@ -8,6 +8,8 @@ interface WorkRequest {
 
     interface Network : WorkRequest {
 
+        // todo
+
 //        class Abstract : Network {
 //
 //            override fun oneTimeWorkRequest(data: Data): OneTimeWorkRequest {

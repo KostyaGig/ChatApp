@@ -1,13 +1,10 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.messaging.FirebaseMessaging
-import io.socket.client.IO
 import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
@@ -24,8 +21,6 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NetworkConnectionFragment
-import ru.zinoview.viewmodelmemoryleak.ui.di.data.cloud.CoreNetworkModule
-import java.net.Socket
 
 
 class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentBinding>(
@@ -98,31 +93,18 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
             messageSession.disconnect(Unit)
         }
 
-        val socket = IO.socket("http://10.0.2.2:3000")
         binding.sendMessageBtn.setOnClickListener {
-            Log.d("zinoviewk","ONCLICK")
-            socket.connect()
-            socket.emit("push")
-//            val message = binding.messageField.text.toString().trim()
-//            messageSession.sendMessage(viewModel,message)
+            val message = binding.messageField.text.toString().trim()
+            messageSession.sendMessage(viewModel,message)
         }
 
         viewModel.messages()
         viewModel.connection()
-
-       FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val token = task.result
-                Log.d("zinoviewk","token $token")
-            } else {
-                Log.d("zinoviewk","token ERROR")
-            }
-        }
     }
 
     override fun onStart() {
         super.onStart()
-        userStatusViewModel.offline()
+        userStatusViewModel.online()
 
         viewModel.observe(this) { messages ->
             messages.last().changeTitle(requireActivity() as ToolbarActivity)
@@ -152,6 +134,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
     override fun onPause() {
         super.onPause()
+
 
         val editTextState = UiState.EditText(binding.messageField.text.toString())
         messageSession.saveState(uiStateViewModel,editTextState)

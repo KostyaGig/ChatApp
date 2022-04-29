@@ -3,6 +3,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.di.data.chat
 import android.content.Context
 import androidx.work.WorkManager
 import org.koin.dsl.module.module
+import ru.zinoview.viewmodelmemoryleak.data.cache.UserSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatAction
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatRepository
 import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.Worker
@@ -32,7 +33,9 @@ class DataModule(
                 get(),
                 get(),
                 get(),
-                get(),
+                UserSharedPreferences.Base(
+                    get(),get()
+                ),
                 ChatAction.SendMessage(
                     get()
                 ),
