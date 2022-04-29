@@ -2,15 +2,15 @@ package ru.zinoview.viewmodelmemoryleak.data.chat.user_status
 
 import ru.zinoview.viewmodelmemoryleak.core.chat.user_status.Offline
 import ru.zinoview.viewmodelmemoryleak.core.chat.user_status.Online
+import ru.zinoview.viewmodelmemoryleak.data.chat.notification.cloud.CloudDataSource
 
 interface UserStatusRepository : Online, Offline {
 
     class Base(
-        private val userStatus: UserStatusWrapper
+        private val cloudDataSource: ru.zinoview.viewmodelmemoryleak.data.chat.user_status.cloud.CloudDataSource
     ) : UserStatusRepository {
 
-        override fun online() = userStatus.update(UserStatus.Online)
-        override fun offline() = userStatus.update(UserStatus.Offline)
-
+        override suspend fun online() = cloudDataSource.online()
+        override suspend fun offline() = cloudDataSource.offline()
     }
 }

@@ -51,6 +51,7 @@ class ChatApp : Application(), Configuration.Provider {
         val notificationDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.notification.DataModule()
         val notificationNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.notification.NetworkModule()
         val userStatusDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.user_status.DataModule()
+        val userStatusNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.user_status.NetworkModule()
 
         val authenticationDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.authentication.DataModule()
 
@@ -75,6 +76,7 @@ class ChatApp : Application(), Configuration.Provider {
         modules.add(joinDataModule)
         modules.add(joinNetworkModule)
         modules.add(userStatusDataModule)
+        modules.add(userStatusNetworkModule)
         modules.add(notificationDataModule)
         modules.add(notificationNetworkModule)
         modules.add(authenticationDataModule)

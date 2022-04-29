@@ -14,7 +14,8 @@ class UiModule : Module {
             UserStatusViewModel.Base(
                 get(),
                 get(),
-                UiMessagesNotificationCommunication()
+                UiMessagesNotificationCommunication(),
+                get()
             )
         }
     }
