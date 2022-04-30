@@ -36,30 +36,4 @@ interface CloudDataSource<T> :
         override suspend fun connection(isConnected: Boolean)
             = connectionState.update(isConnected,socket)
     }
-
-    class Test : CloudDataSource<CloudConnection> {
-
-        private var count = 0
-
-        override fun disconnect(arg: Unit) {
-            count = 0
-        }
-
-        override suspend fun observe(block: (CloudConnection) -> Unit) = Unit
-
-        override suspend fun connection(isConnected: Boolean) : CloudConnection {
-            return if (isConnected) {
-                val result = if (count % 2 == 0) {
-                    CloudConnection.Failure("Waiting for server...")
-                } else {
-                    CloudConnection.Success
-                }
-                count++
-                result
-            } else {
-                CloudConnection.Failure("Waiting for network...")
-            }
-        }
-
-    }
 }

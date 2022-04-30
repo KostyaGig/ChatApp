@@ -33,21 +33,4 @@ interface JoinUserRepository : Clean {
         }
     }
 
-    class Test(
-        private val cloudDataSource: CloudDataSource
-    ) : JoinUserRepository {
-
-        override suspend fun joinedUserId(nickname: String): DataJoin {
-            val userId = cloudDataSource.joinedUserId(nickname)
-
-            return if (userId == "-1") {
-                DataJoin.Failure("User nickname must not be empty")
-            } else {
-                DataJoin.Test(userId)
-            }
-        }
-
-        override fun clean()  = Unit
-
-    }
 }

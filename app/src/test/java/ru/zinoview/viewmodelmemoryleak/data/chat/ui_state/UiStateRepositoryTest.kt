@@ -4,20 +4,21 @@ import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
+import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiState
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStates
 
 /**
- * Test for [ru.zinoview.viewmodelmemoryleak.data.chat.ui_state.UiStateRepository.Test]
+ * Test for [ru.zinoview.viewmodelmemoryleak.data.chat.ui_state.UiStateRepository]
  * */
 
 class UiStateRepositoryTest {
 
-    private var repository: UiStateRepository? = null
+    private var repository: TestUiStateRepository? = null
 
     @Before
     fun setUp() {
-        repository = UiStateRepository.Test()
+        repository = TestUiStateRepository()
     }
 
     @Test
@@ -90,5 +91,18 @@ class UiStateRepositoryTest {
     @After
     fun clean() {
         repository = null
+    }
+
+    class TestUiStateRepository : UiStateRepository {
+
+        private var uiState: UiStates = UiStates.Test.Empty
+
+        override fun save(state: UiStates) {
+            uiState = state
+        }
+
+        override fun read(key: Unit) = (uiState as UiStates.Test).map()
+
+        override fun messages(): List<DataMessage> = emptyList()
     }
 }

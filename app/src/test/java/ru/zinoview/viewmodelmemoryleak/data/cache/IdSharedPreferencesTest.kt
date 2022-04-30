@@ -6,15 +6,15 @@ import org.junit.Before
 import org.junit.Test
 
 /**
- * Test for [ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences.Test]
+ * Test for [ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences]
  */
 
 class IdSharedPreferencesTest {
 
-    private var idSharedPreferences: IdSharedPreferences<String,String>? = null
+    private var idSharedPreferences: TestIdSharedPreferences? = null
     @Before
     fun setUp() {
-        idSharedPreferences = IdSharedPreferences.Test()
+        idSharedPreferences = TestIdSharedPreferences()
     }
 
     @Test
@@ -61,5 +61,22 @@ class IdSharedPreferencesTest {
     @After
     fun clean() {
         idSharedPreferences = null
+    }
+
+    class TestIdSharedPreferences : IdSharedPreferences<String,String> {
+
+        private val map = HashMap<String,String>()
+
+        override fun isEmpty(arg: Unit) = map.isEmpty()
+
+        override fun save(id: String) {
+            map[KEY] = id
+        }
+
+        override fun read(key: String) = map[KEY] ?: ""
+
+        private companion object {
+            private const val KEY = "value_key"
+        }
     }
 }

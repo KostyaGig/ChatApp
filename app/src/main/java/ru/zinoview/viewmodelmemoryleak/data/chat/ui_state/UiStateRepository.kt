@@ -25,17 +25,4 @@ interface UiStateRepository : Save<UiStates>, Read<UiStates,Unit>, Messages<Data
             return cloudMessages.map { it.map(mapper) }
         }
     }
-
-    class Test : UiStateRepository {
-
-        private var uiState: UiStates = UiStates.Test.Empty
-
-        override fun save(state: UiStates) {
-            uiState = state
-        }
-
-        override fun read(key: Unit) = (uiState as UiStates.Test).map()
-
-        override fun messages(): List<DataMessage> = emptyList()
-    }
 }

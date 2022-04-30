@@ -6,16 +6,16 @@ import org.junit.Before
 import org.junit.Test
 
 /**
- * Test for [ru.zinoview.viewmodelmemoryleak.data.authentication.AuthenticationRepository.Test]
+ * Test for [ru.zinoview.viewmodelmemoryleak.data.authentication.AuthenticationRepository]
  */
 
 class AuthenticationRepositoryTest {
 
-    private var repository: AuthenticationRepository? = null
+    private var repository: TestAuthenticationRepository? = null
 
     @Before
     fun setUp() {
-        repository = AuthenticationRepository.Test()
+        repository = TestAuthenticationRepository()
     }
 
     @Test
@@ -37,5 +37,22 @@ class AuthenticationRepositoryTest {
     @After
     fun clean() {
         repository = null
+    }
+
+    class TestAuthenticationRepository : AuthenticationRepository {
+
+        private var isAuth = false
+
+        override fun auth(): DataAuth {
+            val result = if (isAuth) {
+                DataAuth.Success
+            } else {
+                DataAuth.Failure
+            }
+            isAuth = isAuth.not()
+            return result
+        }
+
+        override fun clean() = Unit
     }
 }

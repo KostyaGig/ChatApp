@@ -7,20 +7,21 @@ import org.junit.Before
 import org.junit.Test
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
+import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudMessage
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudToDataMessageMapper
 
 /**
- * Test for [ru.zinoview.viewmodelmemoryleak.data.chat.ChatRepository.Test]
+ * Test for [ru.zinoview.viewmodelmemoryleak.data.chat.ChatRepository]
  */
 
 class ChatRepositoryTest {
 
-    private var repository: ChatRepository<List<DataMessage>>? = null
+    private var repository: TestChatRepository? = null
 
     @Before
     fun setUp() {
-        repository = ChatRepository.Test(
-            CloudDataSource.Test(),
+        repository = TestChatRepository(
+            TestCloudDataSource(),
             TestCloudToDataMessageMapper(1)
         )
     }
@@ -28,7 +29,7 @@ class ChatRepositoryTest {
     @Test
     fun test_receive_empty_messages() = runBlocking {
         val expected = listOf(DataMessage.Failure("Messages are empty"))
-        val actual = repository?.messages {}
+        val actual = repository?.messages()
 
         assertEquals(expected, actual)
     }
@@ -47,8 +48,8 @@ class ChatRepositoryTest {
             DataMessage.Sent.Unread("-1",1,"How are you?","-1"),
             DataMessage.Received("-1",2,"I'm fine","-1"),
         )
-        repository?.messages {}
-        val actual = repository?.messages {}
+        repository?.messages()
+        val actual = repository?.messages()
 
         assertEquals(expected, actual)
     }
@@ -61,7 +62,7 @@ class ChatRepositoryTest {
         val expected = listOf(
             DataMessage.Failure("Messages are empty")
         )
-        val actual = repository?.messages {}
+        val actual = repository?.messages()
 
         assertEquals(expected, actual)
     }
@@ -82,8 +83,8 @@ class ChatRepositoryTest {
         )
 
         repository?.editMessage("3","What are you doing?")
-        repository?.messages {}
-        val actual = repository?.messages {}
+        repository?.messages()
+        val actual = repository?.messages()
         assertEquals(expected, actual)
     }
 
@@ -102,8 +103,8 @@ class ChatRepositoryTest {
         )
 
         repository?.editMessage("3","What are you doing?")
-        repository?.messages {}
-        var actual = repository?.messages {}
+        repository?.messages()
+        var actual = repository?.messages()
         assertEquals(expected, actual)
 
         expected = listOf(
@@ -114,14 +115,74 @@ class ChatRepositoryTest {
         )
 
         repository?.readMessages(Pair(0,3))
-        repository?.messages {}
-        actual = repository?.messages {}
+        repository?.messages()
+        actual = repository?.messages()
         assertEquals(expected, actual)
     }
 
     @After
     fun clean() {
         repository = null
+    }
+
+    class TestChatRepository(
+        private val cloudDataSource: TestCloudDataSource,
+        private val mapper: CloudToDataMessageMapper
+    ) : ChatRepository<DataMessage> {
+        override fun clean() = Unit
+
+        private var count = 0
+
+        override suspend fun editMessage(messageId: String, content: String)
+                = cloudDataSource.editMessage(messageId, content)
+
+        override suspend fun sendMessage(content: String) {
+            val userId = if (count % 2 == 0 ) 1 else 2
+            cloudDataSource.sendMessage(userId.toString(),"fake nick name",content)
+            count++
+        }
+
+        override fun readMessages(range: Pair<Int, Int>)
+                = cloudDataSource.readMessages(range)
+
+        fun messages() : List<DataMessage> = cloudDataSource.messages().map { it.map(mapper) }
+    }
+
+    class TestCloudDataSource : CloudDataSource<List<CloudMessage>> {
+
+        private val messages = mutableListOf<CloudMessage.Test>()
+        private var isSuccess = false
+
+        override suspend fun sendMessage(userId: String, nickName: String ,content: String) {
+            messages.add(
+                CloudMessage.Test(
+                "-1",userId,content,false,"-1"
+            ))
+        }
+
+        fun messages() : List<CloudMessage>{
+            val result = if (isSuccess) {
+                messages
+            } else {
+                listOf(CloudMessage.Failure("Messages are empty"))
+            }
+            isSuccess = !isSuccess
+            return result
+        }
+
+        override fun readMessages(range: Pair<Int, Int>) {
+            for (index in range.first..range.second) {
+                val message = messages[index]
+                messages[index] = message.read()
+            }
+        }
+
+        override fun disconnect(arg: Unit) = messages.clear()
+
+        override suspend fun editMessage(messageId: String, content: String) {
+            val message = messages[messageId.toInt() - 1]
+            messages[messageId.toInt() - 1]  = message.updated(content)
+        }
     }
 
     private inner class TestCloudToDataMessageMapper(

@@ -16,6 +16,7 @@ interface ChatRepository<T> : Messages<DataMessage>, SendMessage, EditMessage ,R
     override fun showProcessingMessages() = Unit
 
     override suspend fun messages(block: (List<DataMessage>) -> Unit) = Unit
+
     class Base(
         private val cloudDataSource: CloudDataSource<Unit>,
         private val mapper: CloudToDataMessageMapper,
@@ -52,27 +53,4 @@ interface ChatRepository<T> : Messages<DataMessage>, SendMessage, EditMessage ,R
         override fun showProcessingMessages() = Unit
     }
 
-    class Test(
-        private val cloudDataSource: CloudDataSource.Test,
-        private val mapper: CloudToDataMessageMapper
-    ) : ChatRepository<DataMessage> {
-        override fun clean() = Unit
-
-        private var count = 0
-
-        override suspend fun editMessage(messageId: String, content: String)
-            = cloudDataSource.editMessage(messageId, content)
-
-        override suspend fun sendMessage(content: String) {
-            val userId = if (count % 2 == 0 ) 1 else 2
-            cloudDataSource.sendMessage(userId.toString(),"fake nick name",content)
-            count++
-        }
-
-        override fun readMessages(range: Pair<Int, Int>)
-            = cloudDataSource.readMessages(range)
-
-        fun messages() : List<DataMessage> = cloudDataSource.messages().map { it.map(mapper) }
-
-    }
 }

@@ -25,21 +25,4 @@ interface AuthenticationRepository : ru.zinoview.viewmodelmemoryleak.core.Clean 
 
         override fun clean() = Unit
     }
-
-    class Test : AuthenticationRepository {
-
-        private var isAuth = false
-
-        override fun auth(): DataAuth {
-            val result = if (isAuth) {
-                DataAuth.Success
-            } else {
-                DataAuth.Failure
-            }
-            isAuth = isAuth.not()
-            return result
-        }
-
-        override fun clean() = Unit
-    }
 }

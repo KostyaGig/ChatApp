@@ -23,9 +23,6 @@ class CoreCacheModule(
 
         single<IdSharedPreferences<String,Unit>> {
             IdSharedPreferences.Base(
-                SharedPreferencesReader.String(
-                    get()
-                ),
                 get(),
                 context
             )

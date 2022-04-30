@@ -20,7 +20,7 @@ interface CloudDataSource : Disconnect<Unit>, AbstractCloudDataSource {
 
         override suspend fun joinedUserId(nickname: String) : String {
             connection.connect(socket)
-            return suspendCoroutine<String> { continuation ->
+            return suspendCoroutine { continuation ->
                 connection.addSocketBranch(JOIN_USER)
                 val user = json.json(
                     Pair(
@@ -42,21 +42,5 @@ interface CloudDataSource : Disconnect<Unit>, AbstractCloudDataSource {
 
             private const val NICKNAME_KEY = "nickname"
         }
-    }
-
-    class Test : CloudDataSource {
-
-        private var id = -1
-
-        override suspend fun joinedUserId(nickname: String): String {
-            return if (nickname.isEmpty()) {
-                "-1"
-            } else {
-                id += 1
-                "$id"
-            }
-        }
-
-        override fun disconnect(arg: Unit) = Unit
     }
 }

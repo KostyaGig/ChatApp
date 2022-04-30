@@ -46,7 +46,6 @@ interface WorkManager {
                     IsNotEmpty.List(),
                     ListSize.Base(),
                     IdSharedPreferences.Base(
-                        SharedPreferencesReader.String(emptyString),
                         Id.Base(emptyString),
                         context
                     )

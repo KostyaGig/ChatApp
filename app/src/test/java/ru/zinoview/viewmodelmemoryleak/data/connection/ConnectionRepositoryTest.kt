@@ -5,21 +5,22 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import ru.zinoview.viewmodelmemoryleak.data.connection.cloud.CloudConnection
 import ru.zinoview.viewmodelmemoryleak.data.connection.cloud.CloudDataSource
 
 
 /**
- * Test for [ru.zinoview.viewmodelmemoryleak.data.connection.ConnectionRepository.Test]
+ * Test for [ru.zinoview.viewmodelmemoryleak.data.connection.ConnectionRepository]
  */
 
 class ConnectionRepositoryTest {
 
-    private var repository: ConnectionRepository<DataConnection>? = null
+    private var repository: TestConnectionRepository? = null
 
     @Before
     fun setUp() {
-        repository = ConnectionRepository.Test(
-            CloudDataSource.Test(),
+        repository = TestConnectionRepository(
+            TestCloudDataSource(),
             CloudToDataConnectionMapper(),
         )
     }
@@ -49,5 +50,46 @@ class ConnectionRepositoryTest {
     @After
     fun clean() {
         repository = null
+    }
+
+    class TestConnectionRepository(
+        private val cloudDataSource: CloudDataSource<CloudConnection>,
+        private val mapper: CloudToDataConnectionMapper
+    ) : ConnectionRepository<DataConnection> {
+
+        override suspend fun observe(block: (DataConnection) -> Unit) {
+
+        }
+
+        override suspend fun connection(isConnected: Boolean): DataConnection {
+            val cloud = cloudDataSource.connection(isConnected)
+            return cloud.map(mapper)
+        }
+    }
+
+    class TestCloudDataSource : CloudDataSource<CloudConnection> {
+
+        private var count = 0
+
+        override fun disconnect(arg: Unit) {
+            count = 0
+        }
+
+        override suspend fun observe(block: (CloudConnection) -> Unit) = Unit
+
+        override suspend fun connection(isConnected: Boolean) : CloudConnection {
+            return if (isConnected) {
+                val result = if (count % 2 == 0) {
+                    CloudConnection.Failure("Waiting for server...")
+                } else {
+                    CloudConnection.Success
+                }
+                count++
+                result
+            } else {
+                CloudConnection.Failure("Waiting for network...")
+            }
+        }
+
     }
  }

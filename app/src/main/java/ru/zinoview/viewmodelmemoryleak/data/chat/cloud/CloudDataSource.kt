@@ -103,42 +103,4 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
         private const val MESSAGE_ID_KEY = "id"
     }
 
-
-    class Test : CloudDataSource<List<CloudMessage>> {
-
-        private val messages = mutableListOf<CloudMessage.Test>()
-        private var isSuccess = false
-
-        override suspend fun sendMessage(userId: String, nickName: String ,content: String) {
-            messages.add(CloudMessage.Test(
-                "-1",userId,content,false,"-1"
-            ))
-        }
-
-        fun messages() : List<CloudMessage>{
-            val result = if (isSuccess) {
-                messages
-            } else {
-                listOf(CloudMessage.Failure("Messages are empty"))
-            }
-            isSuccess = !isSuccess
-            return result
-        }
-
-        override fun readMessages(range: Pair<Int, Int>) {
-            for (index in range.first..range.second) {
-                val message = messages[index]
-                messages[index] = message.read()
-            }
-        }
-
-        override fun disconnect(arg: Unit) = messages.clear()
-
-        override suspend fun editMessage(messageId: String, content: String) {
-            val message = messages[messageId.toInt() - 1]
-            messages[messageId.toInt() - 1]  = message.updated(content)
-        }
-
-    }
-
 }
