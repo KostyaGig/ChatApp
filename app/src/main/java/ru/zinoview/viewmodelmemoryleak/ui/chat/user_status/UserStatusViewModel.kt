@@ -1,9 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.user_status
 
 import androidx.lifecycle.viewModelScope
-import ru.zinoview.viewmodelmemoryleak.core.chat.user_status.Offline
-import ru.zinoview.viewmodelmemoryleak.core.chat.user_status.Online
-import ru.zinoview.viewmodelmemoryleak.data.chat.notification.NotificationMessageRepository
 import ru.zinoview.viewmodelmemoryleak.data.chat.user_status.UserStatusRepository
 import ru.zinoview.viewmodelmemoryleak.ui.core.BaseViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.core.CommunicationObserve
@@ -15,23 +12,21 @@ interface UserStatusViewModel : CommunicationObserve<List<UiMessagesNotification
 
     fun offline()
 
-    // todo clean not used classes
     class Base(
-        private val userStatusRepository: UserStatusRepository,
-        repository: NotificationMessageRepository,
+        private val repository: UserStatusRepository,
         communication: UiMessagesNotificationCommunication,
         private val dispatcher: Dispatcher
         ) : UserStatusViewModel,BaseViewModel<List<UiMessagesNotification>>(
-        repository,communication
+            repository,communication
     ) {
         override fun online()
             = dispatcher.doBackground(viewModelScope) {
-                userStatusRepository.online()
+                repository.online()
             }
 
         override fun offline()
             = dispatcher.doBackground(viewModelScope) {
-                userStatusRepository.offline()
+                repository.offline()
             }
 
     }

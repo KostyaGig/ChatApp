@@ -8,48 +8,25 @@ interface WorkRequest {
 
     interface Network : WorkRequest {
 
-        // todo
+        abstract class Abstract<T : ListenableWorker>(
+            private val clazz: Class<T>
+        ): Network {
 
-//        class Abstract : Network {
-//
-//            override fun oneTimeWorkRequest(data: Data): OneTimeWorkRequest {
-//                val constraints = Constraints.Builder()
-//                    .setRequiredNetworkType(NetworkType.CONNECTED)
-//                    .build()
-//
-//                return OneTimeWorkRequestBuilder<>()
-//                    .setInputData(data)
-//                    .setConstraints(constraints)
-//                    .build()
-//            }
-//        }
 
-        class Edit : Network {
-            override fun oneTimeWorkRequest(data: Data): OneTimeWorkRequest {
+            override fun  oneTimeWorkRequest(data: Data): OneTimeWorkRequest {
                 val constraints = Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build()
 
-                return OneTimeWorkRequestBuilder<EditMessageWorker>()
+                return OneTimeWorkRequest.Builder(clazz)
                     .setInputData(data)
                     .setConstraints(constraints)
                     .build()
             }
         }
 
-        class Send : Network {
-
-            override fun oneTimeWorkRequest(data: Data): OneTimeWorkRequest {
-                val constraints = Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build()
-
-                return OneTimeWorkRequestBuilder<SendMessageWorker>()
-                    .setInputData(data)
-                    .setConstraints(constraints)
-                    .build()
-            }
-        }
+        class Edit : Network.Abstract<EditMessageWorker>(EditMessageWorker::class.java)
+        class Send : Network.Abstract<SendMessageWorker>(SendMessageWorker::class.java)
 
     }
 }
