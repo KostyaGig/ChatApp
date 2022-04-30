@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
 import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
@@ -43,7 +44,9 @@ interface CloudMessage : Message, CloudSame {
             = this.content == content
 
         override fun addUnreadMessageId(userId: String, unreadMessages: MutableList<String>) {
+            Log.d("zinoviewk","addUnreadMessageId $userId")
             if (isRead.not() && senderId.toString() != userId) {
+                Log.d("zinoviewk","addUnreadMessageId")
                 unreadMessages.add(id)
             }
         }

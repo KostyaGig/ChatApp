@@ -22,6 +22,11 @@ abstract class ChatRecyclerViewScrollListener : RecyclerView.OnScrollListener() 
             val range = Pair(firstVisibleItemPosition,lastVisibleItemPosition)
             viewModel.readMessages(range)
         }
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+            Log.d("zinoviewk","onscroll state changed")
+        }
     }
     object Empty : ChatRecyclerViewScrollListener()
 

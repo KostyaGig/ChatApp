@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
+import android.util.Log
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.core.chat.Messages
@@ -79,6 +80,7 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
 
         override fun readMessages(range: Pair<Int, Int>) {
             messagesStore.unreadMessageIds(range) { unreadMessageIds ->
+                Log.d("zinoviewk","readMessages $unreadMessageIds")
                 val ids = CloudUnreadMessageIds.Base(unreadMessageIds)
                 val jsonIds = json.json(ids)
 

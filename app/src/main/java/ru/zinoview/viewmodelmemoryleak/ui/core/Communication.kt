@@ -38,7 +38,7 @@ interface Communication<T> : CommunicationObserve<T> {
 
         override fun postValue(value: T) {
             liveData.value = value
-            unSubscribe()
+//            unSubscribe()
         }
 
         override fun unSubscribe() = liveData.removeObserver(observer!!)

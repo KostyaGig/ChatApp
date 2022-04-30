@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -81,9 +82,9 @@ interface UiMessage :
         override fun changeTitle(toolbar: ToolbarActivity)
             = toolbar.changeTitle(TITLE)
 
-        override fun addScroll(scrollCommunication: ScrollCommunication) {
-            scrollCommunication.postValue(UiScroll.Base())
-        }
+        override fun addScroll(scrollCommunication: ScrollCommunication)
+            = scrollCommunication.postValue(UiScroll.Base())
+
 
         private companion object {
             private const val TITLE = "Chat"

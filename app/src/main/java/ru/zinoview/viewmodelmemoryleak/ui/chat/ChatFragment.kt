@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -88,6 +89,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         binding.chatRv.adapter = adapter
 
         scrollListener = ChatRecyclerViewScrollListener.Base(manager, viewModel)
+        binding.chatRv.addOnScrollListener(scrollListener)
 
         binding.cancelEditBtn.setOnClickListener {
             messageSession.disconnect(Unit)
@@ -102,17 +104,28 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         viewModel.connection()
     }
 
+    // todo fix this stuff
+    private var isNotAdded = true
+
     override fun onStart() {
         super.onStart()
         userStatusViewModel.online()
 
         viewModel.observe(this) { messages ->
+            if (isNotAdded) {
+                val first = messages.first()
+                if (first is UiMessage.Received || first is UiMessage.Sent && messages.size == 1) {
+                    Log.d("zinoviewk","ADD SCROLL")
+                    scrollListener.onScrolled(binding.chatRv,0,0)
+                    isNotAdded = false
+                }
+            }
             messages.last().changeTitle(requireActivity() as ToolbarActivity)
             adapter.submitList(messages)
         }
 
         viewModel.observeScrollCommunication(this) { uiScroll ->
-            uiScroll.addScrollListener(binding.chatRv,scrollListener)
+//            uiScroll.addScrollListener(binding.chatRv,scrollListener)
         }
 
         viewModel.observeConnection(this) { connection ->

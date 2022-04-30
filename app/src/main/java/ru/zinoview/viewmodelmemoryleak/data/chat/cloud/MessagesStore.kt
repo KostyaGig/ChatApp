@@ -70,20 +70,21 @@ interface MessagesStore :
         }
 
         override fun unreadMessageIds(range: Pair<Int, Int>, block: (List<String>) -> Unit) {
+            Log.d("zinoviewk","msg size ${messages.size}")
             val userId = idSharedPreferences.read(Unit)
             val unreadMessageIds = mutableListOf<String>()
 
             if (isNotEmpty.isNotEmpty(messages) && range.first != -1) {
                 if (listSize.isLessThen(MIN_SIZE_LIST,messages)) {
                     val message = messages.first()
+                    Log.d("zinoviewk","size < 2 read first message $message")
                     message.addUnreadMessageId(userId,unreadMessageIds)
                 } else {
                     for (index in range.first..range.second) {
-                        // todo
-//                        if (messages.size - 1 >= index ) {
+                        if (messages.size - 1 >= index) {
                             val message = messages[index]
                             message.addUnreadMessageId(userId,unreadMessageIds)
-//                        }
+                        }
                     }
                 }
             }

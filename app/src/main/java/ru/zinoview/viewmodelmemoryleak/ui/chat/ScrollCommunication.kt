@@ -5,9 +5,10 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.Communication
 class ScrollCommunication : Communication.Single<UiScroll>() {
 
     override fun postValue(value: UiScroll) {
-        if (liveData.hasActiveObservers()) {
-            super.postValue(value)
-        }
+        super.postValue(value)
+//        if (liveData.hasActiveObservers()) {
+//            super.postValue(value)
+//        }
     }
 
 }

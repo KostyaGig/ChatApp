@@ -6,7 +6,7 @@ interface UiScroll {
 
     fun addScrollListener(recyclerView: RecyclerView,listener: ChatRecyclerViewScrollListener)
 
-    class Base() : UiScroll {
+    class Base : UiScroll {
         override fun addScrollListener(
             recyclerView: RecyclerView,
             listener: ChatRecyclerViewScrollListener
