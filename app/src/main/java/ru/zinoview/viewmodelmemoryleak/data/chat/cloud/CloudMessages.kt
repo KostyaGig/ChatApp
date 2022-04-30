@@ -83,8 +83,8 @@ interface CloudMessage : Message, CloudSame {
                 = mapper.mapSend(content,time)
         }
 
-        class Edit(
-            senderId: String,
+        data class Edit(
+            private val senderId: String,
             private val content: String,
             private val time: String
         ) : Base(senderId, content) {

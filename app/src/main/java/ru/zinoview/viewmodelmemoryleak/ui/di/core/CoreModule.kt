@@ -4,6 +4,7 @@ import android.content.Context
 import org.koin.dsl.module.Module
 import org.koin.dsl.module.module
 import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
+import ru.zinoview.viewmodelmemoryleak.core.Time
 
 class CoreModule(
     private val context: Context
@@ -17,6 +18,10 @@ class CoreModule(
             ResourceProvider.Base(
                 context
             )
+        }
+
+        single<Time<String>> {
+            Time.String()
         }
 
     }

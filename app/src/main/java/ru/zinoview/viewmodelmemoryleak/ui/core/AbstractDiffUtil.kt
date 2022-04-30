@@ -1,7 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.core
 
 import androidx.recyclerview.widget.DiffUtil
-import ru.zinoview.viewmodelmemoryleak.ui.chat.UiChatMessage
+import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
 
 abstract class AbstractDiffUtil<T : DiffSame<T>> : DiffUtil.ItemCallback<T>() {
 
@@ -11,5 +11,5 @@ abstract class AbstractDiffUtil<T : DiffSame<T>> : DiffUtil.ItemCallback<T>() {
     override fun areContentsTheSame(oldItem: T, newItem: T)
         = oldItem.isContentTheSame(newItem)
 
-    object Empty : AbstractDiffUtil<UiChatMessage>()
+    object Empty : AbstractDiffUtil<UiMessage>()
 }

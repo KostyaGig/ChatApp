@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat
 
-import android.util.Log
 import androidx.work.Data
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.Worker
@@ -9,7 +8,7 @@ import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 
 interface ChatAction {
 
-    fun executeWorker(worker: Worker, data: List<String>)
+    fun executeWorker(worker: Worker, data: List<String>) = Unit
 
     suspend fun sendMessage(data: Data,cloudDataSource: CloudDataSource<Unit>) = Unit
     suspend fun editMessage(data: Data,cloudDataSource: CloudDataSource<Unit>) = Unit
@@ -86,5 +85,7 @@ interface ChatAction {
         }
 
     }
+
+    object Empty : ChatAction
 
 }

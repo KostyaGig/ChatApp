@@ -2,6 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat.notification
 
 import android.app.Notification
 import android.content.Context
+import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 
 interface NotificationService {

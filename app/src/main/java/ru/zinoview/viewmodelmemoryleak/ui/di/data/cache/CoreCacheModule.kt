@@ -2,10 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.di.data.cache
 
 import android.content.Context
 import org.koin.dsl.module.module
-import ru.zinoview.viewmodelmemoryleak.data.cache.Id
-import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
-import ru.zinoview.viewmodelmemoryleak.data.cache.NickNameSharedPreferences
-import ru.zinoview.viewmodelmemoryleak.data.cache.SharedPreferencesReader
+import ru.zinoview.viewmodelmemoryleak.data.cache.*
 import ru.zinoview.viewmodelmemoryleak.data.core.EmptyString
 
 
@@ -17,6 +14,13 @@ class CoreCacheModule(
     }
 
     private val cacheModule = module {
+
+        single<UserSharedPreferences> {
+            UserSharedPreferences.Base(
+                get(),get()
+            )
+        }
+
         single<IdSharedPreferences<Int,Unit>> {
             IdSharedPreferences.Base(
                 SharedPreferencesReader.Int(

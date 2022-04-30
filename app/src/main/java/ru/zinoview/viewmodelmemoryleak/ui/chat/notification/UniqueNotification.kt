@@ -14,7 +14,7 @@ interface UniqueNotification {
         private val context: Context,
         private val resourceProvider: ResourceProvider,
         private val notificationId: NotificationId,
-        private val date: Date
+        private val date: Date,
     ) : UniqueNotification {
 
         private val notificationIds = ArrayList<String>()
@@ -36,7 +36,7 @@ interface UniqueNotification {
                     .setGroup(groupId)
                     .build()
 
-                NotificationWrapper.Base(notificationId.id(), notification)
+                NotificationWrapper.Base(notificationId.id(), notification,time)
             } else {
                 NotificationWrapper.Empty
             }

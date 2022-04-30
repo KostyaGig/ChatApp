@@ -1,24 +1,20 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
-import android.util.Log
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
-import ru.zinoview.viewmodelmemoryleak.core.chat.ShowProcessingMessages
+import ru.zinoview.viewmodelmemoryleak.core.chat.Messages
 import ru.zinoview.viewmodelmemoryleak.data.chat.SendMessage
-import ru.zinoview.viewmodelmemoryleak.data.chat.ui_state.UiStateSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.AbstractCloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnection
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStates
 
-interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadMessages {
+interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMessage, EditMessage, ReadMessages {
 
-    suspend fun messages(block:(List<CloudMessage>) -> Unit) : T
-    override fun disconnect(arg: Unit) = Unit
-    override fun readMessages(data: Pair<Int, Int>) = Unit
-    fun saveMessages(prefs: UiStateSharedPreferences,state: UiStates) = Unit
+    override fun readMessages(range: Pair<Int, Int>) = Unit
+
+    override suspend fun messages(block: (List<CloudMessage>) -> Unit) = Unit
 
     class Base(
         private val socket: Socket,
@@ -40,7 +36,6 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
                 val messages = data.data(modelMessages)
 
                 processingMessages.update(messages)
-
                 messagesStore.addMessages(messages)
             }
 
@@ -108,32 +103,6 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
         private const val MESSAGE_ID_KEY = "id"
     }
 
-    class Update(
-        private val messagesStore: MessagesStore,
-        private val processingMessages: ProcessingMessages
-        ) : CloudDataSource<Unit>,
-            ShowProcessingMessages {
-
-        override suspend fun sendMessage(userId: String, nickName: String, content: String) {
-            val progressMessage = CloudMessage.Progress.Send(
-                userId,
-                content,
-                System.currentTimeMillis().toString()
-            )
-
-            messagesStore.add(progressMessage)
-            processingMessages.add(progressMessage)
-        }
-
-        override suspend fun editMessage(messageId: String, content: String) {
-            messagesStore.updateProcessingMessages(processingMessages,messageId, content)
-            messagesStore.editMessage(messageId, content)
-        }
-
-        override fun showProcessingMessages() = processingMessages.show(Unit)
-
-        override suspend fun messages(block: (List<CloudMessage>) -> Unit) = Unit
-    }
 
     class Test : CloudDataSource<List<CloudMessage>> {
 
@@ -146,7 +115,7 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
             ))
         }
 
-        override suspend fun messages(block: (List<CloudMessage>) -> Unit) : List<CloudMessage> {
+        fun messages() : List<CloudMessage>{
             val result = if (isSuccess) {
                 messages
             } else {

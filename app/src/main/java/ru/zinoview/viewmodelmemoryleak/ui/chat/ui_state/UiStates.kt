@@ -1,13 +1,13 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state
 
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ToUiMessageMapper
-import ru.zinoview.viewmodelmemoryleak.ui.chat.UiChatMessage
+import ru.zinoview.viewmodelmemoryleak.ui.chat.DomainToUiMessageMapper
+import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
 
 interface UiStates {
 
     fun map(communication: UiStateCommunication) = Unit
-    fun map(mapper: ToUiMessageMapper) : UiStates = Base()
-    fun map(mapper: UiStatesMapper,messages: List<UiChatMessage>) : UiStates = Test.Empty
+    fun map(mapper: DomainToUiMessageMapper) : UiStates = Base()
+    fun map(mapper: UiStatesMapper,messages: List<UiMessage>) : UiStates = Test.Empty
 
     class Base(
         private val messageField: UiState.EditText = UiState.EditText(),
@@ -33,7 +33,7 @@ interface UiStates {
             communication.postValue(states)
         }
 
-        override fun map(mapper: UiStatesMapper,messages: List<UiChatMessage>)
+        override fun map(mapper: UiStatesMapper,messages: List<UiMessage>)
             = mapper.map(
                 listOf(messageField,editMessage),messages
             )

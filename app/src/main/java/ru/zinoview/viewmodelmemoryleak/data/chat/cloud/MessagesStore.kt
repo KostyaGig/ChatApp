@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.core.chat.ui_state.Messages
@@ -58,6 +59,8 @@ interface MessagesStore :
             content: String
         ) {
 
+            Log.d("zinoviewk","msgId: $messageId,messages $messages")
+
             val messageById = listItem.item(messages,messageId)
             val editedMessageById = messageById.map(content,mapper)
 
@@ -76,6 +79,7 @@ interface MessagesStore :
                     message.addUnreadMessageId(userId,unreadMessageIds)
                 } else {
                     for (index in range.first..range.second) {
+                        // todo
 //                        if (messages.size - 1 >= index ) {
                             val message = messages[index]
                             message.addUnreadMessageId(userId,unreadMessageIds)

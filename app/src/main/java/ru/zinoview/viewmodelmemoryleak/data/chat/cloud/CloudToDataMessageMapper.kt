@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
@@ -26,7 +25,6 @@ interface CloudToDataMessageMapper : Mapper<DataMessage> {
             senderNickname: String,
             isRead: Boolean
         ): DataMessage {
-            Log.d("zinoviewk","PREF ID ${idSharedPreferences.read(Unit)} SENDER $senderId")
             return if (idSharedPreferences.read(Unit) == senderId) {
                 if (isRead) {
                     DataMessage.Sent.Read(id, senderId, content, senderNickname)

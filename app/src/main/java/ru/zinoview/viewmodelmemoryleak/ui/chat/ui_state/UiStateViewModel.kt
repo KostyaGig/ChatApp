@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import ru.zinoview.viewmodelmemoryleak.core.Read
 import ru.zinoview.viewmodelmemoryleak.core.Save
 import ru.zinoview.viewmodelmemoryleak.data.chat.ui_state.UiStateRepository
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ToUiMessageMapper
+import ru.zinoview.viewmodelmemoryleak.ui.chat.DomainToUiMessageMapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.CommunicationObserve
 import ru.zinoview.viewmodelmemoryleak.ui.core.Work
 
@@ -17,7 +17,7 @@ interface UiStateViewModel : CommunicationObserve<List<UiState>>, Save<UiStates>
         private val work: Work<UiStates,UiStates>,
         private val repository: UiStateRepository,
         private val communication: UiStateCommunication,
-        private val mapper: ToUiMessageMapper,
+        private val mapper: DomainToUiMessageMapper,
         private val uiStatesMapper: UiStatesMapper
     ) : UiStateViewModel, ViewModel() {
 

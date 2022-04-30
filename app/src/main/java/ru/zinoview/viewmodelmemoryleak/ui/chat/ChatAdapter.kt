@@ -13,20 +13,20 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractViewHolder
 import java.lang.IllegalStateException
 
  open class ChatAdapter(
-     diffUtil: AbstractDiffUtil<UiChatMessage>,
+     diffUtil: AbstractDiffUtil<UiMessage>,
      private val listener: EditMessageListener
- ) : androidx.recyclerview.widget.ListAdapter<UiChatMessage, ChatAdapter.BaseViewHolder>(diffUtil) {
+ ) : androidx.recyclerview.widget.ListAdapter<UiMessage, ChatAdapter.BaseViewHolder>(diffUtil) {
 
      object Empty : ChatAdapter(AbstractDiffUtil.Empty, EditMessageListener.Empty)
 
     override fun getItemViewType(position: Int): Int {
         return when(getItem(position)) {
-            is UiChatMessage.Sent.Read -> 1
-            is UiChatMessage.Sent.Unread -> 2
-            is UiChatMessage.ProgressMessage -> 3
-            is UiChatMessage.Received -> 4
-            is UiChatMessage.Progress, UiChatMessage.Empty -> 5
-            is UiChatMessage.Failure -> 6
+            is UiMessage.Sent.Read -> 1
+            is UiMessage.Sent.Unread -> 2
+            is UiMessage.ProgressMessage -> 3
+            is UiMessage.Received -> 4
+            is UiMessage.Progress, UiMessage.Empty -> 5
+            is UiMessage.Failure -> 6
             else -> {
                 Log.d("zinoviewk","else ${getItem(position)}")
                 -1
@@ -71,7 +71,7 @@ import java.lang.IllegalStateException
 
     abstract class BaseViewHolder(
         view: View
-    ) : AbstractViewHolder<UiChatMessage>(view) {
+    ) : AbstractViewHolder<UiMessage>(view) {
 
         class Message(
             view: View,
@@ -82,7 +82,7 @@ import java.lang.IllegalStateException
             private val stateImage = view.findViewById<ImageView>(R.id.state_send_image)
             private val editImage = view.findViewById<ImageView>(R.id.edit_image)
 
-            override fun bind(item: UiChatMessage) {
+            override fun bind(item: UiMessage) {
                 item.bind(contentTv,stateImage,editImage)
 
                 editImage.setOnClickListener { item.edit(listener) }
@@ -97,7 +97,7 @@ import java.lang.IllegalStateException
         class Failure(
             view: View
         ) : BaseViewHolder(view) {
-            override fun bind(item: UiChatMessage) = Unit
+            override fun bind(item: UiMessage) = Unit
         }
     }
 

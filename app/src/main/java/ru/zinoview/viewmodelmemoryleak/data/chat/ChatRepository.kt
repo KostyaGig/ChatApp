@@ -1,51 +1,42 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
+import ru.zinoview.viewmodelmemoryleak.core.chat.Messages
 import ru.zinoview.viewmodelmemoryleak.core.chat.ShowProcessingMessages
 import ru.zinoview.viewmodelmemoryleak.data.cache.UserSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
-import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudMessage
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudToDataMessageMapper
-import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.Worker
+import ru.zinoview.viewmodelmemoryleak.core.chat.SendMessage
 import ru.zinoview.viewmodelmemoryleak.data.core.CleanRepository
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
 
-interface ChatRepository<T> : Clean, EditMessage,ReadMessages,ShowProcessingMessages {
-
-    suspend fun sendMessage(content: String)
-
-    suspend fun messages(block: (List<DataMessage>) -> Unit) : T
+interface ChatRepository<T> : Messages<DataMessage>, SendMessage, EditMessage ,ReadMessages, ShowProcessingMessages,Clean {
 
     override fun showProcessingMessages() = Unit
 
+    override suspend fun messages(block: (List<DataMessage>) -> Unit) = Unit
     class Base(
-        // todo move
-        private val updateChatCloudDataSource: CloudDataSource.Update,
-        private val cloudDataSource: CloudDataSource.Base,
+        private val cloudDataSource: CloudDataSource<Unit>,
         private val mapper: CloudToDataMessageMapper,
         private val userSharedPreferences: UserSharedPreferences,
-        private val sendMessageAction: ChatAction,
-        private val editMessageAction: ChatAction,
-        private val worker: Worker
+        private val chatActions: ChatActions
     ) : ChatRepository<Unit>,
         CleanRepository(cloudDataSource) {
 
         override suspend fun sendMessage(content: String) {
             val userId = userSharedPreferences.id().toString()
             val userNickName = userSharedPreferences.nickName()
+
             val data = listOf(userId,userNickName,content)
 
-            updateChatCloudDataSource.sendMessage(userId,userNickName,content)
-            sendMessageAction.executeWorker(worker,data)
+            chatActions.sendMessage(data)
         }
 
         override suspend fun editMessage(messageId: String, content: String) {
-            updateChatCloudDataSource.editMessage(messageId, content)
             val data = listOf(messageId,content)
 
-            editMessageAction.executeWorker(worker,data)
+            chatActions.editMessage(data)
         }
 
         override fun readMessages(range: Pair<Int,Int>)
@@ -58,14 +49,13 @@ interface ChatRepository<T> : Clean, EditMessage,ReadMessages,ShowProcessingMess
             }
         }
 
-        override fun showProcessingMessages()
-            = updateChatCloudDataSource.showProcessingMessages()
+        override fun showProcessingMessages() = Unit
     }
 
     class Test(
-        private val cloudDataSource: CloudDataSource<List<CloudMessage>>,
+        private val cloudDataSource: CloudDataSource.Test,
         private val mapper: CloudToDataMessageMapper
-    ) : ChatRepository<List<DataMessage>> {
+    ) : ChatRepository<DataMessage> {
         override fun clean() = Unit
 
         private var count = 0
@@ -82,8 +72,7 @@ interface ChatRepository<T> : Clean, EditMessage,ReadMessages,ShowProcessingMess
         override fun readMessages(range: Pair<Int, Int>)
             = cloudDataSource.readMessages(range)
 
-        override suspend fun messages(block: (List<DataMessage>) -> Unit)
-            = cloudDataSource.messages {}.map { it.map(mapper) }
+        fun messages() : List<DataMessage> = cloudDataSource.messages().map { it.map(mapper) }
 
     }
 }

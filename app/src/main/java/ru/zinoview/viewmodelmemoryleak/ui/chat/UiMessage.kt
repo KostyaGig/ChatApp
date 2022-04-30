@@ -15,12 +15,12 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStates
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.*
 
-interface UiChatMessage :
-    DiffSame<UiChatMessage>, UiSame, Bind, Ui, ChangeTitle<ToolbarActivity>,
+interface UiMessage :
+    DiffSame<UiMessage>, UiSame, Bind, Ui, ChangeTitle<ToolbarActivity>,
     Message, Show<ViewWrapper>{
 
-    override fun isContentTheSame(item: UiChatMessage) = false
-    override fun isItemTheSame(item: UiChatMessage) = false
+    override fun isContentTheSame(item: UiMessage) = false
+    override fun isItemTheSame(item: UiMessage) = false
 
     override fun same(data: String,isRead: Boolean) = false
     override fun sameId(id: String) = false
@@ -36,17 +36,17 @@ interface UiChatMessage :
 
     fun addScroll(scrollCommunication: ScrollCommunication) = Unit
 
-    object Empty : UiChatMessage
+    object Empty : UiMessage
 
     class Failure(
         private val message: String
-    ) : UiChatMessage {
+    ) : UiMessage {
 
         override fun changeTitle(toolbar: ToolbarActivity)
             = toolbar.changeTitle(message)
     }
 
-    object Progress : UiChatMessage {
+    object Progress : UiMessage {
 
         override fun changeTitle(toolbar: ToolbarActivity) {
             toolbar.changeTitle(TITLE)
@@ -59,7 +59,7 @@ interface UiChatMessage :
         private val id: String,
         private val content: String,
         private val isRead: Boolean
-    ) : UiChatMessage {
+    ) : UiMessage {
 
         override fun bind(view: TextView) {
             view.text = content
@@ -70,8 +70,8 @@ interface UiChatMessage :
             stateImage.visibility = View.GONE
         }
 
-        override fun isItemTheSame(item: UiChatMessage) = item.sameId(id)
-        override fun isContentTheSame(item: UiChatMessage) = item.same(content,isRead)
+        override fun isItemTheSame(item: UiMessage) = item.sameId(id)
+        override fun isContentTheSame(item: UiMessage) = item.same(content,isRead)
 
         override fun same(data: String,isRead: Boolean)
             = content == data && this.isRead == isRead
@@ -147,7 +147,7 @@ interface UiChatMessage :
         override fun changeTitle(toolbar: ToolbarActivity) = Unit
     }
 
-    interface OldMessage : UiChatMessage, SaveState {
+    interface OldMessage : UiMessage, SaveState {
 
         class Base(
             private val id: String,
@@ -178,7 +178,7 @@ interface UiChatMessage :
 
 
 
-    interface EditedMessage : UiChatMessage, EditContent, Action<ChatViewModel>, IsNotEmpty<Unit> {
+    interface EditedMessage : UiMessage, EditContent, Action<ChatViewModel>, IsNotEmpty<Unit> {
 
         class Base(
             private val id: String

@@ -74,7 +74,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
         val diffUtil = ChatMessageDiffUtil()
         adapter = ChatAdapter(diffUtil, object : EditMessageListener {
-            override fun edit(message: UiChatMessage) {
+            override fun edit(message: UiMessage) {
                 val text = ViewWrapper.Text(binding.oldMessageTv)
                 message.show(text)
 

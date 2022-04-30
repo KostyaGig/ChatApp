@@ -3,7 +3,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat.edit
 import ru.zinoview.viewmodelmemoryleak.core.Add
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatViewModel
-import ru.zinoview.viewmodelmemoryleak.ui.chat.UiChatMessage
+import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.SaveState
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.ToOldMessageMapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiState
@@ -12,11 +12,11 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.Show
 
-interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit>, SaveState, Add<UiChatMessage> {
+interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit>, SaveState, Add<UiMessage> {
 
     fun sendMessage(viewModel: ChatViewModel, content: String) = Unit
 
-    override fun add(data: UiChatMessage) = Unit
+    override fun add(data: UiMessage) = Unit
     override fun show(arg: Unit) = Unit
     override fun editContent(content: String) = Unit
     override fun disconnect(arg: Unit) = Unit
@@ -30,10 +30,10 @@ interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit>, SaveState,
         private val oldMapper: ToOldMessageMapper,
     ) : MessageSession {
 
-        private var editedMessage: UiChatMessage.EditedMessage = UiChatMessage.EditedMessage.Empty
-        private var oldMessage: UiChatMessage.OldMessage = UiChatMessage.OldMessage.Empty
+        private var editedMessage: UiMessage.EditedMessage = UiMessage.EditedMessage.Empty
+        private var oldMessage: UiMessage.OldMessage = UiMessage.OldMessage.Empty
 
-        override fun add(message: UiChatMessage) {
+        override fun add(message: UiMessage) {
             this.editedMessage = message.map(editedMapper)
             this.oldMessage = message.map(oldMapper)
         }
@@ -61,8 +61,8 @@ interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit>, SaveState,
         override fun show(arg: Unit) = viewWrapper.show(Unit)
 
         override fun disconnect(arg: Unit) {
-            editedMessage = UiChatMessage.EditedMessage.Empty
-            oldMessage = UiChatMessage.OldMessage.Empty
+            editedMessage = UiMessage.EditedMessage.Empty
+            oldMessage = UiMessage.OldMessage.Empty
             viewWrapper.disconnect(Unit)
         }
     }

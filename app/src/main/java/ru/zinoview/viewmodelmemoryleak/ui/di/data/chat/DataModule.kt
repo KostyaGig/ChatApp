@@ -3,8 +3,8 @@ package ru.zinoview.viewmodelmemoryleak.ui.di.data.chat
 import android.content.Context
 import androidx.work.WorkManager
 import org.koin.dsl.module.module
-import ru.zinoview.viewmodelmemoryleak.data.cache.UserSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatAction
+import ru.zinoview.viewmodelmemoryleak.data.chat.ChatActions
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatRepository
 import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.Worker
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudToDataMessageMapper
@@ -32,14 +32,12 @@ class DataModule(
                 get(),
                 get(),
                 get(),
-                UserSharedPreferences.Base(
-                    get(),get()
-                ),
-                ChatAction.SendMessage(
-                    get()
-                ),
-                ChatAction.EditMessage(get()),
-                worker
+                ChatActions.Base(
+                    worker,ChatAction.SendMessage(
+                        get()
+                    ),
+                    ChatAction.EditMessage(get())
+                )
             )
         }
 
@@ -54,10 +52,6 @@ class DataModule(
             CloudToDataMessageMapper.Base(
                 get()
             )
-        }
-
-        single<UserStatusWrapper> {
-            UserStatusWrapper.Base()
         }
     }
 

@@ -1,14 +1,14 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state
 
-import ru.zinoview.viewmodelmemoryleak.ui.chat.UiChatMessage
+import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
 
 interface UiStatesMapper {
 
-    fun map(states: List<UiState>,messages: List<UiChatMessage>) : UiStates
+    fun map(states: List<UiState>,messages: List<UiMessage>) : UiStates
 
     class Base : UiStatesMapper {
 
-        override fun map(states: List<UiState>, messages: List<UiChatMessage>): UiStates {
+        override fun map(states: List<UiState>, messages: List<UiMessage>): UiStates {
 
             return UiStates.Base(
                 states[MESSAGE_FIELD_STATE_INDEX] as UiState.EditText,

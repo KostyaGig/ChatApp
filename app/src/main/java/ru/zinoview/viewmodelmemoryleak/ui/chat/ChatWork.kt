@@ -5,17 +5,17 @@ import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
 import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
 import ru.zinoview.viewmodelmemoryleak.ui.core.Work
 
-interface ChatWork : Work<List<DataMessage>,List<UiChatMessage>> {
+interface ChatWork : Work<List<DataMessage>,List<UiMessage>> {
 
     class Base(
         private val dispatcher: Dispatcher,
-        private val mapper: ToUiMessageMapper
-        ) : ChatWork, Work.Abstract<List<DataMessage>,List<UiChatMessage>>(dispatcher) {
+        private val mapper: DomainToUiMessageMapper
+        ) : ChatWork, Work.Abstract<List<DataMessage>,List<UiMessage>>(dispatcher) {
 
         override fun execute(
             scope: CoroutineScope,
             background: suspend () -> List<DataMessage>,
-            ui: (List<UiChatMessage>) -> Unit
+            ui: (List<UiMessage>) -> Unit
         ) {
             doBackground(scope) {
                 val dataMessages = background.invoke()

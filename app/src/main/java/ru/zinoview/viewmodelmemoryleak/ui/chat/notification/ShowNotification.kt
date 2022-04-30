@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.notification
 
 import android.os.Build
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudMessage
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.ui.core.Show
@@ -18,6 +19,7 @@ interface ShowNotification : Show<List<CloudMessage>>, Disconnect<String> {
             }
 
             val notifications = notification.notifications(messages)
+            Log.d("zinoviewk","notifications count $notifications")
 
             notifications.forEach { notification ->
                 notification.show(service)

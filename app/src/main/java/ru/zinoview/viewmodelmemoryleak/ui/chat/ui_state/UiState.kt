@@ -2,7 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state
 
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatAdapter
-import ru.zinoview.viewmodelmemoryleak.ui.chat.UiChatMessage
+import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 
 interface UiState : IsNotEmpty<Unit> {
@@ -44,7 +44,7 @@ interface UiState : IsNotEmpty<Unit> {
         ) {
             viewWrapper.show(Unit,oldMessageText)
 
-            val uiChatMessage = UiChatMessage.OldMessage.Base(messageId,oldMessageText)
+            val uiChatMessage = UiMessage.OldMessage.Base(messageId,oldMessageText)
             messageSession.add(uiChatMessage)
 
             messageSession.show(Unit)
@@ -56,7 +56,7 @@ interface UiState : IsNotEmpty<Unit> {
     }
 
     class Messages(
-        private val messages: List<UiChatMessage> = emptyList()
+        private val messages: List<UiMessage> = emptyList()
     ) : UiState {
 
         override fun recover(

@@ -5,7 +5,6 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
-import ru.zinoview.viewmodelmemoryleak.ui.chat.UiChatMessage
 
 /**
  * Test for [ru.zinoview.viewmodelmemoryleak.core.chat.Mapper]

@@ -12,6 +12,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.DataModule
 import ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.NetworkModule
 import ru.zinoview.viewmodelmemoryleak.ui.di.data.cloud.CoreNetworkModule
 import ru.zinoview.viewmodelmemoryleak.ui.di.data.core.CoreDataModule
+import ru.zinoview.viewmodelmemoryleak.ui.di.domain.chat.DomainModule
 import ru.zinoview.viewmodelmemoryleak.ui.di.ui.chat.UiModule
 import ru.zinoview.viewmodelmemoryleak.ui.di.ui.core.CoreUiModule
 
@@ -48,21 +49,24 @@ class ChatApp : Application(), Configuration.Provider {
         val joinDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.join.DataModule()
         val joinNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.join.NetworkModule()
 
-        val notificationDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.notification.DataModule()
-        val notificationNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.notification.NetworkModule()
         val userStatusDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.user_status.DataModule()
         val userStatusNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.user_status.NetworkModule()
 
         val authenticationDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.authentication.DataModule()
 
-        val coreUiModule = CoreUiModule()
+        val updateDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.update.DataModule()
+        val updateNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.update.NetworkModule()
 
+        val processingMessagesDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.processing_messages.DataModule()
+        val processingMessagesNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.processing_messages.NetworkModule()
+
+        val chatDomainModule = DomainModule()
+
+        val coreUiModule = CoreUiModule()
         val chatUiModule = UiModule()
-        val uiStateModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.chat.ui_state.UiModule()
         val authenticationUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.authentication.UiModule(this)
         val joinUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.join.UiModule()
         val connectionUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.connection.UiModule()
-        val userStatusUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.chat.user_status.UiModule()
 
         val modules = mutableListOf<ru.zinoview.viewmodelmemoryleak.ui.di.core.Module>()
 
@@ -77,17 +81,18 @@ class ChatApp : Application(), Configuration.Provider {
         modules.add(joinNetworkModule)
         modules.add(userStatusDataModule)
         modules.add(userStatusNetworkModule)
-        modules.add(notificationDataModule)
-        modules.add(notificationNetworkModule)
         modules.add(authenticationDataModule)
         modules.add(connectionNetworkModule)
+        modules.add(updateDataModule)
+        modules.add(updateNetworkModule)
+        modules.add(processingMessagesDataModule)
+        modules.add(processingMessagesNetworkModule)
+        modules.add(chatDomainModule)
         modules.add(coreUiModule)
         modules.add(chatUiModule)
-        modules.add(uiStateModule)
         modules.add(authenticationUiModule)
         modules.add(joinUiModule)
         modules.add(connectionUiModule)
-        modules.add(userStatusUiModule)
 
         val koinModules = mutableListOf<Module>()
         modules.forEach { module ->

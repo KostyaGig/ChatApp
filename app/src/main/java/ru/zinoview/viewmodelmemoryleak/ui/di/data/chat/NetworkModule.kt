@@ -29,12 +29,6 @@ class NetworkModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
                 get()
             )
         }
-
-        single {
-            CloudDataSource.Update(
-                get(),get()
-            )
-        }
     }
 
     override fun add(modules: MutableList<org.koin.dsl.module.Module>) {
