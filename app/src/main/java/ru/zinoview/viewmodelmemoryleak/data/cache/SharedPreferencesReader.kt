@@ -7,14 +7,6 @@ interface SharedPreferencesReader<T> {
 
     fun read(key: kotlin.String, prefs: SharedPreferences) : T
 
-    class Int(
-        private val id: Id
-    ) : SharedPreferencesReader<kotlin.Int> {
-
-        override fun read(key: kotlin.String, prefs: SharedPreferences) : kotlin.Int
-            = id.read(key, prefs)
-    }
-
     class String(
         private val emptyString: EmptyString
     ) : SharedPreferencesReader<kotlin.String> {

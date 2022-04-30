@@ -18,7 +18,7 @@ interface DataJoin : Join {
     }
 
     data class Test(
-        private val id: Int
+        private val id: String
     ) : DataJoin {
 
         override fun <T> map(mapper: Mapper<T>): T

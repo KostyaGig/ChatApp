@@ -15,8 +15,7 @@ interface ImmediatelyUpdateChatRepository : SendMessage, EditMessage {
 
 
         override suspend fun sendMessage(content: String) {
-            // todo make id() -> String
-            val id = prefs.id().toString()
+            val id = prefs.id()
             val nickName = prefs.nickName()
             cloudDataSource.sendMessage(id,nickName,content)
         }

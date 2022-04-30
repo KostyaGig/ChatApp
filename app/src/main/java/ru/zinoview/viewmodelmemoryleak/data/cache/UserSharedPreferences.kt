@@ -2,12 +2,12 @@ package ru.zinoview.viewmodelmemoryleak.data.cache
 
 interface UserSharedPreferences {
 
-    fun id() : Int
+    fun id() : String
 
     fun nickName() : String
 
     class Base(
-        private val id: IdSharedPreferences<Int,Unit>,
+        private val id: IdSharedPreferences<String,Unit>,
         private val name: NickNameSharedPreferences<String,Unit>,
     ) : UserSharedPreferences {
 

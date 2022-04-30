@@ -22,7 +22,7 @@ interface MessagesStore :
         private val mapper: ToProgressEditMessageMapper,
         private val isNotEmpty: IsNotEmpty<List<CloudMessage>>,
         private val listSize: ListSize,
-        private val idSharedPreferences: IdSharedPreferences<Int,Unit>,
+        private val idSharedPreferences: IdSharedPreferences<String,Unit>,
     ) : MessagesStore {
 
         private val messages = ArrayList<CloudMessage>()

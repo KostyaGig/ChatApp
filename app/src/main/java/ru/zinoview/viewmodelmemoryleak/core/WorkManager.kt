@@ -12,6 +12,7 @@ import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.ChatWorkerFactory
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.*
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.Data
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.ProcessingMessages
+import ru.zinoview.viewmodelmemoryleak.data.core.EmptyString
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.*
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.ShowNotification
 
@@ -24,6 +25,7 @@ interface WorkManager {
     ) : WorkManager {
         override fun workManager(context: Context): Configuration {
 
+            val emptyString = EmptyString.Base()
             val cloudDataSource = CloudDataSource.Base(
                 IO.socket(URI),
                 SocketConnection.Base(
@@ -44,10 +46,8 @@ interface WorkManager {
                     IsNotEmpty.List(),
                     ListSize.Base(),
                     IdSharedPreferences.Base(
-                        SharedPreferencesReader.Int(
-                            Id.Base()
-                        ),
-                        Id.Base(),
+                        SharedPreferencesReader.String(emptyString),
+                        Id.Base(emptyString),
                         context
                     )
                 ),

@@ -15,8 +15,8 @@ interface CloudToDataMessageMapper : Mapper<DataMessage> {
     ) : DataMessage
 
     class Base(
-        private val idSharedPreferences: IdSharedPreferences<Int, Unit>
-    ) : CloudToDataMessageMapper,Mapper.Base<DataMessage>(DataMessage.Empty) {
+        private val idSharedPreferences: IdSharedPreferences<String, Unit>
+    ) : CloudToDataMessageMapper, Mapper.Base<DataMessage>(DataMessage.Empty) {
 
         override fun map(
             id: String,
@@ -25,7 +25,7 @@ interface CloudToDataMessageMapper : Mapper<DataMessage> {
             senderNickname: String,
             isRead: Boolean
         ): DataMessage {
-            return if (idSharedPreferences.read(Unit) == senderId) {
+            return if (idSharedPreferences.read(Unit) == senderId.toString()) {
                 if (isRead) {
                     DataMessage.Sent.Read(id, senderId, content, senderNickname)
                 } else {

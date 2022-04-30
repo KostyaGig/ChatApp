@@ -8,17 +8,17 @@ import ru.zinoview.viewmodelmemoryleak.core.Save
 interface IdSharedPreferences<T,K> : IsEmpty<Unit>, Save<T>, Read<T,K> {
 
     class Base(
-        private val reader: SharedPreferencesReader<Int>,
+        private val reader: SharedPreferencesReader<String>,
         private val id: Id,
         context: Context
-    ) : IdSharedPreferences<Int,Unit> {
+    ) : IdSharedPreferences<String,Unit> {
 
         private val prefs = context.getSharedPreferences(NAME,Context.MODE_PRIVATE)
 
-        override fun read(arg: Unit): Int = reader.read(KEY,prefs)
+        override fun read(arg: Unit) = id.read(KEY,prefs)
 
-        override fun save(id: Int)
-            = prefs.edit().putInt(KEY,id).apply()
+        override fun save(id: String)
+            = prefs.edit().putString(KEY,id).apply()
 
         override fun isEmpty(arg: Unit) = id.isEmpty(read(Unit))
 

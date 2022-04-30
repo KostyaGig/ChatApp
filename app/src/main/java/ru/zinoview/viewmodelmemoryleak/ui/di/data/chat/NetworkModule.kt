@@ -19,7 +19,7 @@ class NetworkModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
                 get()
             )
         }
-        single {
+        single<CloudDataSource<Unit>> {
             CloudDataSource.Base(
                 get(),
                 get(),

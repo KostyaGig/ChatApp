@@ -2,20 +2,22 @@ package ru.zinoview.viewmodelmemoryleak.data.cache
 
 import android.content.SharedPreferences
 import ru.zinoview.viewmodelmemoryleak.core.IsEmpty
+import ru.zinoview.viewmodelmemoryleak.data.core.EmptyString
 
-interface Id : SharedPreferencesReader<Int>, IsEmpty<Int> {
+interface Id : SharedPreferencesReader<String>, IsEmpty<String> {
 
-    class Base : Id {
+    class Base(
+        private val emptyString: EmptyString
+    ) : Id {
 
-        override fun isEmpty(src: Int) = src == EMPTY_ID
+        override fun isEmpty(src: String) = src == EMPTY_ID
 
         override fun read(key: String,prefs: SharedPreferences)
-            = prefs.getInt(key,
-            EMPTY_ID
-        )
+            = emptyString.string(prefs.getString(key, EMPTY_ID
+            ), EMPTY_ID)
 
         private companion object {
-            private const val EMPTY_ID = -1
+            private const val EMPTY_ID = "-1"
         }
     }
 }

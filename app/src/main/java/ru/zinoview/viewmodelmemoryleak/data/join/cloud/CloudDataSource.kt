@@ -10,7 +10,7 @@ import kotlin.coroutines.suspendCoroutine
 
 interface CloudDataSource : Disconnect<Unit>, AbstractCloudDataSource {
 
-    suspend fun joinedUserId(nickname: String) : Int
+    suspend fun joinedUserId(nickname: String) : String
 
     class Base(
         private val socket: Socket,
@@ -18,9 +18,9 @@ interface CloudDataSource : Disconnect<Unit>, AbstractCloudDataSource {
         private val json: Json,
     ) : AbstractCloudDataSource.Base(socket, connection), CloudDataSource {
 
-        override suspend fun joinedUserId(nickname: String) : Int {
+        override suspend fun joinedUserId(nickname: String) : String {
             connection.connect(socket)
-            return suspendCoroutine<Int> { continuation ->
+            return suspendCoroutine<String> { continuation ->
                 connection.addSocketBranch(JOIN_USER)
                 val user = json.json(
                     Pair(
@@ -31,7 +31,7 @@ interface CloudDataSource : Disconnect<Unit>, AbstractCloudDataSource {
 
                 socket.on(JOIN_USER) { data ->
                     val id = data.first() as Int
-                    continuation.resume(id)
+                    continuation.resume(id.toString())
                 }
                 socket.emit(JOIN_USER,user)
             }
@@ -48,12 +48,12 @@ interface CloudDataSource : Disconnect<Unit>, AbstractCloudDataSource {
 
         private var id = -1
 
-        override suspend fun joinedUserId(nickname: String): Int {
+        override suspend fun joinedUserId(nickname: String): String {
             return if (nickname.isEmpty()) {
-                -1
+                "-1"
             } else {
                 id += 1
-                id
+                "$id"
             }
         }
 

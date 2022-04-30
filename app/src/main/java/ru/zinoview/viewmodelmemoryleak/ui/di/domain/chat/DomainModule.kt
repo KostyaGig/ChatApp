@@ -13,7 +13,7 @@ class DomainModule : Module {
                 get(),
                 get(),
                 get(),
-                DataToDomainMessageMapper()
+                DataToDomainMessageMapper.Base()
             )
         }
     }

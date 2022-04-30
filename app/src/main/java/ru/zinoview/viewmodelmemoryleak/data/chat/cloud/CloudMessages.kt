@@ -19,7 +19,7 @@ interface CloudMessage : Message, CloudSame {
 
     fun mapNotification(mapper: NotificationMapper) : NotificationWrapper = NotificationWrapper.Empty
 
-    fun addUnreadMessageId(userId: Int,unreadMessages: MutableList<String>) = Unit
+    fun addUnreadMessageId(userId: String,unreadMessages: MutableList<String>) = Unit
 
     data class Base(
         private val id: String,
@@ -42,8 +42,8 @@ interface CloudMessage : Message, CloudSame {
         override fun sameContent(content: String)
             = this.content == content
 
-        override fun addUnreadMessageId(userId: Int, unreadMessages: MutableList<String>) {
-            if (isRead.not() && senderId != userId) {
+        override fun addUnreadMessageId(userId: String, unreadMessages: MutableList<String>) {
+            if (isRead.not() && senderId.toString() != userId) {
                 unreadMessages.add(id)
             }
         }
