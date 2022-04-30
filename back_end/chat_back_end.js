@@ -72,7 +72,7 @@ io.on('connection', (socket) => {
   				newMessage.content = content;
   				newMessage.senderNickName = item.senderNickName;
 
-  				// todo if was updated change isRead -> false
+  				newMessage.isRead = false
 
   				indexEditingContentMessage = index;
   			}
