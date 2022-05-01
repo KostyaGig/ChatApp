@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
@@ -27,6 +28,12 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NetworkConnectionFragm
 class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentBinding>(
     ChatViewModel.Base::class
 ) {
+
+    // todo move to interface
+    fun showNotificationMessageInRecyclerView(messageId: String) {
+        Toast.makeText(requireContext(),messageId,Toast.LENGTH_LONG).show()
+        Log.d("zinoviewk","SHOW NOTIF MSG IN rec view $messageId")
+    }
 
     private var adapter: ChatAdapter = ChatAdapter.Empty
     private var scrollListener: ChatRecyclerViewScrollListener = ChatRecyclerViewScrollListener.Empty

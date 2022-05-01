@@ -26,6 +26,19 @@ interface NotificationWrapper : Show<NotificationService>,DisconnectNotification
         }
     }
 
+    class Push(
+        private val tag: String,
+        private val notification: Notification
+    ) : NotificationWrapper {
+
+        override fun show(service: NotificationService)
+            = service.show(notification,tag)
+
+        override fun disconnect(service: NotificationService, content: String)
+            = service.disconnect(tag)
+
+    }
+
     object Empty : NotificationWrapper {
         override fun show(arg: NotificationService) = Unit
         override fun disconnect(service: NotificationService, content: String) = Unit

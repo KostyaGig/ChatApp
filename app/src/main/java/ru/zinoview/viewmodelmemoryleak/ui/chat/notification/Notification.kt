@@ -1,33 +1,72 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.notification
 
-import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudMessage
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import androidx.core.app.NotificationCompat
+import java.lang.IllegalStateException
 
+interface Notification {
 
-interface Notification : CreateChannel, DisconnectNotification {
+    fun notification(title: String,content: String,icon: Int,channelId: String,subText: String) : NotificationCompat.Builder
 
-    fun notifications(messages: List<CloudMessage>) : List<NotificationWrapper>
+    // todo move intent data into a class
+    fun <T> intentNotification(context: Context, activity: Class<T>,messageId: String) : NotificationCompat.Builder
 
     class Base(
-        private val channel: Channel,
-        private val mapper: NotificationMapper
+        private val context: Context
     ) : Notification {
 
-        private val notifications = ArrayList<NotificationWrapper>()
+        override fun notification(
+            title: String,
+            content: String,
+            icon: Int,
+            channelId: String,
+            subText: String
+        ) : NotificationCompat.Builder {
 
-        override fun notifications(messages: List<CloudMessage>): List<NotificationWrapper> {
-            val notifications = messages.map { messages -> messages.mapNotification(mapper) }
-
-            this.notifications.addAll(notifications)
-
-            return notifications
+            return NotificationCompat.Builder(context, channelId)
+                .setContentText(content)
+                .setSmallIcon(icon)
+                .setContentTitle(title)
+                .setGroup(channelId)
+                .setSubText(subText)
         }
 
-        override fun disconnect(service: NotificationService, content: String) {
-            notifications.forEach { notifcation ->
-                notifcation.disconnect(service, content)
+        override fun <T> intentNotification(
+            context: Context,
+            activity: Class<T>,
+            messageId: String
+        ) = throw IllegalStateException("Base.notificationIntent()")
+    }
+
+    class Intent(
+        private val notification: NotificationCompat.Builder
+    ) : Notification {
+
+        override fun notification(
+            title: String,
+            content: String,
+            icon: Int,
+            channelId: String,
+            subText: String
+        ) : NotificationCompat.Builder = throw IllegalStateException("Push.notification()")
+
+        override fun <T> intentNotification(context: Context, activity: Class<T>,messageId: String) : NotificationCompat.Builder {
+            // todo move to class and use it in mainActivity before launch mainactivity
+            val intent = Intent(context, activity).apply {
+                putExtra("fragment_key","chat")
+                putExtra("message_id",messageId)
             }
+
+            intent.flags = android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP or android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
+            val contentIntent = PendingIntent.getActivity(context, REQUEST_CODE,intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            return notification.setContentIntent(contentIntent)
         }
 
-        override fun createChannel() = channel.createChannel()
+        private companion object {
+            private const val REQUEST_CODE = 321
+        }
+
     }
 }

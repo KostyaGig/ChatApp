@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.join
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,11 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NetworkConnectionFragm
 class JoinUserFragment : NetworkConnectionFragment<JoinUserViewModel.Base, JoinFragmentBinding>(
     JoinUserViewModel.Base::class
 ) {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("zinoviewk","JOIN FRAGMENT ONCREATE")
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

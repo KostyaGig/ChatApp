@@ -8,7 +8,7 @@ interface NotificationMapper {
     fun mapEdit(content: String,time: String) : NotificationWrapper = NotificationWrapper.Empty
 
     class Base(
-        private val channelId: GroupId
+        private val channelId: Channel
     ) : NotificationMapper {
 
         override fun mapEdit(content: String,time: String)

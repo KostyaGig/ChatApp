@@ -2,14 +2,14 @@ package ru.zinoview.viewmodelmemoryleak.ui.core
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.databinding.ActivityMainBinding
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatFragment
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.*
 
-class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity {
+class MainActivity : AppCompatActivity(), Navigation,  ToolbarActivity {
 
     private var _binding: ActivityMainBinding? = null
     private val binding by lazy {
@@ -28,27 +28,29 @@ class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity {
         if (savedInstanceState != null) {
             fragmentIntent.navigate(this)
         } else {
-            if (intent.getStringExtra("fragment_key") != null) {
-                Log.d("zinoviewk","BUNDLE NULL, fragment ${intent.getStringExtra("fragment_key")}")
-            } else {
-                Log.d("zinoviewk","BUNDLE NULL, fragment null")
-            }
             fragmentIntent.navigate(intent,this)
         }
     }
 
     override fun onNewIntent(intent: android.content.Intent?) {
         super.onNewIntent(intent)
-        Log.d("zinoviewk","ONNEWINTENT")
+        // todo rewrite
+        val messageNotificationId = intent?.getStringExtra("message_id") ?: ""
+        val fragment = supportFragmentManager.fragments.first() as ChatFragment
+        fragment.showNotificationMessageInRecyclerView(messageNotificationId)
     }
 
 
-    override fun navigateTo(fragment: Fragment) {
+    override fun navigateTo(fragment: Fragment,notificationMessageId: String) {
         fragmentIntent.saveFragment(fragment)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container,fragment)
             .commitNow()
+
+        if (fragment is ChatFragment) {
+            fragment.showNotificationMessageInRecyclerView(notificationMessageId)
+        }
     }
 
     override fun back() {

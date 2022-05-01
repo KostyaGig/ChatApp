@@ -2,6 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.core.navigation
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Save
 
 interface Intent<T> : Navigate {
@@ -26,11 +27,18 @@ interface Intent<T> : Navigate {
 
 
         override fun navigate(intent: Intent,navigation: Navigation) {
-            val data = intent.getStringExtra(FRAGMENT_KEY) ?: EMPTY
-            val fragment = mapper.map(data)
-            fragment.navigate(navigation)
+            val stringFragment = intent.getStringExtra(FRAGMENT_KEY) ?: EMPTY
+            Log.d("zinoviewk","navigate $stringFragment")
 
-            fragmentStore.save(data)
+            // todo replace on parcelable
+            val intentNotificationMessageId = intent.getStringExtra(NOTIFICATION_MESSAGE_KEY)
+
+            val notificationMessage = intentNotificationMessageId ?: ""
+
+            val fragment = mapper.map(stringFragment)
+            fragment.navigate(navigation,notificationMessage)
+
+            fragmentStore.save(stringFragment)
         }
 
         override fun navigate(navigation: Navigation)
@@ -41,6 +49,7 @@ interface Intent<T> : Navigate {
 
         private companion object {
             private const val FRAGMENT_KEY = "fragment_key"
+            private const val NOTIFICATION_MESSAGE_KEY = "message_id"
             private const val EMPTY = ""
         }
     }
@@ -48,6 +57,7 @@ interface Intent<T> : Navigate {
     interface FragmentStore : Navigate, Save<String> {
 
         fun save(fragment: androidx.fragment.app.Fragment)
+
 
         class Base(
             private val stringFragment: StringFragment,

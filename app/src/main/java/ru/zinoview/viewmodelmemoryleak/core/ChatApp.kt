@@ -24,14 +24,21 @@ class ChatApp : Application(), Configuration.Provider {
         super.onCreate()
 
         val resourceProvider = ResourceProvider.Base(this)
-        val channelId = GroupId.Base(this)
-        val channel = Channel.Base(channelId,UniqueNotification.Base(
-            this,resourceProvider, NotificationId.Base(), Date.Notification()))
+        val channel = Channel.Base(this)
+        channel.createChannel()
+
         val service = NotificationService.Base(this)
+
+
         notification = ShowNotification.Base(
-            Notification.Base(
-                channel,
-                NotificationMapper.Base(GroupId.Notification(channel))
+            NotificationWrappers.Base(
+                NotificationMapper.Base(Channel.Processing(
+                    UniqueNotification.Base(
+                        resourceProvider, NotificationId.Base(), Date.Notification(),Notification.Base(
+                            this
+                        )
+                    )
+                ))
             ),
             service
         )
