@@ -11,14 +11,13 @@ interface NotificationWrapper : Show<NotificationService>,DisconnectNotification
         private val time: String
     ) : NotificationWrapper {
 
-        override fun show(service: NotificationService) {
-            service.show(id,notification,time)
-        }
+        override fun show(service: NotificationService)
+            = service.show(notification,time,id)
 
         override fun disconnect(service: NotificationService, content: String) {
             val contentText = notification.extras.getCharSequence(CONTENT_TEXT)
             if (content == contentText) {
-                service.disconnect(id,time)
+                service.disconnect(time,id)
             }
         }
 

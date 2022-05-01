@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
-import android.util.Log
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.core.chat.Messages
@@ -10,6 +9,7 @@ import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnection
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
+import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationService
 
 interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMessage, EditMessage, ReadMessages {
 
@@ -23,7 +23,8 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
         private val json: Json,
         private val data: Data<List<CloudMessage>>,
         private val messagesStore: MessagesStore,
-        private val processingMessages: ProcessingMessages
+        private val processingMessages: ProcessingMessages,
+        private val notificationService: NotificationService
     ) : AbstractCloudDataSource.Base(socket, connection), CloudDataSource<Unit> {
 
         override suspend fun messages(block:(List<CloudMessage>) -> Unit) {
@@ -80,11 +81,14 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
 
         override fun readMessages(range: Pair<Int, Int>) {
             messagesStore.unreadMessageIds(range) { unreadMessageIds ->
-                Log.d("zinoviewk","readMessages $unreadMessageIds")
                 val ids = CloudUnreadMessageIds.Base(unreadMessageIds)
                 val jsonIds = json.json(ids)
 
                 socket.emit(READ_MESSAGE,jsonIds)
+
+                unreadMessageIds.forEach { tag ->
+                    notificationService.disconnect(tag)
+                }
             }
             connection.addSocketBranch(READ_MESSAGE)
             connection.connect(socket)

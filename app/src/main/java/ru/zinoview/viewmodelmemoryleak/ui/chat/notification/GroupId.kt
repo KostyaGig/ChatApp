@@ -5,6 +5,7 @@ import android.app.NotificationChannelGroup
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 
 interface GroupId : CreateChannel {
@@ -32,6 +33,7 @@ interface GroupId : CreateChannel {
         override fun createChannel()  = Unit
     }
 
+    // todo move create channels to application class after start the application
     class Base(
         private val context: Context
     ) : Abstract() {
@@ -41,20 +43,19 @@ interface GroupId : CreateChannel {
             val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val channels = listOf(
                 NotificationChannel(SM_GROUP_ID, SM_GROUP_ID, NotificationManager.IMPORTANCE_DEFAULT),
-                NotificationChannel(EM_GROUP_ID, EM_GROUP_ID, NotificationManager.IMPORTANCE_DEFAULT)
+                NotificationChannel(EM_GROUP_ID, EM_GROUP_ID, NotificationManager.IMPORTANCE_DEFAULT),
             )
 
             manager.createNotificationChannelGroups(
                 listOf(
                     NotificationChannelGroup(SM_GROUP_ID, SM_GROUP_ID),
-                    NotificationChannelGroup(EM_GROUP_ID, EM_GROUP_ID)
+                    NotificationChannelGroup(EM_GROUP_ID, EM_GROUP_ID),
                 )
             )
 
             channels.forEach { channel ->
                 manager.createNotificationChannel(channel)
             }
-
         }
     }
 }

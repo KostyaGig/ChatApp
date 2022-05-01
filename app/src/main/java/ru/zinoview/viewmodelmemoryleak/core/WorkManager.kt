@@ -14,6 +14,7 @@ import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.Data
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.ProcessingMessages
 import ru.zinoview.viewmodelmemoryleak.data.core.EmptyString
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.*
+import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationService
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.ShowNotification
 
 interface WorkManager {
@@ -50,7 +51,8 @@ interface WorkManager {
                         context
                     )
                 ),
-                ProcessingMessages.Empty
+                ProcessingMessages.Empty,
+                NotificationService.Push(context)
             )
             val factory = ChatWorkerFactory(
                 cloudDataSource,
