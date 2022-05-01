@@ -20,7 +20,7 @@ interface JoinUserViewModel :
         private val work: JoinWork,
         private val communication: JoinUserCommunication,
         private val connectionWrapper: UiConnectionWrapper
-    ) : BaseViewModel<UiJoin>(repository,communication), JoinUserViewModel {
+    ) : BaseViewModel<UiJoin>(listOf(repository),communication), JoinUserViewModel {
 
         init {
             Log.d("zinoviewk","Join viewmodel init")

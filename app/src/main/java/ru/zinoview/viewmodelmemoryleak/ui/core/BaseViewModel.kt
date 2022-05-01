@@ -6,11 +6,15 @@ import androidx.lifecycle.ViewModel
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 
 abstract class BaseViewModel<T>(
-    private val repository: Clean,
-    private val communication: Communication<T>
+    private var cleans: List<Clean>,
+    private var communication: Communication<T>
 ) : ViewModel(), Clean, CommunicationObserve<T> {
 
-    override fun clean() = repository.clean()
+    override fun clean() {
+        cleans.forEach { clean ->
+            clean.clean()
+        }
+    }
 
     override fun observe(owner: LifecycleOwner, observer: Observer<T>) =
         communication.observe(owner, observer)

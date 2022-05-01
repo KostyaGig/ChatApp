@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.data.connection.cloud
 
 import io.socket.client.Socket
+import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.data.core.SuspendObserve
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.AbstractCloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnection
@@ -14,7 +15,7 @@ interface CloudDataSource<T> :
     class Base(
         private val socket: Socket,
         private val connection: SocketConnection,
-        private val connectionState: ConnectionState,
+        private val connectionState: ConnectionState
     ) : CloudDataSource<Unit>, AbstractCloudDataSource.Base(socket, connection){
 
         override suspend fun observe(block: (CloudConnection) -> Unit) {

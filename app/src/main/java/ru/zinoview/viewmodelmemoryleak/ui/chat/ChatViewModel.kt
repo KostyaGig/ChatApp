@@ -16,7 +16,7 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
     ActionViewModel<String>,
     ru.zinoview.viewmodelmemoryleak.ui.core.ConnectionViewModel,
     ReadMessages,
-    ObserveScrollCommunication,
+    ObserveScroll,
     ShowProcessingMessages {
 
     fun messages()
@@ -29,9 +29,11 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
         private val dispatcher: Dispatcher,
         private val mapper: DomainToUiMessageMapper,
         private val communication: MessagesCommunication,
-        private val scrollCommunication: ScrollCommunication,
+        private val scroll: Scroll,
         private val connectionWrapper: UiConnectionWrapper
-    ) : BaseViewModel<List<UiMessage>>(interactor,communication), ChatViewModel {
+    ) : BaseViewModel<List<UiMessage>>(listOf(
+            interactor,scroll
+        ),communication), ChatViewModel {
 
         override fun doAction(content: String)
             = work.doBackground(viewModelScope) {
@@ -50,9 +52,8 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
                     val uiMessages = domain.map { it.map(mapper) }
 
                     dispatcher.doUi(viewModelScope) {
-                        uiMessages.first().addScroll(scrollCommunication)
-
                         communication.postValue(uiMessages)
+                        scroll.add(uiMessages)
                     }
                 }
             }
@@ -75,6 +76,7 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
         override fun observeScrollCommunication(
             owner: LifecycleOwner,
             observer: Observer<UiScroll>
-        ) = scrollCommunication.observe(owner, observer)
+        ) = scroll.observeScrollCommunication(owner, observer)
+
     }
 }

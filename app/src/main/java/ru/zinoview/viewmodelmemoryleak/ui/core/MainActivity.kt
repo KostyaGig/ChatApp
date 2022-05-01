@@ -2,6 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.core
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.R
@@ -29,6 +30,11 @@ class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity {
         } else {
             fragmentIntent.navigate(intent,this)
         }
+    }
+
+    override fun onNewIntent(intent: android.content.Intent?) {
+        super.onNewIntent(intent)
+        Log.d("zinoviewk","ONNEWINTENT")
     }
 
 

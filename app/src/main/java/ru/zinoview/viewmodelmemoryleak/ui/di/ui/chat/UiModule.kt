@@ -46,7 +46,7 @@ class UiModule : Module {
                 get(),
                 get(),
                 MessagesCommunication(),
-                ScrollCommunication(),
+                Scroll.Base(ScrollCommunication()),
                 get()
             )
         }
