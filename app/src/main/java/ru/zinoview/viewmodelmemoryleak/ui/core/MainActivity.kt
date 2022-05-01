@@ -28,6 +28,11 @@ class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity {
         if (savedInstanceState != null) {
             fragmentIntent.navigate(this)
         } else {
+            if (intent.getStringExtra("fragment_key") != null) {
+                Log.d("zinoviewk","BUNDLE NULL, fragment ${intent.getStringExtra("fragment_key")}")
+            } else {
+                Log.d("zinoviewk","BUNDLE NULL, fragment null")
+            }
             fragmentIntent.navigate(intent,this)
         }
     }
