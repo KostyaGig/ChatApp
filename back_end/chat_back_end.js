@@ -50,7 +50,7 @@ io.on('connection', (socket) => {
 
 		console.log("send message ",message)
 
-		sendNotification(message.senderNickName,message.content)
+		sendNotification(message.id,message.senderNickName,message.content)
 	})
 
 
@@ -72,7 +72,9 @@ io.on('connection', (socket) => {
   				newMessage.content = content;
   				newMessage.senderNickName = item.senderNickName;
 
+  				// todo if was updated change isRead -> false
   				newMessage.isRead = false
+
 
   				indexEditingContentMessage = index;
   			}
@@ -104,6 +106,7 @@ io.on('connection', (socket) => {
 					}
 				});
 			});
+			console.log("read",newMessage);
 
 			messages[indexMessageForUpdate] = newMessage;
 
@@ -141,24 +144,22 @@ io.on('connection', (socket) => {
 		console.log('connectUser',offlineUserNotificationTokens)
 	})
 
-	function sendNotification(senderNickName,content) {
+	function sendNotification(messageId,senderNickName,content) {
 
-		var payload = {
-			notification: {
-				title: senderNickName,
-    			body: content
-			}
-		}
-
-		var options = {
-  			priority: "high",
-  			timeToLive: 60 * 60 * 24
-		};
 
 		offlineUserNotificationTokens.forEach(function(item, index, array) {
 			var notificationToken = item
 
-			admin.messaging().sendToDevice(notificationToken, payload, options)
+			const message = {
+  				data: {
+  					messageId: messageId,
+    				nickName: senderNickName,
+   		 			content: content
+  				},
+  				token: notificationToken
+			};
+
+			admin.messaging().send(message)
   				.then((response) => {
     				console.log('Successfully sent message:', response);
   				})
