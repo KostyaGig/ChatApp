@@ -6,7 +6,7 @@ const fs = require('fs');
 const app = express();
 
 var PORT = process.env.PORT || 3000;
-const server = app.listen(PORT);
+const server = app.listen(PORT); 
 
 app.use(express.static('public'));
 console.log('Server is running');
@@ -18,6 +18,8 @@ var users = [];
 var messages = [];
 
 var offlineUserNotificationTokens = [];
+
+// base uri - http://10.0.2.2:3000
 
 io.on('connection', (socket) => {
 
@@ -72,6 +74,7 @@ io.on('connection', (socket) => {
   				newMessage.content = content;
   				newMessage.senderNickName = item.senderNickName;
 
+  				// todo if was updated change isRead -> false
   				newMessage.isRead = false
 
 
@@ -108,7 +111,7 @@ io.on('connection', (socket) => {
 			console.log("read",newMessage);
 
 			messages[indexMessageForUpdate] = newMessage;
-
+			
 			io.emit('messages',messages)
 		}
 	})
@@ -169,5 +172,156 @@ io.on('connection', (socket) => {
 
 	}
 
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb://localhost:27017/";
+
+
+	socket.on('testAddSenderIdAndReceiverId',(user) => {
+		console.log(user)
+		// var jsonUser = JSON.parse(user)
+		// console.log(jsonUser)
+		// console.log(user['senderId'],user['receiverId'])
+
+		var senderId = user['senderId']
+		var receiverId = user['receiverId']
+
+		MongoClient.connect(url, function(err, db) {
+  			if (err) throw err;
+  			var database = db.db("chat_app_db");
+  			var user = {
+  				senderId: senderId,
+  				receiverId: receiverId,
+  				msg: [ 
+  					{ senderName: 'Petya', content: 'Hello,Kostya' },
+     				{ senderName: 'Kostya', content: 'Hello,Petya' }
+     			]}
+  			
+  			database.collection("user").insertOne(user, function(err, res) {
+    			if (err) throw err;
+    			console.log("1 document inserted");
+    			db.close();
+  			});
+
+		});
+	})
+
+	socket.on('testUpdateSenderIdAndReceiverId',(user) => {
+		console.log(user)
+		// var jsonUser = JSON.parse(user)
+		// console.log(jsonUser)
+		// console.log(user['senderId'],user['receiverId'])
+
+		var senderId = user['senderId']
+		var receiverId = user['receiverId']
+		var newMsg = user['messages']
+
+		var jsonNewMsg = {
+			msg: newMsg
+		}
+
+		MongoClient.connect(url, function(err, db) {
+  			if (err) throw err;
+  			var database = db.db("chat_app_db");
+
+  			var query = {
+  				senderId: senderId,
+  				receiverId: receiverId,
+  			}
+
+  			var newMessages = { $set: jsonNewMsg}
+
+  			database.collection("user").updateOne(query,newMessages, function(err, res) {
+    			if (err) throw err;
+    			console.log("1 document inserted");
+    			db.close();
+  			});
+
+		});
+	})
+
+	socket.on('testReadSenderIdAndReceiverId',(user) => {
+		var senderId = user['senderId']
+		var receiverId = user['receiverId']
+
+		MongoClient.connect(url, function(err, db) {
+  			if (err) throw err;
+  			var database = db.db("chat_app_db");
+
+  			var user = {
+  				senderId: senderId,
+  				receiverId: receiverId
+  			}
+
+  			database.collection("user").findOne(user, function(err, result) {
+    			if (err) throw err;
+    			console.log('msg',result['msg']);
+    			db.close();
+  			});
+
+		});
+	})
+
+
+	socket.on('testSendMessage',(message) => {
+		console.log(message)
+
+		var senderId = message['senderId']
+		var receiverId = message['receiverId']
+
+		MongoClient.connect(url, function(err, db) {
+  			if (err) throw err;
+  			var database = db.db("chat_app_db");
+
+  			var user = {
+  				senderId: senderId,
+  				receiverId: receiverId
+  			}
+
+  			database.collection("user").findOne(user, function(err, result) {
+    			if (err) throw err;
+    			var jsonFoundMessages = result['msg']
+    			var listOfMessages = [];
+
+    			console.log('Print messages')
+
+				// copy old messages to list 
+    			jsonFoundMessages.forEach(function(message) {
+    				var messageObject = Object();
+    				messageObject.senderName = message.senderName;
+    				messageObject.content = message.content;
+    				listOfMessages.push(messageObject);
+				});
+
+				// add new message to list after coped old messages to there
+				var newMessage = Object();
+				newMessage.senderName = message['senderName'];
+				newMessage.content = message['content'];
+
+				listOfMessages.push(newMessage)
+
+				// query for update messages 
+				var query = {
+  					senderId: senderId,
+  					receiverId: receiverId,
+  				}
+
+  				var jsonMessages = {
+  					msg: listOfMessages
+  				}
+    			
+    			var newMessages = { $set: jsonMessages}
+
+    			database.collection("user").updateOne(query,newMessages, function(err, res) {
+    				if (err) throw err;
+    				console.log("1 document inserted");
+    				db.close();
+  				});
+
+  			});
+
+		});
+	})
+
 
 })
+
