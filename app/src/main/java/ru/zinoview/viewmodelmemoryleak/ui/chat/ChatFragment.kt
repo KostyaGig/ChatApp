@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.koin.android.ext.android.getKoin
+import ru.zinoview.viewmodelmemoryleak.core.Time
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession
@@ -19,6 +21,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.user_status.UserStatusViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBarHeight
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
+import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
 
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
@@ -29,7 +32,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
     ChatViewModel.Base::class
 ) {
 
-    // todo move to interface
+    // todo move to the interface
     fun showNotificationMessageInRecyclerView(messageId: String) {
         Toast.makeText(requireContext(),messageId,Toast.LENGTH_LONG).show()
         Log.d("zinoviewk","SHOW NOTIF MSG IN rec view $messageId")
@@ -62,6 +65,15 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         networkConnectionReceiver = NetworkConnectionReceiver.Base(viewModel)
 
         val editContainer = ViewWrapper.Base(binding.editMessageContainer)
+
+        binding.messageField.addTextChangedListener(
+            // todo inject
+            TypeMessageTextWatcher.Base(
+                TypeMessageTimer.Base(viewModel,Time.Base()),
+                Dispatcher.Delay(),
+                lifecycleScope
+            )
+        )
 
         val snackBar = SnackBar.EmptyField(
             binding.messageField, SnackBar.SnackBarVisibility(

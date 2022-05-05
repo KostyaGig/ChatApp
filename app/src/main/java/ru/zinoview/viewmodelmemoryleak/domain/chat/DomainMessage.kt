@@ -2,6 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.domain.chat
 
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
+import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
 
 interface DomainMessage : Message {
 
@@ -77,5 +78,25 @@ interface DomainMessage : Message {
 
         override fun <T> map(mapper: Mapper<T>): T
             = mapper.mapProgress(senderId, content)
+    }
+
+    abstract class Typing : DomainMessage {
+
+        data class Is(
+            private val senderNickName: String
+        ) : Typing() {
+
+            override fun <T> map(mapper: Mapper<T>)
+                = mapper.mapIsTyping(senderNickName)
+        }
+
+        data class IsNot(
+            private val senderNickName: String
+        ) : Typing() {
+
+            override fun <T> map(mapper: Mapper<T>)
+                = mapper.mapIsNotTyping(senderNickName)
+        }
+
     }
 }

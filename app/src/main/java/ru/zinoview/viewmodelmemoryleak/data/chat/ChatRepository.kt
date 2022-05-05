@@ -1,17 +1,17 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Clean
-import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
-import ru.zinoview.viewmodelmemoryleak.core.chat.Messages
-import ru.zinoview.viewmodelmemoryleak.core.chat.ShowProcessingMessages
+import ru.zinoview.viewmodelmemoryleak.core.chat.*
+import ru.zinoview.viewmodelmemoryleak.core.chat.SendMessage
 import ru.zinoview.viewmodelmemoryleak.data.cache.UserSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudToDataMessageMapper
-import ru.zinoview.viewmodelmemoryleak.core.chat.SendMessage
 import ru.zinoview.viewmodelmemoryleak.data.core.CleanRepository
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
 
-interface ChatRepository<T> : Messages<DataMessage>, SendMessage, EditMessage ,ReadMessages, ShowProcessingMessages,Clean {
+interface ChatRepository<T> : Messages<DataMessage>, SendMessage, EditMessage ,
+    ReadMessages, TypeMessage, ShowProcessingMessages,Clean {
 
     override fun showProcessingMessages() = Unit
 
@@ -26,7 +26,7 @@ interface ChatRepository<T> : Messages<DataMessage>, SendMessage, EditMessage ,R
         CleanRepository(cloudDataSource) {
 
         override suspend fun sendMessage(content: String) {
-            val userId = userSharedPreferences.id().toString()
+            val userId = userSharedPreferences.id()
             val userNickName = userSharedPreferences.nickName()
 
             val data = listOf(userId,userNickName,content)
@@ -40,17 +40,22 @@ interface ChatRepository<T> : Messages<DataMessage>, SendMessage, EditMessage ,R
             chatActions.editMessage(data)
         }
 
-        override fun readMessages(range: Pair<Int,Int>)
-            = cloudDataSource.readMessages(range)
-
-        override suspend fun messages(block: (List<DataMessage>) -> Unit) {
-            cloudDataSource.messages { cloud ->
-                val data = cloud.map { it.map(mapper) }
-                block.invoke(data)
-            }
+        override suspend fun updateTypeMessageState(isTyping: Boolean)  {
+            val userNickName = userSharedPreferences.nickName()
+            cloudDataSource.updateTypeMessageState(isTyping,userNickName)
         }
 
-        override fun showProcessingMessages() = Unit
-    }
+            override fun readMessages(range: Pair<Int,Int>)
+                = cloudDataSource.readMessages(range)
+
+            override suspend fun messages(block: (List<DataMessage>) -> Unit) {
+                cloudDataSource.messages { cloud ->
+                    val data = cloud.map { it.map(mapper) }
+                    block.invoke(data)
+                }
+            }
+
+            override fun showProcessingMessages() = Unit
+        }
 
 }

@@ -78,4 +78,24 @@ interface DataMessage : Message {
         override fun <T> map(mapper: Mapper<T>): T
             = mapper.mapProgress(senderId, content)
     }
+
+    abstract class Typing : DataMessage {
+
+        data class Is(
+            private val senderNickName: String
+        ) : Typing() {
+
+            override fun <T> map(mapper: Mapper<T>)
+                = mapper.mapIsTyping(senderNickName)
+        }
+
+        data class IsNot(
+            private val senderNickName: String
+        ) : Typing() {
+
+            override fun <T> map(mapper: Mapper<T>)
+                = mapper.mapIsNotTyping(senderNickName)
+        }
+
+    }
 }

@@ -17,6 +17,9 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
 
     override suspend fun messages(block: (List<CloudMessage>) -> Unit) = Unit
 
+    // todo test
+    suspend fun updateTypeMessageState(isTyping: Boolean,senderNickName: String) = Unit
+
     class Base(
         private val socket: Socket,
         private val connection: SocketConnection,
@@ -51,14 +54,13 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
                     SENDER_ID_KEY,userId
                 ),
                 Pair(
-                    SENDER_NICK_NAME,nickName
+                    SENDER_NICK_NAME_KEY,nickName
                 ),
                 Pair(
                     MESSAGE_CONTENT_KEY,content
                 ),
             )
 
-            connection.connect(socket)
             socket.emit(SEND_MESSAGE,message)
         }
 
@@ -72,9 +74,7 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
                 )
             )
 
-            connection.connect(socket)
             connection.addSocketBranch(EDIT_MESSAGE)
-
 
             socket.emit(EDIT_MESSAGE,message)
         }
@@ -91,7 +91,43 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
                 }
             }
             connection.addSocketBranch(READ_MESSAGE)
+        }
+
+        override suspend fun updateTypeMessageState(isTyping: Boolean,senderNickName: String) {
             connection.connect(socket)
+
+            val state = json.json(
+                Pair(
+                    IS_TYPING_KEY,isTyping
+                ),
+                Pair(
+                    SENDER_NICK_NAME_KEY,senderNickName
+                )
+            )
+
+//            socket.on(TO_TYPE_MESSAGE) { cloudData ->
+//                Log.d("zinoviewk","scoket to type")
+//                if (cloudData != null) {
+//                    val jsonTypingMessage = json.json(cloudData.first())
+//                    val typingMessage = json.objectFromJson(jsonTypingMessage,TypingValue::class.java).map()
+//
+//                    Log.d("zinoviewk","data - $typingMessage")
+//
+//                    if (typingMessage.isCloud()) {
+//                        Log.d("zinoviewk","isCloud")
+//                    } else {
+//                        Log.d("zinoviewk","isNotCloud")
+//                    }
+//
+////                    messagesStore.add(typingMessage)
+////                    messagesStore.remove(typingMessage)
+//                } else {
+//                    Log.d("zinoviewk","data is nulll")
+//                }
+//            }
+
+            socket.emit(TO_TYPE_MESSAGE,state)
+            connection.addSocketBranch(TO_TYPE_MESSAGE)
         }
 
         override fun disconnect(arg: Unit)  = Unit
@@ -102,11 +138,13 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
         private const val MESSAGES = "messages"
         private const val EDIT_MESSAGE = "edit_message"
         private const val READ_MESSAGE = "read_message"
+        private const val TO_TYPE_MESSAGE = "to_type_message"
 
         private const val SENDER_ID_KEY = "senderId"
-        private const val SENDER_NICK_NAME = "senderNickName"
+        private const val SENDER_NICK_NAME_KEY = "senderNickName"
         private const val MESSAGE_CONTENT_KEY = "content"
         private const val MESSAGE_ID_KEY = "id"
+        private const val IS_TYPING_KEY = "isTyping"
     }
 
 }

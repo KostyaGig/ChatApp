@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
 import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
@@ -26,7 +27,7 @@ interface CloudMessage : Message, CloudSame {
         private val senderId: Int,
         private val content: String,
         private val senderNickName: String,
-        private val isRead: Boolean
+        private val isRead: Boolean,
     ) : CloudMessage {
 
         override fun <T> map(content: String, mapper: Mapper<T>): T
@@ -47,6 +48,24 @@ interface CloudMessage : Message, CloudSame {
                 unreadMessages.add(id)
             }
         }
+    }
+
+    data class Typing(
+        private val senderNickName: String,
+        private val isTyping: Boolean,
+        private val isCloud: Boolean = false
+    ) : CloudMessage {
+
+
+        override fun map(mapper: CloudToDataMessageMapper) : DataMessage {
+            return if (isTyping) {
+                mapper.mapIsTyping(senderNickName)
+            } else {
+                mapper.mapIsNotTyping(senderNickName)
+            }
+        }
+
+        fun isCloud() = isCloud
     }
 
     data class Failure(
@@ -124,6 +143,19 @@ class Value(
     private val nameValuePairs: CloudMessage.Base
 ) : Mapper.Base<CloudMessage>(CloudMessage.Empty) {
 
+
+    override fun map(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ) = nameValuePairs
+
+}
+
+class TypingValue(
+    private val nameValuePairs: CloudMessage.Typing
+) : Mapper.Base<CloudMessage>(CloudMessage.Empty) {
 
     override fun map(
         id: String,

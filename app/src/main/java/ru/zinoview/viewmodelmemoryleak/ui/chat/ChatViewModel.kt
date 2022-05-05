@@ -23,6 +23,8 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
 
     fun editMessage(messageId: String, content: String)
 
+    fun updateTypeMessageState(isTyping: Boolean)
+
     class Base(
         private val interactor: ChatInteractor,
         private val work: ChatWork,
@@ -30,6 +32,7 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
         private val mapper: DomainToUiMessageMapper,
         private val communication: MessagesCommunication,
         private val scroll: Scroll,
+        // todo move to another viewModel
         private val connectionWrapper: UiConnectionWrapper
     ) : BaseViewModel<List<UiMessage>>(listOf(
             interactor,scroll
@@ -59,9 +62,20 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
             }
         }
 
+        override fun updateTypeMessageState(isTyping: Boolean)
+            = work.doBackground(viewModelScope) {
+                interactor.updateTypeMessageState(isTyping)
+            }
+
+
         override fun readMessages(range: Pair<Int, Int>) = interactor.readMessages(range)
 
         override fun showProcessingMessages() = interactor.showProcessingMessages()
+
+        override fun observeScrollCommunication(
+            owner: LifecycleOwner,
+            observer: Observer<UiScroll>
+        ) = scroll.observeScrollCommunication(owner, observer)
 
         override fun observeConnection(owner: LifecycleOwner,observer: Observer<UiConnection>)
             = connectionWrapper.observeConnection(owner, observer)
@@ -72,11 +86,6 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
             = work.doBackground(viewModelScope) {
                 connectionWrapper.updateNetworkState(isConnected,viewModelScope)
             }
-
-        override fun observeScrollCommunication(
-            owner: LifecycleOwner,
-            observer: Observer<UiScroll>
-        ) = scroll.observeScrollCommunication(owner, observer)
 
     }
 }

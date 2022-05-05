@@ -1,5 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.core.chat
 
+import android.util.Log
+
 interface Mapper<T> {
 
     abstract class Base<T>(
@@ -37,6 +39,16 @@ interface Mapper<T> {
             content: String,
             senderNickname: String
         ) = empty
+
+        override fun mapIsNotTyping(senderNickname: String): T {
+            Log.d("zinoviewk","return empty")
+            return empty
+        }
+
+        override fun mapIsTyping(senderNickname: String): T {
+            Log.d("zinoviewk","return empty")
+            return empty
+        }
     }
 
     fun map(
@@ -71,6 +83,14 @@ interface Mapper<T> {
         id: String,
         senderId: Int,
         content: String,
+        senderNickname: String
+    ) : T
+
+    fun mapIsTyping(
+        senderNickname: String
+    ) : T
+
+    fun mapIsNotTyping(
         senderNickname: String
     ) : T
 }

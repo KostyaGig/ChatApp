@@ -26,7 +26,8 @@ import java.lang.IllegalStateException
             is UiMessage.ProgressMessage -> 3
             is UiMessage.Received -> 4
             is UiMessage.Progress, UiMessage.Empty -> 5
-            is UiMessage.Failure -> 6
+            is UiMessage.Typing -> 6
+            is UiMessage.Failure -> 7
             else -> {
                 Log.d("zinoviewk","else ${getItem(position)}")
                 -1
@@ -58,7 +59,10 @@ import java.lang.IllegalStateException
             5 -> BaseViewHolder.Empty(
                     LayoutInflater.from(parent.context).inflate(R.layout.empty,parent,false)
                 )
-            6 -> BaseViewHolder.Failure(
+            6 -> BaseViewHolder.Typing(
+                LayoutInflater.from(parent.context).inflate(R.layout.typing,parent,false)
+            )
+            7 -> BaseViewHolder.Failure(
                 LayoutInflater.from(parent.context).inflate(R.layout.error,parent,false)
             )
 
@@ -98,6 +102,15 @@ import java.lang.IllegalStateException
             view: View
         ) : BaseViewHolder(view) {
             override fun bind(item: UiMessage) = Unit
+        }
+
+        class Typing(
+            view: View
+        ) : BaseViewHolder(view) {
+
+            private val senderNicknameTextView = view.findViewById<TextView>(R.id.sender_nickname_tv)
+
+            override fun bind(item: UiMessage) = item.bind(senderNicknameTextView)
         }
     }
 

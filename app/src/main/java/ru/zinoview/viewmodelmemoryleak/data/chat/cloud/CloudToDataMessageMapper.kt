@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
@@ -41,5 +42,16 @@ interface CloudToDataMessageMapper : Mapper<DataMessage> {
 
         override fun mapProgress(senderId: Int, content: String)
             = DataMessage.Progress(senderId, content)
+
+        override fun mapIsTyping(senderNickname: String): DataMessage {
+            Log.d("zinoviewk","mapIsTyping")
+            return DataMessage.Typing.Is(senderNickname)
+        }
+
+        override fun mapIsNotTyping(senderNickname: String) : DataMessage {
+            Log.d("zinoviewk","mapIsNotTyping")
+
+            return DataMessage.Typing.IsNot(senderNickname)
+        }
     }
 }

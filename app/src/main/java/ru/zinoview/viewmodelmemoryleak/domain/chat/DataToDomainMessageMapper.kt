@@ -35,6 +35,12 @@ interface DataToDomainMessageMapper : Mapper<DomainMessage> {
             content: String,
             senderNickname: String
         ) =  DomainMessage.Sent.Unread(id,senderId,content,senderNickname)
+
+        override fun mapIsTyping(senderNickname: String)
+            = DomainMessage.Typing.Is(senderNickname)
+
+        override fun mapIsNotTyping(senderNickname: String)
+            = DomainMessage.Typing.IsNot(senderNickname)
     }
 
 }

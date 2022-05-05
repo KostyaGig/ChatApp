@@ -7,6 +7,7 @@ import android.widget.TextView
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
+import ru.zinoview.viewmodelmemoryleak.domain.chat.DomainMessage
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditContent
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.SaveState
@@ -146,6 +147,31 @@ interface UiMessage :
         override fun addScroll(scrollCommunication: ScrollCommunication) = Unit
 
         override fun changeTitle(toolbar: ToolbarActivity) = Unit
+    }
+
+    abstract class Typing : UiMessage {
+
+        data class Is(
+            private val senderNickName: String
+        ) : Typing() {
+
+            override fun <T> map(mapper: Mapper<T>)
+                = mapper.mapIsTyping(senderNickName)
+
+            override fun bind(view: TextView) {
+                val text = senderNickName + "is typing..."
+                view.text = text
+            }
+        }
+
+        data class IsNot(
+            private val senderNickName: String
+        ) : Typing() {
+
+            override fun <T> map(mapper: Mapper<T>)
+                = mapper.mapIsNotTyping(senderNickName)
+        }
+
     }
 
     interface OldMessage : UiMessage, SaveState {

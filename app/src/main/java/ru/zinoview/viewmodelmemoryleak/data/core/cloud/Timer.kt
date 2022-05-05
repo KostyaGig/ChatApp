@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.core.cloud
 
-import android.util.Log
 import java.util.concurrent.Executors
 
 interface Timer {

@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
+import ru.zinoview.viewmodelmemoryleak.domain.chat.DomainMessage
 
 
 interface DomainToUiMessageMapper : Mapper<UiMessage> {
@@ -35,6 +36,12 @@ interface DomainToUiMessageMapper : Mapper<UiMessage> {
             content: String,
             senderNickname: String
         ) =  UiMessage.Sent.Unread(id,content,senderId.toString(),senderNickname)
+
+        override fun mapIsTyping(senderNickname: String)
+            = UiMessage.Typing.Is(senderNickname)
+
+        override fun mapIsNotTyping(senderNickname: String)
+            = UiMessage.Typing.IsNot(senderNickname)
     }
 
 }

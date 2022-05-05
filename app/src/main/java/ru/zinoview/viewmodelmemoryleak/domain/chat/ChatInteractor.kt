@@ -7,7 +7,8 @@ import ru.zinoview.viewmodelmemoryleak.data.chat.processing_messages.ProcessingC
 import ru.zinoview.viewmodelmemoryleak.data.chat.update.ImmediatelyUpdateChatRepository
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
 
-interface ChatInteractor : Messages<DomainMessage>, SendMessage, EditMessage, ShowProcessingMessages, ReadMessages ,Clean {
+interface ChatInteractor : Messages<DomainMessage>, SendMessage,
+    EditMessage, ShowProcessingMessages, ReadMessages , TypeMessage, Clean {
 
     class Base(
         private val chatRepository: ChatRepository<Unit>,
@@ -27,6 +28,9 @@ interface ChatInteractor : Messages<DomainMessage>, SendMessage, EditMessage, Sh
             updateChatRepository.editMessage(messageId,content)
             chatRepository.editMessage(messageId, content)
         }
+
+        override suspend fun updateTypeMessageState(isTyping: Boolean)
+            = chatRepository.updateTypeMessageState(isTyping)
 
         override fun showProcessingMessages()
             = processingMessagesRepository.show(Unit)

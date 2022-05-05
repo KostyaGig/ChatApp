@@ -8,4 +8,8 @@ interface Time<T> {
 
         override fun time() = System.currentTimeMillis().toString()
     }
+
+    class Base : Time<Long> {
+        override fun time() = System.currentTimeMillis()
+    }
 }
