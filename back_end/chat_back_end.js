@@ -6,7 +6,7 @@ const fs = require('fs');
 const app = express();
 
 var PORT = process.env.PORT || 3000;
-const server = app.listen(PORT); 
+const server = app.listen(PORT);
 
 app.use(express.static('public'));
 console.log('Server is running');
@@ -54,6 +54,42 @@ io.on('connection', (socket) => {
 
 		sendNotification(message.id,message.senderNickName,message.content)
 	})
+
+	const functions = require("firebase-functions");
+	var admin = require("firebase-admin");
+	var serviceAccount = require("/Users/kostazinovev/Desktop/chat_firebase_key.json");
+
+	if (!admin.apps.length) {
+    	admin.initializeApp({
+  			credential: admin.credential.cert(serviceAccount)
+		});
+	}
+
+	function sendNotification(messageId,senderNickName,content) {
+
+
+		offlineUserNotificationTokens.forEach(function(item, index, array) {
+			var notificationToken = item
+
+			const message = {
+  				data: {
+  					messageId: messageId,
+    				nickName: senderNickName,
+   		 			content: content
+  				},
+  				token: notificationToken
+			};
+
+			admin.messaging().send(message)
+  				.then((response) => {
+    				console.log('Successfully sent message:', response);
+  				})
+  				.catch((error) => {
+    				console.log('Error sending message:', error);
+  				});
+		})
+
+	}
 
 
 	socket.on('messages', () => {
@@ -111,20 +147,10 @@ io.on('connection', (socket) => {
 			console.log("read",newMessage);
 
 			messages[indexMessageForUpdate] = newMessage;
-			
+
 			io.emit('messages',messages)
 		}
 	})
-
-	const functions = require("firebase-functions");
-	var admin = require("firebase-admin");
-	var serviceAccount = require("/Users/kostazinovev/Desktop/chat_firebase_key.json");
-
-	if (!admin.apps.length) {
-    	admin.initializeApp({
-  			credential: admin.credential.cert(serviceAccount)
-		});
-	}
 
 
 	socket.on('disconnect_user',(notificationToken) => {
@@ -146,31 +172,34 @@ io.on('connection', (socket) => {
 		console.log('connectUser',offlineUserNotificationTokens)
 	})
 
-	function sendNotification(messageId,senderNickName,content) {
 
+	var isTypingYet = false
 
-		offlineUserNotificationTokens.forEach(function(item, index, array) {
-			var notificationToken = item
+	socket.on('to_type_message',(message) => {
+		var objectMessage = Object()
+		var isTyping = message['isTyping']
+		var senderNickName = message['senderNickName']
 
-			const message = {
-  				data: {
-  					messageId: messageId,
-    				nickName: senderNickName,
-   		 			content: content
-  				},
-  				token: notificationToken
-			};
+		objectMessage.senderNickName = senderNickName
+		objectMessage.isCloud = true
 
-			admin.messaging().send(message)
-  				.then((response) => {
-    				console.log('Successfully sent message:', response);
-  				})
-  				.catch((error) => {
-    				console.log('Error sending message:', error);
-  				});
-		})
+		if (isTyping) {
+			if(isTypingYet == false) {
+				objectMessage.isTyping = true
+				isTypingYet = true
+				io.emit('to_type_message',objectMessage)
+				console.log('push',objectMessage)
+			}
+		} else {
+			if(isTypingYet == true) {
+				objectMessage.isTyping = false
+				isTypingYet = false
+				io.emit('to_type_message',objectMessage)
+				console.log('push',objectMessage)
+			}
+		}
+	})
 
-	}
 
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/";
@@ -191,11 +220,11 @@ var url = "mongodb://localhost:27017/";
   			var user = {
   				senderId: senderId,
   				receiverId: receiverId,
-  				msg: [ 
+  				msg: [
   					{ senderName: 'Petya', content: 'Hello,Kostya' },
      				{ senderName: 'Kostya', content: 'Hello,Petya' }
      			]}
-  			
+
   			database.collection("user").insertOne(user, function(err, res) {
     			if (err) throw err;
     			console.log("1 document inserted");
@@ -284,7 +313,7 @@ var url = "mongodb://localhost:27017/";
 
     			console.log('Print messages')
 
-				// copy old messages to list 
+				// copy old messages to list
     			jsonFoundMessages.forEach(function(message) {
     				var messageObject = Object();
     				messageObject.senderName = message.senderName;
@@ -299,7 +328,7 @@ var url = "mongodb://localhost:27017/";
 
 				listOfMessages.push(newMessage)
 
-				// query for update messages 
+				// query for update messages
 				var query = {
   					senderId: senderId,
   					receiverId: receiverId,
@@ -308,7 +337,7 @@ var url = "mongodb://localhost:27017/";
   				var jsonMessages = {
   					msg: listOfMessages
   				}
-    			
+
     			var newMessages = { $set: jsonMessages}
 
     			database.collection("user").updateOne(query,newMessages, function(err, res) {
@@ -324,4 +353,6 @@ var url = "mongodb://localhost:27017/";
 
 
 })
+
+
 
