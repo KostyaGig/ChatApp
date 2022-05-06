@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.*
 import ru.zinoview.viewmodelmemoryleak.core.chat.SendMessage
@@ -11,7 +10,7 @@ import ru.zinoview.viewmodelmemoryleak.data.core.CleanRepository
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
 
 interface ChatRepository<T> : Messages<DataMessage>, SendMessage, EditMessage ,
-    ReadMessages, TypeMessage, ShowProcessingMessages,Clean {
+    ReadMessages, ToTypeMessage, ShowProcessingMessages,Clean {
 
     override fun showProcessingMessages() = Unit
 
@@ -40,9 +39,9 @@ interface ChatRepository<T> : Messages<DataMessage>, SendMessage, EditMessage ,
             chatActions.editMessage(data)
         }
 
-        override suspend fun updateTypeMessageState(isTyping: Boolean)  {
+        override suspend fun toTypeMessage(isTyping: Boolean)  {
             val userNickName = userSharedPreferences.nickName()
-            cloudDataSource.updateTypeMessageState(isTyping,userNickName)
+            cloudDataSource.toTypeMessage(isTyping,userNickName)
         }
 
             override fun readMessages(range: Pair<Int,Int>)

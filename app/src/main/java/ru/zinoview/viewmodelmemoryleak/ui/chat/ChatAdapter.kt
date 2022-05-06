@@ -25,8 +25,8 @@ import java.lang.IllegalStateException
             is UiMessage.Sent.Unread -> 2
             is UiMessage.ProgressMessage -> 3
             is UiMessage.Received -> 4
-            is UiMessage.Progress, UiMessage.Empty -> 5
-            is UiMessage.Typing -> 6
+            is UiMessage.Progress, UiMessage.Empty, is UiMessage.Typing.IsNot -> 5
+            is UiMessage.Progress, UiMessage.Empty, is UiMessage.Typing.Is -> 6
             is UiMessage.Failure -> 7
             else -> {
                 Log.d("zinoviewk","else ${getItem(position)}")

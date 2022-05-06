@@ -52,7 +52,9 @@ class UiModule : Module {
         }
 
         single<DomainToUiMessageMapper> {
-            DomainToUiMessageMapper.Base()
+            DomainToUiMessageMapper.Base(
+                get()
+            )
         }
     }
 

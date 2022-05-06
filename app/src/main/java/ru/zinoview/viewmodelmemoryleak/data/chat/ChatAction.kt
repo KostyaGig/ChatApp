@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat
 
+import android.util.Log
 import androidx.work.Data
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.Worker
@@ -42,6 +43,7 @@ interface ChatAction {
     ) : Abstract(notification) {
 
         override suspend fun sendMessage(data: Data, cloudDataSource: CloudDataSource<Unit>) {
+            Log.d("zinoviewk","send Message from Action Worker")
             val userId = data.getString(USER_ID_KEY)
             val userNickName = data.getString(USER_NICK_NAME_KEY)
             val content = data.getString(MESSAGE_CONTENT_KEY)

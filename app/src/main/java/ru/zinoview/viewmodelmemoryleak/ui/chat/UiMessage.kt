@@ -151,26 +151,25 @@ interface UiMessage :
 
     abstract class Typing : UiMessage {
 
-        data class Is(
-            private val senderNickName: String
+        class Is(
+            private val message: String
         ) : Typing() {
 
-            override fun <T> map(mapper: Mapper<T>)
-                = mapper.mapIsTyping(senderNickName)
 
             override fun bind(view: TextView) {
-                val text = senderNickName + "is typing..."
-                view.text = text
+                view.text = message
             }
+
+            override fun changeTitle(toolbar: ToolbarActivity)
+                = toolbar.changeTitle(message)
         }
 
-        data class IsNot(
-            private val senderNickName: String
-        ) : Typing() {
-
-            override fun <T> map(mapper: Mapper<T>)
-                = mapper.mapIsNotTyping(senderNickName)
-        }
+         class IsNot(
+             private val message: String
+         ) : Typing() {
+             override fun changeTitle(toolbar: ToolbarActivity)
+                = toolbar.changeTitle(message)
+         }
 
     }
 

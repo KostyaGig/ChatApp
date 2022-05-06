@@ -64,7 +64,7 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
 
         override fun updateTypeMessageState(isTyping: Boolean)
             = work.doBackground(viewModelScope) {
-                interactor.updateTypeMessageState(isTyping)
+                interactor.toTypeMessage(isTyping)
             }
 
 

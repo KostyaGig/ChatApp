@@ -1,12 +1,16 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
+import ru.zinoview.viewmodelmemoryleak.R
+import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.domain.chat.DomainMessage
 
 
 interface DomainToUiMessageMapper : Mapper<UiMessage> {
 
-    class Base : DomainToUiMessageMapper, Mapper.Base<UiMessage>(UiMessage.Empty) {
+    class Base(
+        private val resourceProvider: ResourceProvider
+    ) : DomainToUiMessageMapper, Mapper.Base<UiMessage>(UiMessage.Empty) {
         override fun mapFailure(message: String): UiMessage
                 = UiMessage.Failure(message)
 
@@ -21,7 +25,7 @@ interface DomainToUiMessageMapper : Mapper<UiMessage> {
         )
 
         override fun mapProgress(senderId: Int, content: String)
-                = UiMessage.ProgressMessage(senderId.toString(),content)
+            = UiMessage.ProgressMessage(senderId.toString(),content)
 
         override fun mapRead(
             id: String,
@@ -38,10 +42,15 @@ interface DomainToUiMessageMapper : Mapper<UiMessage> {
         ) =  UiMessage.Sent.Unread(id,content,senderId.toString(),senderNickname)
 
         override fun mapIsTyping(senderNickname: String)
-            = UiMessage.Typing.Is(senderNickname)
+            = UiMessage.Typing.Is("$senderNickname $SUFFIX")
 
         override fun mapIsNotTyping(senderNickname: String)
-            = UiMessage.Typing.IsNot(senderNickname)
+            = UiMessage.Typing.IsNot(resourceProvider.string(R.string.app_name))
+
+        private companion object {
+            private const val SUFFIX = "is typing..."
+            private const val CHAT = "chat"
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
+import android.util.Log
 import io.socket.client.Socket
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.core.chat.Messages
@@ -18,7 +19,7 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
     override suspend fun messages(block: (List<CloudMessage>) -> Unit) = Unit
 
     // todo test
-    suspend fun updateTypeMessageState(isTyping: Boolean,senderNickName: String) = Unit
+    suspend fun toTypeMessage(isTyping: Boolean,senderNickName: String) = Unit
 
     class Base(
         private val socket: Socket,
@@ -49,6 +50,7 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
         }
 
         override suspend fun sendMessage(userId: String,nickName: String,content: String) {
+            connection.connect(socket)
             val message = json.json(
                 Pair(
                     SENDER_ID_KEY,userId
@@ -61,10 +63,13 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
                 ),
             )
 
+            Log.d("zinoviewk","CLOUD DATA SOURCE SEND MESSAGE $content")
+
             socket.emit(SEND_MESSAGE,message)
         }
 
         override suspend fun editMessage(messageId: String, content: String) {
+            connection.connect(socket)
             val message = json.json(
                 Pair(
                     MESSAGE_ID_KEY,messageId
@@ -80,6 +85,7 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
         }
 
         override fun readMessages(range: Pair<Int, Int>) {
+            connection.connect(socket)
             messagesStore.unreadMessageIds(range) { unreadMessageIds ->
                 val ids = CloudUnreadMessageIds.Base(unreadMessageIds)
                 val jsonIds = json.json(ids)
@@ -93,7 +99,7 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
             connection.addSocketBranch(READ_MESSAGE)
         }
 
-        override suspend fun updateTypeMessageState(isTyping: Boolean,senderNickName: String) {
+        override suspend fun toTypeMessage(isTyping: Boolean,senderNickName: String) {
             connection.connect(socket)
 
             val state = json.json(
@@ -105,26 +111,13 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
                 )
             )
 
-//            socket.on(TO_TYPE_MESSAGE) { cloudData ->
-//                Log.d("zinoviewk","scoket to type")
-//                if (cloudData != null) {
-//                    val jsonTypingMessage = json.json(cloudData.first())
-//                    val typingMessage = json.objectFromJson(jsonTypingMessage,TypingValue::class.java).map()
-//
-//                    Log.d("zinoviewk","data - $typingMessage")
-//
-//                    if (typingMessage.isCloud()) {
-//                        Log.d("zinoviewk","isCloud")
-//                    } else {
-//                        Log.d("zinoviewk","isNotCloud")
-//                    }
-//
-////                    messagesStore.add(typingMessage)
-////                    messagesStore.remove(typingMessage)
-//                } else {
-//                    Log.d("zinoviewk","data is nulll")
-//                }
-//            }
+            socket.on(TO_TYPE_MESSAGE) { cloudData ->
+                val jsonTypingMessage = json.json(cloudData.first())
+                val typingMessage = json.objectFromJson(jsonTypingMessage,TypingValue::class.java).map()
+                messagesStore.add(typingMessage)
+                messagesStore.remove(typingMessage)
+                Log.d("zinoviewk","toTypeMessage SOCKET ON")
+            }
 
             socket.emit(TO_TYPE_MESSAGE,state)
             connection.addSocketBranch(TO_TYPE_MESSAGE)
