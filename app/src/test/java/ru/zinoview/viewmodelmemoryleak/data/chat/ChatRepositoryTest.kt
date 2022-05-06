@@ -120,6 +120,35 @@ class ChatRepositoryTest {
         assertEquals(expected, actual)
     }
 
+    @Test
+    fun test_to_type_message_is_typing() = runBlocking {
+        val expected = DataMessage.Typing.Is("Bob")
+        val actual = repository?.toTypeMessage(true)
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun test_to_type_message_is_not_typing() = runBlocking {
+        val expected = DataMessage.Typing.IsNot("Bob")
+        val actual = repository?.toTypeMessage(false)
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun test_to_type_mix_states() = runBlocking {
+        var expected: DataMessage = DataMessage.Typing.IsNot("Bob")
+        var actual = repository?.toTypeMessage(false)
+        assertEquals(expected, actual)
+
+        expected = DataMessage.Typing.Is("Bob")
+        actual = repository?.toTypeMessage(true)
+        assertEquals(expected, actual)
+
+        expected = DataMessage.Typing.Is("Bob")
+        actual = repository?.toTypeMessage(true)
+        assertEquals(expected, actual)
+    }
+
     @After
     fun clean() {
         repository = null
@@ -143,7 +172,10 @@ class ChatRepositoryTest {
         }
 
         override fun readMessages(range: Pair<Int, Int>)
-                = cloudDataSource.readMessages(range)
+            = cloudDataSource.readMessages(range)
+
+        override suspend fun toTypeMessage(isTyping: Boolean)
+            = cloudDataSource.toTypeMessage(isTyping,"Bob").first().map(mapper)
 
         fun messages() : List<DataMessage> = cloudDataSource.messages().map { it.map(mapper) }
     }
@@ -183,6 +215,11 @@ class ChatRepositoryTest {
             val message = messages[messageId.toInt() - 1]
             messages[messageId.toInt() - 1]  = message.updated(content)
         }
+
+        override suspend fun toTypeMessage(
+            isTyping: Boolean,
+            senderNickName: String
+        ) = listOf(CloudMessage.Typing(senderNickName,isTyping))
     }
 
     private inner class TestCloudToDataMessageMapper(
@@ -210,6 +247,12 @@ class ChatRepositoryTest {
 
         override fun mapFailure(message: String)
             = DataMessage.Failure(message)
+
+        override fun mapIsTyping(senderNickname: String)
+            = DataMessage.Typing.Is(senderNickname)
+
+        override fun mapIsNotTyping(senderNickname: String)
+            = DataMessage.Typing.IsNot(senderNickname)
     }
 
 

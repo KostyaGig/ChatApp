@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.work.*
 import com.google.gson.Gson
 import io.socket.client.IO
+import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
 import ru.zinoview.viewmodelmemoryleak.data.cache.Id
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
-import ru.zinoview.viewmodelmemoryleak.data.cache.SharedPreferencesReader
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatAction
 import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.ChatWorkerFactory
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.*
@@ -28,11 +28,12 @@ interface WorkManager {
 
             val emptyString = EmptyString.Base()
             val cloudDataSource = CloudDataSource.Base(
-                IO.socket(URI),
-                SocketConnection.Base(
-                    ActivityConnection.Base(
-                        Timer.Base(),
-                        ServerActivity.Base()
+                SocketWrapper.Base(
+                    IO.socket(URI),
+                    SocketConnection.Base(
+                        ActivityConnection.Base(
+                            Timer.Base()
+                        )
                     )
                 ),
                 Json.Base(

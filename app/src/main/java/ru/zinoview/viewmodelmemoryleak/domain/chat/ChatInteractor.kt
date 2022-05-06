@@ -8,7 +8,7 @@ import ru.zinoview.viewmodelmemoryleak.data.chat.update.ImmediatelyUpdateChatRep
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
 
 interface ChatInteractor : Messages<DomainMessage>, SendMessage,
-    EditMessage, ShowProcessingMessages, ReadMessages , ToTypeMessage, Clean {
+    EditMessage, ShowProcessingMessages, ReadMessages , ToTypeMessage.Unit, Clean {
 
     class Base(
         private val chatRepository: ChatRepository<Unit>,

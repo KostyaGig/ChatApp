@@ -27,7 +27,7 @@ class NetworkModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
 
         single<CloudDataSource<Unit>> {
             CloudDataSource.Base(
-                get(), get(), ConnectionState.Base(
+                get(), ConnectionState.Base(
                     get(),get()
                 )
             )

@@ -3,6 +3,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.di.data.cloud
 import com.google.gson.Gson
 import io.socket.client.IO
 import org.koin.dsl.module.module
+import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.*
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
 
@@ -13,11 +14,14 @@ class CoreNetworkModule : Module {
             IO.socket(URI)
         }
 
+        single<SocketWrapper> {
+            SocketWrapper.Base(get(),get())
+        }
+
         factory<SocketConnection> {
             SocketConnection.Base(
                 ActivityConnection.Base(
-                    Timer.Base(),
-                    ServerActivity.Base()
+                    Timer.Base()
                 )
             )
         }

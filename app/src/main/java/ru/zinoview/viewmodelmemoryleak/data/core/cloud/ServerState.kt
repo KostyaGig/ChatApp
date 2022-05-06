@@ -1,8 +1,8 @@
 package ru.zinoview.viewmodelmemoryleak.data.core.cloud
 
-import io.socket.client.Socket
+import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
 
 interface ServerState {
 
-   suspend fun serverState(socket: Socket) : CloudServerState
+   suspend fun serverState(socket: SocketWrapper) : CloudServerState
 }

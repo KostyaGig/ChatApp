@@ -2,40 +2,34 @@ package ru.zinoview.viewmodelmemoryleak.data.chat.user_status.cloud
 
 import ru.zinoview.viewmodelmemoryleak.core.chat.user_status.Offline
 import ru.zinoview.viewmodelmemoryleak.core.chat.user_status.Online
+import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketData
+import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
 import ru.zinoview.viewmodelmemoryleak.data.chat.user_status.FirebaseMessageNotification
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.AbstractCloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
-import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnection
 
 interface CloudDataSource : Offline, Online {
 
     class Base(
-        private val socket: io.socket.client.Socket,
-        private val connection: SocketConnection,
+        private val socketWrapper: SocketWrapper,
         private val firebase: FirebaseMessageNotification,
         private val json: Json
-        ) : AbstractCloudDataSource.Base(socket, connection),CloudDataSource {
+        ) : AbstractCloudDataSource.Base(socketWrapper),CloudDataSource {
 
         override suspend fun online() {
-            connection.connect(socket)
-
-            val notificationTokenJson = json.json(
+            val notificationTokenJson = SocketData.Base(json.json(
                 Pair(NOTIFICATION_TOKEN,firebase.notificationToken())
-            )
+            ))
 
-            socket.emit(CONNECT,notificationTokenJson)
-            connection.addSocketBranch(CONNECT)
+            socketWrapper.emit(CONNECT,notificationTokenJson)
         }
 
         override suspend fun offline() {
-            connection.connect(socket)
-
-            val notificationTokenJson = json.json(
+            val notificationTokenJson = SocketData.Base(json.json(
                 Pair(NOTIFICATION_TOKEN,firebase.notificationToken())
-            )
+            ))
 
-            socket.emit(DISCONNECT,notificationTokenJson)
-            connection.addSocketBranch(DISCONNECT)
+            socketWrapper.emit(DISCONNECT,notificationTokenJson)
         }
 
         private companion object {

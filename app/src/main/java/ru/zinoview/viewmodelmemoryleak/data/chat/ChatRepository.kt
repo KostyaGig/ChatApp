@@ -10,7 +10,7 @@ import ru.zinoview.viewmodelmemoryleak.data.core.CleanRepository
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
 
 interface ChatRepository<T> : Messages<DataMessage>, SendMessage, EditMessage ,
-    ReadMessages, ToTypeMessage, ShowProcessingMessages,Clean {
+    ReadMessages, ToTypeMessage<T>, ShowProcessingMessages,Clean {
 
     override fun showProcessingMessages() = Unit
 

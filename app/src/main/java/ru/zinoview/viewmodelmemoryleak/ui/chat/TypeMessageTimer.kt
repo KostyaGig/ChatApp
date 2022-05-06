@@ -17,7 +17,7 @@ interface TypeMessageTimer {
 
         override fun startTyping() {
             timeOfTimer = time.time()
-            viewModel.updateTypeMessageState(true)
+            viewModel.toTypeMessage(true)
         }
 
         override suspend fun stopTyping() {
@@ -25,7 +25,7 @@ interface TypeMessageTimer {
             val difference = currentTime - timeOfTimer
 
             if (difference >= MAX_TIME_AFTER_STOP_TYPING) {
-                viewModel.updateTypeMessageState(false)
+                viewModel.toTypeMessage(false)
             }
         }
 

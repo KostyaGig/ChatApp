@@ -23,7 +23,7 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
 
     fun editMessage(messageId: String, content: String)
 
-    fun updateTypeMessageState(isTyping: Boolean)
+    fun toTypeMessage(isTyping: Boolean)
 
     class Base(
         private val interactor: ChatInteractor,
@@ -62,7 +62,7 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
             }
         }
 
-        override fun updateTypeMessageState(isTyping: Boolean)
+        override fun toTypeMessage(isTyping: Boolean)
             = work.doBackground(viewModelScope) {
                 interactor.toTypeMessage(isTyping)
             }

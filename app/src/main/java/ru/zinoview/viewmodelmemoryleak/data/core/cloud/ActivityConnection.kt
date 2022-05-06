@@ -1,24 +1,18 @@
 package ru.zinoview.viewmodelmemoryleak.data.core.cloud
 
-import android.util.Log
-import io.socket.client.Socket
+import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-interface ActivityConnection : ServerState,ServerActivity {
+interface ActivityConnection : ServerState {
 
     class Base(
-        private val timer: Timer,
-        private val serverActivity: ServerActivity
+        private val timer: Timer
     ) : ActivityConnection {
 
-        init {
-            Log.d("zinoviewk","init ACTIVITY CONNECTION")
-        }
-
-        override suspend fun serverState(socket: Socket) : CloudServerState = suspendCoroutine {continuation ->
+        override suspend fun serverState(socket: SocketWrapper) : CloudServerState = suspendCoroutine {continuation ->
             timer.start(HANDLE_DELAY) {
-                if (isNotActive(socket)) {
+                if (socket.isNotActive()) {
                     continuation.resume(
                         CloudServerState.Died
                     )
@@ -26,13 +20,9 @@ interface ActivityConnection : ServerState,ServerActivity {
                     continuation.resume(
                         CloudServerState.Alive
                     )
-                    Log.d("zinoviewk","internet is ok server is ok")
                 }
             }
         }
-
-        override fun isNotActive(socket: Socket)
-            = serverActivity.isNotActive(socket)
 
         private companion object {
             private const val HANDLE_DELAY = 3000L

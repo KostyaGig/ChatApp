@@ -13,7 +13,6 @@ class NetworkModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
         single<CloudDataSource> {
             CloudDataSource.Base(
                 get(),
-                get(),
                 FirebaseMessageNotification.Base(),
                 get()
             )

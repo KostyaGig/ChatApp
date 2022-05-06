@@ -40,15 +40,8 @@ interface Mapper<T> {
             senderNickname: String
         ) = empty
 
-        override fun mapIsNotTyping(senderNickname: String): T {
-            Log.d("zinoviewk","return empty")
-            return empty
-        }
-
-        override fun mapIsTyping(senderNickname: String): T {
-            Log.d("zinoviewk","return empty")
-            return empty
-        }
+        override fun mapIsNotTyping(senderNickname: String) = empty
+        override fun mapIsTyping(senderNickname: String) = empty
     }
 
     fun map(

@@ -1,14 +1,13 @@
 package ru.zinoview.viewmodelmemoryleak.data.core.cloud
 
-import io.socket.client.Socket
+import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
 
 interface AbstractCloudDataSource : Disconnect<Unit> {
 
     abstract class Base(
-        private val socket: Socket,
-        private val connect: SocketConnection
+        private val socket: SocketWrapper
     ) : Disconnect<Unit> {
 
-        override fun disconnect(arg: Unit) = connect.disconnect(socket)
+        override fun disconnect(arg: Unit) = socket.disconnect(Unit)
     }
 }
