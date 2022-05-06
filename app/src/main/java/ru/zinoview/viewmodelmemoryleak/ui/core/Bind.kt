@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.core
 
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 

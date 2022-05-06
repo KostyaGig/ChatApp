@@ -1,13 +1,15 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
+import android.graphics.Color
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
-import ru.zinoview.viewmodelmemoryleak.domain.chat.DomainMessage
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditContent
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.SaveState
@@ -26,6 +28,7 @@ interface UiMessage :
 
     override fun same(data: String,isRead: Boolean) = false
     override fun sameId(id: String) = false
+    override fun sameFound(isFounded: Boolean) = false
 
     override fun bind(view: TextView) = Unit
     override fun bind(view: TextView, stateImage: ImageView,editImage: ImageView) = Unit
@@ -60,7 +63,10 @@ interface UiMessage :
     abstract class Abstract(
         private val id: String,
         private val content: String,
-        private val isRead: Boolean
+        private val isRead: Boolean,
+        private val isFounded: Boolean = false,
+        private val senderNickname: String = "",
+        private val senderId: String = "",
     ) : UiMessage {
 
         override fun bind(view: TextView) {
@@ -72,7 +78,7 @@ interface UiMessage :
             stateImage.visibility = View.GONE
         }
 
-        override fun isItemTheSame(item: UiMessage) = item.sameId(id)
+        override fun isItemTheSame(item: UiMessage) = item.sameId(id) && item.sameFound(isFounded)
         override fun isContentTheSame(item: UiMessage) = item.same(content,isRead)
 
         override fun same(data: String,isRead: Boolean)
@@ -80,12 +86,14 @@ interface UiMessage :
 
         override fun sameId(id: String) = this.id == id
 
+        override fun sameFound(isFounded: Boolean)
+            = this.isFounded == isFounded
+
         override fun changeTitle(toolbar: ToolbarActivity)
             = toolbar.changeTitle(TITLE)
 
         override fun addScroll(scrollCommunication: ScrollCommunication)
             = scrollCommunication.postValue(UiScroll.Base())
-
 
         private companion object {
             private const val TITLE = "Chat"
@@ -97,8 +105,8 @@ interface UiMessage :
         private val content: String,
         private val senderId: String,
         private val senderNickname: String,
-        private val isRead: Boolean
-    ) : Abstract(id,content,isRead) {
+        isRead: Boolean
+    ) : Abstract(id,content,isRead,false,senderNickname,senderId) {
 
         override fun bind(view: TextView, stateImage: ImageView, editImage: ImageView) {
             super.bind(view, stateImage, editImage)
@@ -111,6 +119,7 @@ interface UiMessage :
 
         override fun show(view: ViewWrapper) = view.show(Unit,content)
 
+
         data class Read(
             private val id: String,
             private val content: String,
@@ -119,20 +128,48 @@ interface UiMessage :
         ) : Sent(id, content, senderId, senderNickname,true)
 
 
-        data class Unread(
+        class Unread(
             private val id: String,
             private val content: String,
             private val senderId: String,
             private val senderNickname: String
         ) : Sent(id,content, senderId, senderNickname,false)
+
     }
 
-    data class Received(
+    abstract class Received(
         private val id: String,
         private val content: String,
         private val senderId: String,
-        private val senderNickname: String
-    ) : Abstract(id,content,false)
+        private val senderNickname: String,
+        private val isFounded: Boolean
+    ) : Abstract(id,content,false,isFounded,senderNickname,senderId) {
+
+        data class Base(
+            private val id: String,
+            private val content: String,
+            private val senderId: String,
+            private val senderNickname: String
+        ) : Received(id, content, senderId, senderNickname,false) {
+
+            override fun <T> map(mapper: Mapper<T>): T
+            // todo change senderId type to String
+            {
+                Log.d("zinoviewk","MAP UNREAD MESSAGE")
+                return mapper.map(id,senderId.toInt(),content, senderNickname)
+            }
+
+        }
+
+        data class Found(
+            private val id: String,
+            private val content: String,
+            private val senderId: String,
+            private val senderNickname: String
+        ) : Received(id, content, senderId, senderNickname,true)
+
+    }
+
 
     class ProgressMessage(
         private val senderId: String,

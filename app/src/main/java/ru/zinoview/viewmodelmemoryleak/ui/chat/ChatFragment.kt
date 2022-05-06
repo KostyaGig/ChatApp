@@ -43,6 +43,8 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
     private var messageSession: MessageSession = MessageSession.Empty
 
+    private var memento: UiChatMessagesMemento = UiChatMessagesMemento.Empty
+
     private val uiStateViewModel by lazy {
         getKoin().get<UiStateViewModel.Base>()
     }
@@ -104,6 +106,18 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         })
 
         val manager = LinearLayoutManager(requireContext())
+
+        memento = UiChatMessagesMemento.Base(
+            ToUiFoundMessageMapper.Base()
+        )
+
+//        CoroutineScope(Dispatchers.IO).launch {
+//            delay(6000)
+//            withContext(Dispatchers.Main) {
+//                memento.find("afb5a4af-a3cd-4d82-a278-bb773c3d9508",manager,binding.chatRv,adapter)
+//            }
+//        }
+
         binding.chatRv.layoutManager = manager
         binding.chatRv.adapter = adapter
 
@@ -129,8 +143,10 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         userStatusViewModel.online()
 
         viewModel.observe(this) { messages ->
+            Log.d("zinoviewk","$messages")
             messages.last().changeTitle(requireActivity() as ToolbarActivity)
             adapter.submitList(messages)
+            memento.update(messages)
         }
 
         viewModel.observeScrollCommunication(this) { uiScroll ->

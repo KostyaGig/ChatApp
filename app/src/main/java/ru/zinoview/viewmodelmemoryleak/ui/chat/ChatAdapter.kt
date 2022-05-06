@@ -24,10 +24,11 @@ import java.lang.IllegalStateException
             is UiMessage.Sent.Read -> 1
             is UiMessage.Sent.Unread -> 2
             is UiMessage.ProgressMessage -> 3
-            is UiMessage.Received -> 4
+            is UiMessage.Received.Base -> 4
             is UiMessage.Progress, UiMessage.Empty, is UiMessage.Typing.IsNot -> 5
-            is UiMessage.Progress, UiMessage.Empty, is UiMessage.Typing.Is -> 6
-            is UiMessage.Failure -> 7
+            is UiMessage.Empty, is UiMessage.Typing.Is -> 6
+            is UiMessage.Received.Found -> 7
+            is UiMessage.Failure -> 8
             else -> {
                 Log.d("zinoviewk","else ${getItem(position)}")
                 -1
@@ -62,7 +63,11 @@ import java.lang.IllegalStateException
             6 -> BaseViewHolder.Typing(
                 LayoutInflater.from(parent.context).inflate(R.layout.typing,parent,false)
             )
-            7 -> BaseViewHolder.Failure(
+            7 -> BaseViewHolder.Message(
+                LayoutInflater.from(parent.context).inflate(R.layout.found_received,parent,false),
+                listener
+            )
+            8-> BaseViewHolder.Failure(
                 LayoutInflater.from(parent.context).inflate(R.layout.error,parent,false)
             )
 
@@ -88,7 +93,6 @@ import java.lang.IllegalStateException
 
             override fun bind(item: UiMessage) {
                 item.bind(contentTv,stateImage,editImage)
-
                 editImage.setOnClickListener { item.edit(listener) }
             }
         }

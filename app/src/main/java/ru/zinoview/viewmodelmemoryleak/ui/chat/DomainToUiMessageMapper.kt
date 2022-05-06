@@ -3,8 +3,6 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
-import ru.zinoview.viewmodelmemoryleak.domain.chat.DomainMessage
-
 
 interface DomainToUiMessageMapper : Mapper<UiMessage> {
 
@@ -20,7 +18,7 @@ interface DomainToUiMessageMapper : Mapper<UiMessage> {
             content: String,
             senderNickname: String
         ): UiMessage
-                = UiMessage.Received(
+                = UiMessage.Received.Base(
             id,content,senderId.toString(),senderNickname
         )
 
@@ -49,7 +47,6 @@ interface DomainToUiMessageMapper : Mapper<UiMessage> {
 
         private companion object {
             private const val SUFFIX = "is typing..."
-            private const val CHAT = "chat"
         }
     }
 

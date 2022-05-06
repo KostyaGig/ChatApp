@@ -20,6 +20,10 @@
         <entry key="app/src/main/res/layout/empty.xml" value="0.30512820512820515" />
         <entry key="app/src/main/res/layout/empty_screen.xml" value="0.26944444444444443" />
         <entry key="app/src/main/res/layout/error.xml" value="0.13333333333333333" />
+        <entry key="app/src/main/res/layout/found.xml" value="0.16197916666666667" />
+        <entry key="app/src/main/res/layout/found_received.xml" value="0.3098958333333333" />
+        <entry key="app/src/main/res/layout/found_sent_read.xml" value="0.3098958333333333" />
+        <entry key="app/src/main/res/layout/found_sent_unread.xml" value="0.3098958333333333" />
         <entry key="app/src/main/res/layout/join_fragment.xml" value="0.375" />
         <entry key="app/src/main/res/layout/progress.xml" value="0.13333333333333333" />
         <entry key="app/src/main/res/layout/progress_message.xml" value="0.2898148148148148" />
