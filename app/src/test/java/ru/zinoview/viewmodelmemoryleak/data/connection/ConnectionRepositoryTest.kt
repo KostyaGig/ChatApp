@@ -80,14 +80,14 @@ class ConnectionRepositoryTest {
         override suspend fun connection(isConnected: Boolean) : CloudConnection {
             return if (isConnected) {
                 val result = if (count % 2 == 0) {
-                    CloudConnection.Failure("Waiting for server...")
+                    CloudConnection.Message("Waiting for server...")
                 } else {
                     CloudConnection.Success
                 }
                 count++
                 result
             } else {
-                CloudConnection.Failure("Waiting for network...")
+                CloudConnection.Message("Waiting for network...")
             }
         }
 

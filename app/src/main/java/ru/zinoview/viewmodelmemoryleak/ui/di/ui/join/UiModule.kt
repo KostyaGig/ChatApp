@@ -20,8 +20,7 @@ class UiModule : Module {
                     get(),
                     DataToUiJoinMapper()
                 ),
-                JoinUserCommunication(),
-                get()
+                JoinUserCommunication()
             )
         }
     }

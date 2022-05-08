@@ -15,7 +15,7 @@ interface ExceptionMapper : Mapper<Exception,String> {
 
         override fun map(src: Exception): String {
             val idString =  when(src) {
-                is SocketConnectionException -> R.string.sockket_connection_error
+                is SocketConnectionException -> R.string.socket_connection_error
                 else -> R.string.something_went_wrong
             }
             return resourceProvider.string(idString)
@@ -28,7 +28,7 @@ interface ExceptionMapper : Mapper<Exception,String> {
 
         override fun map(src: Exception): String {
             val idString =  when(src) {
-                is SocketConnectionException -> R.string.sockket_connection_error
+                is SocketConnectionException -> R.string.socket_connection_error
                 is EmptyNickNameException -> R.string.nickname_is_empty_text
                 else -> R.string.something_went_wrong
             }

@@ -2,7 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.data.authentication
 
 import java.lang.Exception
 
-interface AuthenticationRepository : ru.zinoview.viewmodelmemoryleak.core.Clean {
+interface AuthenticationRepository {
 
     fun auth() : DataAuth
 
@@ -22,7 +22,5 @@ interface AuthenticationRepository : ru.zinoview.viewmodelmemoryleak.core.Clean 
             }
 
         }
-
-        override fun clean() = Unit
     }
 }

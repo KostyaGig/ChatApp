@@ -1,26 +1,22 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.ShowProcessingMessages
 import ru.zinoview.viewmodelmemoryleak.domain.chat.ChatInteractor
-import ru.zinoview.viewmodelmemoryleak.ui.connection.UiConnection
-import ru.zinoview.viewmodelmemoryleak.ui.connection.UiConnectionWrapper
-import ru.zinoview.viewmodelmemoryleak.ui.core.ActionViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.core.BaseViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
 
 interface ChatViewModel : ChatViewModelObserve, Clean,
-    ActionViewModel<String>,
-    ru.zinoview.viewmodelmemoryleak.ui.core.ConnectionViewModel,
     ReadMessages,
     ObserveScroll,
     ShowProcessingMessages {
 
     fun messages()
+
+    fun sendMessage(content: String)
 
     fun editMessage(messageId: String, content: String)
 
@@ -35,16 +31,14 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
         private val mapper: DomainToUiMessageMapper,
         private val communication: MessagesCommunication,
         private val scroll: Scroll,
-        // todo move to another viewModel
-        private val connectionWrapper: UiConnectionWrapper
-    ) : BaseViewModel<List<UiMessage>>(listOf(
-            interactor,scroll
-        ),communication), ChatViewModel {
+    ) : BaseViewModel<List<UiMessage>>(
+        communication,listOf(interactor,scroll)
+    ), ChatViewModel {
 
-        override fun doAction(content: String)
+        override fun sendMessage(content: String)
             = work.doBackground(viewModelScope) {
                 interactor.sendMessage(content)
-            }
+        }
 
         override fun editMessage(messageId: String, content: String)
             = work.doBackground(viewModelScope) {
@@ -71,10 +65,8 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
 
         override fun showNotificationMessage(messageId: String)
             = work.doBackground(viewModelScope) {
-                Log.d("zinoviewk","VIEWMODEL -> showNotificationMessage($messageId)")
                 interactor.showNotificationMessage(messageId)
             }
-
 
         override fun readMessages(range: Pair<Int, Int>) = interactor.readMessages(range)
 
@@ -84,21 +76,6 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
             owner: LifecycleOwner,
             observer: Observer<UiScroll>
         ) = scroll.observeScrollCommunication(owner, observer)
-
-        override fun observeConnection(owner: LifecycleOwner,observer: Observer<UiConnection>)
-            = connectionWrapper.observeConnection(owner, observer)
-
-        override fun connection() {
-            communication.postValue(listOf(UiMessage.Progress))
-            connectionWrapper.connection(viewModelScope)
-        }
-
-        override fun updateNetworkState(isConnected: Boolean,arg: Unit) {
-            Log.d("zinoviewk","update network state")
-            work.doBackground(viewModelScope) {
-                connectionWrapper.updateNetworkState(isConnected,viewModelScope)
-            }
-        }
 
     }
 }

@@ -2,16 +2,14 @@ package ru.zinoview.viewmodelmemoryleak.ui.connection
 
 import ru.zinoview.viewmodelmemoryleak.core.connection.Connection
 
-class DataToUiConnectionMapper : Connection.Mapper<UiConnection> {
+interface DataToUiConnectionMapper : Connection.Mapper<UiConnection> {
+    class Base : DataToUiConnectionMapper {
 
-    override fun map(message: String): UiConnection
-        = UiConnection.Failure(message)
+        override fun mapSuccess(message: String)
+                = UiConnection.Success(message)
 
-    override fun map(): UiConnection = UiConnection.Success(SUCCESS_CONNECTION_TITLE)
+        override fun mapMessage(message: String)
+                = UiConnection.Message(message)
 
-    private companion object {
-        private const val SUCCESS_CONNECTION_TITLE = "Chat"
     }
-
-
 }

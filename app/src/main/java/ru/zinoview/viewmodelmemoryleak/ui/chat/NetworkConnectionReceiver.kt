@@ -15,7 +15,7 @@ interface NetworkConnectionReceiver {
     fun unRegister(context: Context)
 
     class Base(
-        private val viewModel: ru.zinoview.viewmodelmemoryleak.ui.core.ConnectionViewModel
+        private val viewModel: UpdateNetworkState<Unit>
     ) : NetworkConnectionReceiver, BroadcastReceiver() {
 
         override fun onReceive(context: Context?, intent: Intent?) {

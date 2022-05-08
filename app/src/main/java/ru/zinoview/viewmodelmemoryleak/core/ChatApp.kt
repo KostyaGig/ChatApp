@@ -68,6 +68,7 @@ class ChatApp : Application(), Configuration.Provider {
         val processingMessagesNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.processing_messages.NetworkModule()
 
         val chatDomainModule = DomainModule()
+        val connectionDomainModule = ru.zinoview.viewmodelmemoryleak.ui.di.domain.connection.DomainModule()
 
         val coreUiModule = CoreUiModule()
         val chatUiModule = UiModule()
@@ -95,6 +96,7 @@ class ChatApp : Application(), Configuration.Provider {
         modules.add(processingMessagesDataModule)
         modules.add(processingMessagesNetworkModule)
         modules.add(chatDomainModule)
+        modules.add(connectionDomainModule)
         modules.add(coreUiModule)
         modules.add(chatUiModule)
         modules.add(authenticationUiModule)

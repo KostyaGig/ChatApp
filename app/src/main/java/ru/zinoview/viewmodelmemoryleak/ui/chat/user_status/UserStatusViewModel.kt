@@ -17,7 +17,7 @@ interface UserStatusViewModel : CommunicationObserve<List<UiMessagesNotification
         communication: UiMessagesNotificationCommunication,
         private val dispatcher: Dispatcher
         ) : UserStatusViewModel,BaseViewModel<List<UiMessagesNotification>>(
-            listOf(repository),communication
+            communication
     ) {
         override fun online()
             = dispatcher.doBackground(viewModelScope) {

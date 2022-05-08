@@ -1,12 +1,12 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.core.Time
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
@@ -20,6 +20,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.user_status.UserStatusViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBarHeight
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
+import ru.zinoview.viewmodelmemoryleak.ui.connection.ConnectionViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
 
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
@@ -31,23 +32,17 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
     ChatViewModel.Base::class
 ) {
 
-    private var isNotShowedMessageAfterNotificationClicked = false
-    private var id = ""
-    private var listIsNotUpdated = true
-
-    // todo move to the interface
-    fun showNotificationMessageInRecyclerView(messageId: String) {
-        Log.d("zinoviewk","showNotificationMessageInRecyclerView($messageId)")
-//        viewModel.showNotificationMessage(messageId)
-    }
-
-
     private var adapter: ChatAdapter = ChatAdapter.Empty
     private var scrollListener: ChatRecyclerViewScrollListener = ChatRecyclerViewScrollListener.Empty
 
     private var messageSession: MessageSession = MessageSession.Empty
 
     private var memento: UiChatMessagesMemento = UiChatMessagesMemento.Empty
+
+    private val connectionViewModel by lazy {
+        getKoin().getOrCreateScope(CONNECTION_SCOPE)
+        get<ConnectionViewModel.Base>()
+    }
 
     private val uiStateViewModel by lazy {
         getKoin().get<UiStateViewModel.Base>()
@@ -59,6 +54,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         if (savedInstanceState != null) {
             uiStateViewModel.read(Unit)
         }
@@ -67,7 +63,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        networkConnectionReceiver = NetworkConnectionReceiver.Base(viewModel)
+        networkConnectionReceiver = NetworkConnectionReceiver.Base(connectionViewModel)
 
         val editContainer = ViewWrapper.Base(binding.editMessageContainer)
 
@@ -131,8 +127,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
             messageSession.sendMessage(viewModel,message)
         }
 
-
-        viewModel.connection()
+        connectionViewModel.connection()
     }
 
 
@@ -149,9 +144,8 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
             uiScroll.scroll(binding.chatRv,scrollListener)
         }
 
-        viewModel.observeConnection(this) { connection ->
+        connectionViewModel.observe(this) { connection ->
             connection.changeTitle(requireActivity() as ToolbarActivity)
-            connection.showError(adapter)
             connection.messages(viewModel)
         }
 
@@ -186,5 +180,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
     private companion object {
         private const val SCOPE_NAME = "cufScope"
+        // todo move const to single file
+        private const val CONNECTION_SCOPE = "cvfScope"
     }
 }

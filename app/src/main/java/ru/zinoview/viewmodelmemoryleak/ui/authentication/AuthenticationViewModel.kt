@@ -15,7 +15,7 @@ interface AuthenticationViewModel : CommunicationObserve<UiAuth> {
         private val worker: AuthWorker,
         private val communication: AuthenticationCommunication
     ) : AuthenticationViewModel, BaseViewModel<UiAuth>(
-        listOf(repository),communication
+        communication
     ) {
 
         override fun auth() = worker.execute(viewModelScope,{

@@ -8,6 +8,10 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStateWork
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStatesMapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.user_status.UiMessagesNotificationCommunication
 import ru.zinoview.viewmodelmemoryleak.ui.chat.user_status.UserStatusViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.connection.ConnectionCommunication
+import ru.zinoview.viewmodelmemoryleak.ui.connection.ConnectionViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.connection.DataToUiConnectionMapper
+import ru.zinoview.viewmodelmemoryleak.ui.connection.NetworkConnectionWork
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
 
 
@@ -47,7 +51,6 @@ class UiModule : Module {
                 get(),
                 MessagesCommunication(),
                 Scroll.Base(ScrollCommunication()),
-                get()
             )
         }
 

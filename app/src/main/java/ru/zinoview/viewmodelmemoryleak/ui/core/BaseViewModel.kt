@@ -7,9 +7,9 @@ import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.ui.join.ImageProfile
 
 abstract class BaseViewModel<T>(
-    private var cleans: List<Clean>,
-    private var communication: Communication<T>
-) : ViewModel(), Clean, CommunicationObserve<T> {
+    private var communication: Communication<T>,
+    private var cleans: List<Clean> = emptyList()
+    ) : ViewModel(), Clean, CommunicationObserve<T> {
 
     override fun clean() {
         cleans.forEach { clean ->

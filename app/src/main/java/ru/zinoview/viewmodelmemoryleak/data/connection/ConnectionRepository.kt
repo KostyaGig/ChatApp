@@ -7,9 +7,9 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.NetworkConnection
 interface ConnectionRepository<T> : SuspendObserve<DataConnection>, NetworkConnection<T> {
 
     class Base(
-        private val mapper: CloudToDataConnectionMapper,
-        private val cloudDataSource: CloudDataSource<Unit>
-        ) : ConnectionRepository<Unit> {
+            private val mapper: CloudToDataConnectionMapper,
+            private val cloudDataSource: CloudDataSource<Unit>
+            ) : ConnectionRepository<Unit> {
 
 
         override suspend fun observe(block: (DataConnection) -> Unit) {

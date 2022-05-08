@@ -11,7 +11,7 @@ interface CloudServerState : Update<ConnectionState,ResourceProvider> {
 
         override fun update(connectionState: ConnectionState,resourceProvider: ResourceProvider) {
             connectionState.push(
-                CloudConnection.Failure(
+                CloudConnection.Message(
                     resourceProvider.string(R.string.waiting_for_server)
                 )
             )
@@ -21,7 +21,7 @@ interface CloudServerState : Update<ConnectionState,ResourceProvider> {
     object Alive : CloudServerState {
         override fun update(connectionState: ConnectionState, resourceProvider: ResourceProvider) {
             connectionState.push(
-                CloudConnection.Success
+                CloudConnection.Success(resourceProvider.string(R.string.app_name))
             )
         }
 
