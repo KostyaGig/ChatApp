@@ -3,6 +3,7 @@ package ru.zinoview.viewmodelmemoryleak.core
 import android.app.Application
 import androidx.work.Configuration
 import androidx.work.WorkManager
+import kotlinx.coroutines.GlobalScope
 import org.koin.android.ext.android.startKoin
 import org.koin.dsl.module.Module
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.*
@@ -71,7 +72,9 @@ class ChatApp : Application(), Configuration.Provider {
         val connectionDomainModule = ru.zinoview.viewmodelmemoryleak.ui.di.domain.connection.DomainModule()
 
         val coreUiModule = CoreUiModule()
-        val chatUiModule = UiModule()
+
+        val chatUiModule = UiModule(GlobalScope)
+
         val authenticationUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.authentication.UiModule(this)
         val joinUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.join.UiModule()
         val connectionUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.connection.UiModule()

@@ -1,6 +1,8 @@
 package ru.zinoview.viewmodelmemoryleak.ui.di.ui.chat
 
+import kotlinx.coroutines.CoroutineScope
 import org.koin.dsl.module.module
+import ru.zinoview.viewmodelmemoryleak.core.Time
 import ru.zinoview.viewmodelmemoryleak.ui.chat.*
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStateCommunication
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStateViewModel
@@ -8,14 +10,11 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStateWork
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStatesMapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.user_status.UiMessagesNotificationCommunication
 import ru.zinoview.viewmodelmemoryleak.ui.chat.user_status.UserStatusViewModel
-import ru.zinoview.viewmodelmemoryleak.ui.connection.ConnectionCommunication
-import ru.zinoview.viewmodelmemoryleak.ui.connection.ConnectionViewModel
-import ru.zinoview.viewmodelmemoryleak.ui.connection.DataToUiConnectionMapper
-import ru.zinoview.viewmodelmemoryleak.ui.connection.NetworkConnectionWork
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
 
-
-class UiModule : Module {
+class UiModule(
+    private val scope: CoroutineScope
+) : Module {
 
     private val uiStateChatModule = module {
         scope(SCOPE_NAME) {
@@ -57,6 +56,14 @@ class UiModule : Module {
         single<DomainToUiMessageMapper> {
             DomainToUiMessageMapper.Base(
                 get()
+            )
+        }
+
+        single<TypeMessageTextWatcher> {
+            TypeMessageTextWatcher.Base(
+                TypeMessageTimer.Base(get(),Time.Base()),
+                get(),
+                scope
             )
         }
     }

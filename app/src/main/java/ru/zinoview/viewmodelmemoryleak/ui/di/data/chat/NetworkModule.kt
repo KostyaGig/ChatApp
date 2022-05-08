@@ -3,8 +3,6 @@ package ru.zinoview.viewmodelmemoryleak.ui.di.data.chat
 import android.content.Context
 import org.koin.dsl.module.module
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
-import ru.zinoview.viewmodelmemoryleak.core.Time
-import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.*
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationService
 
@@ -17,7 +15,7 @@ class NetworkModule(
             MessagesStore.Base(
                 ListItem.Base(),
                 ToProgressEditMessageMapper(
-                    Time.String()
+                    get()
                 ),
                 IsNotEmpty.List(),
                 ListSize.Base(),

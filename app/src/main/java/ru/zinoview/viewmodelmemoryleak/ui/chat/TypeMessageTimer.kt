@@ -9,7 +9,7 @@ interface TypeMessageTimer {
     suspend fun stopTyping()
 
     class Base(
-        private val viewModel: ChatViewModel,
+        private val viewModel: ChatViewModel.Base,
         private val time: Time<Long>
     ) : TypeMessageTimer {
 

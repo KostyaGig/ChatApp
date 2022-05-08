@@ -4,11 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.getKoin
-import ru.zinoview.viewmodelmemoryleak.core.Time
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession
@@ -21,7 +19,6 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBarHeight
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.connection.ConnectionViewModel
-import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
 
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
@@ -52,6 +49,8 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         getKoin().get<UserStatusViewModel.Base>()
     }
 
+    private val typeMessageTextWatcher by lazy { get<TypeMessageTextWatcher>() }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -67,14 +66,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
         val editContainer = ViewWrapper.Base(binding.editMessageContainer)
 
-        binding.messageField.addTextChangedListener(
-            // todo inject
-            TypeMessageTextWatcher.Base(
-                TypeMessageTimer.Base(viewModel,Time.Base()),
-                Dispatcher.Delay(),
-                lifecycleScope
-            )
-        )
+        binding.messageField.addTextChangedListener(typeMessageTextWatcher)
 
         val snackBar = SnackBar.EmptyField(
             binding.messageField, SnackBar.SnackBarVisibility(

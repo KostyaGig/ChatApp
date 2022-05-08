@@ -23,6 +23,5 @@ class CoreModule(
         single<Time<String>> {
             Time.String()
         }
-
     }
 }

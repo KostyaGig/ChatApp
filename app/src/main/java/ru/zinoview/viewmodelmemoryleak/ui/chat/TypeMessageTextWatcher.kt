@@ -2,10 +2,8 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat
 
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
-import ru.zinoview.viewmodelmemoryleak.ui.core.DoBackground
 
 interface TypeMessageTextWatcher : TextWatcher {
     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
