@@ -113,7 +113,6 @@ io.on('connection', (socket) => {
   				// todo if was updated change isRead -> false
   				newMessage.isRead = false
 
-
   				indexEditingContentMessage = index;
   			}
 		});

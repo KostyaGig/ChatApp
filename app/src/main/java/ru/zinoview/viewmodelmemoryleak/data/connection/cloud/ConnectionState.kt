@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.connection.cloud
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
@@ -37,7 +38,10 @@ interface ConnectionState : Subscribe<CloudConnection>, Disconnect<Unit>, Connec
             }
         }
 
-        override fun push(state: CloudConnection) = block.invoke(state)
+        override fun push(state: CloudConnection) {
+            Log.d("zinoviewk","push $state")
+            block.invoke(state)
+        }
 
         override fun subscribe(block: (CloudConnection) -> Unit) {
             this.block = block

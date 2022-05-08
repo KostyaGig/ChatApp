@@ -4,6 +4,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import ru.zinoview.viewmodelmemoryleak.core.Clean
+import ru.zinoview.viewmodelmemoryleak.ui.join.ImageProfile
 
 abstract class BaseViewModel<T>(
     private var cleans: List<Clean>,
@@ -18,4 +19,5 @@ abstract class BaseViewModel<T>(
 
     override fun observe(owner: LifecycleOwner, observer: Observer<T>) =
         communication.observe(owner, observer)
+
 }

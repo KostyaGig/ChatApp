@@ -27,7 +27,7 @@ interface UiMessage :
     override fun isItemTheSame(item: UiMessage) = false
 
     override fun same(data: String,isRead: Boolean) = false
-    override fun sameId(id: String) = false
+    override fun same(id: String) = false
     override fun sameFound(isFounded: Boolean) = false
 
     override fun bind(view: TextView) = Unit
@@ -78,13 +78,15 @@ interface UiMessage :
             stateImage.visibility = View.GONE
         }
 
-        override fun isItemTheSame(item: UiMessage) = item.sameId(id) && item.sameFound(isFounded)
+        override fun isItemTheSame(item: UiMessage): Boolean {
+            return item.same(id) && item.sameFound(isFounded)
+        }
         override fun isContentTheSame(item: UiMessage) = item.same(content,isRead)
 
         override fun same(data: String,isRead: Boolean)
             = content == data && this.isRead == isRead
 
-        override fun sameId(id: String) = this.id == id
+        override fun same(id: String) = this.id == id
 
         override fun sameFound(isFounded: Boolean)
             = this.isFounded == isFounded

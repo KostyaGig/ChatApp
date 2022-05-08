@@ -21,7 +21,6 @@ interface UiConnectionWrapper : ObserveConnection, UpdateNetworkState<CoroutineS
     ) : UiConnectionWrapper {
 
         override fun connection(scope: CoroutineScope) {
-
             work.doBackground(scope) {
                 repository.observe { data ->
                     val ui = data.map(mapper)

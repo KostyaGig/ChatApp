@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.koin.android.ext.android.getKoin
@@ -32,11 +31,16 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
     ChatViewModel.Base::class
 ) {
 
+    private var isNotShowedMessageAfterNotificationClicked = false
+    private var id = ""
+    private var listIsNotUpdated = true
+
     // todo move to the interface
     fun showNotificationMessageInRecyclerView(messageId: String) {
-        Toast.makeText(requireContext(),messageId,Toast.LENGTH_LONG).show()
-        Log.d("zinoviewk","SHOW NOTIF MSG IN rec view $messageId")
+        Log.d("zinoviewk","showNotificationMessageInRecyclerView($messageId)")
+//        viewModel.showNotificationMessage(messageId)
     }
+
 
     private var adapter: ChatAdapter = ChatAdapter.Empty
     private var scrollListener: ChatRecyclerViewScrollListener = ChatRecyclerViewScrollListener.Empty
@@ -55,7 +59,6 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         if (savedInstanceState != null) {
             uiStateViewModel.read(Unit)
         }
@@ -107,19 +110,14 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
         val manager = LinearLayoutManager(requireContext())
 
-        memento = UiChatMessagesMemento.Base(
-            ToUiFoundMessageMapper.Base()
-        )
-
-//        CoroutineScope(Dispatchers.IO).launch {
-//            delay(6000)
-//            withContext(Dispatchers.Main) {
-//                memento.find("afb5a4af-a3cd-4d82-a278-bb773c3d9508",manager,binding.chatRv,adapter)
-//            }
-//        }
-
         binding.chatRv.layoutManager = manager
         binding.chatRv.adapter = adapter
+
+        memento = UiChatMessagesMemento.Base(
+            ToUiFoundMessageMapper.Base(),
+            binding.chatRv,
+            adapter
+        )
 
         scrollListener = ChatRecyclerViewScrollListener.Base(manager, viewModel)
         binding.chatRv.addOnScrollListener(scrollListener)
@@ -133,7 +131,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
             messageSession.sendMessage(viewModel,message)
         }
 
-        viewModel.messages()
+
         viewModel.connection()
     }
 
@@ -143,10 +141,8 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         userStatusViewModel.online()
 
         viewModel.observe(this) { messages ->
-            Log.d("zinoviewk","$messages")
             messages.last().changeTitle(requireActivity() as ToolbarActivity)
             adapter.submitList(messages)
-            memento.update(messages)
         }
 
         viewModel.observeScrollCommunication(this) { uiScroll ->

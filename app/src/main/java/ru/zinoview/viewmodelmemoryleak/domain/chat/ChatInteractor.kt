@@ -8,7 +8,8 @@ import ru.zinoview.viewmodelmemoryleak.data.chat.update.ImmediatelyUpdateChatRep
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
 
 interface ChatInteractor : Messages<DomainMessage>, SendMessage,
-    EditMessage, ShowProcessingMessages, ReadMessages , ToTypeMessage.Unit, Clean {
+    EditMessage, ShowProcessingMessages, ReadMessages , ToTypeMessage.Unit,ShowNotificationMessage,
+    Clean {
 
     class Base(
         private val chatRepository: ChatRepository<Unit>,
@@ -31,6 +32,9 @@ interface ChatInteractor : Messages<DomainMessage>, SendMessage,
 
         override suspend fun toTypeMessage(isTyping: Boolean)
             = chatRepository.toTypeMessage(isTyping)
+
+        override suspend fun showNotificationMessage(messageId: String)
+            = chatRepository.showNotificationMessage(messageId)
 
         override fun showProcessingMessages()
             = processingMessagesRepository.show(Unit)

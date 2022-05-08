@@ -59,7 +59,9 @@ interface Notification {
                 putExtra("message_id",messageId)
             }
 
-            intent.flags = android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP or android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
+            intent.flags = android.app.Notification.FLAG_AUTO_CANCEL or android.app.Notification.FLAG_ONGOING_EVENT
+
+            // TODO CHECK UPDATE CURRENT AND ANOTHER WAYS
             val contentIntent = PendingIntent.getActivity(context, REQUEST_CODE,intent, PendingIntent.FLAG_UPDATE_CURRENT)
             return notification.setContentIntent(contentIntent)
         }

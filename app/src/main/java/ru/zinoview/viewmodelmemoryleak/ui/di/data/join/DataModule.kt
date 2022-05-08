@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.di.data.join
 
 import org.koin.dsl.module.module
+import ru.zinoview.viewmodelmemoryleak.data.core.ExceptionMapper
 import ru.zinoview.viewmodelmemoryleak.data.join.JoinUserRepository
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
 
@@ -13,7 +14,7 @@ class DataModule : Module {
                 get(),
                 get(),
                 get(),
-                get()
+                ExceptionMapper.Join(get())
             )
         }
     }

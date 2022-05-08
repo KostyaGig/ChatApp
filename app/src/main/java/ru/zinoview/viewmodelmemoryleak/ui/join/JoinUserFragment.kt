@@ -1,27 +1,27 @@
 package ru.zinoview.viewmodelmemoryleak.ui.join
 
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import ru.zinoview.viewmodelmemoryleak.R
+import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.databinding.JoinFragmentBinding
 import ru.zinoview.viewmodelmemoryleak.ui.chat.NetworkConnectionReceiver
-import ru.zinoview.viewmodelmemoryleak.ui.chat.view.MessageField
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
+import ru.zinoview.viewmodelmemoryleak.ui.core.ResultApiActivity
+import ru.zinoview.viewmodelmemoryleak.ui.core.Text
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NetworkConnectionFragment
 
 class JoinUserFragment : NetworkConnectionFragment<JoinUserViewModel.Base, JoinFragmentBinding>(
     JoinUserViewModel.Base::class
-) {
+), ImageResult {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d("zinoviewk","JOIN FRAGMENT ONCREATE")
-    }
+    private var imageProfile: ImageProfile = ImageProfile.Empty
+
+    private val text = getKoin().get<Text>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -29,8 +29,15 @@ class JoinUserFragment : NetworkConnectionFragment<JoinUserViewModel.Base, JoinF
         networkConnectionReceiver = NetworkConnectionReceiver.Base(viewModel)
 
         binding.joinBtn.setOnClickListener {
-            val nicknameField = view.findViewById<MessageField.Base>(R.id.nickname_field)
-            nicknameField.doAction(viewModel)
+            val nickName = text.text(binding.nicknameField)
+            viewModel.joinUser(
+                imageProfile,
+                nickName
+            )
+        }
+
+        binding.profileImage.setOnClickListener {
+            (requireActivity() as ResultApiActivity).image()
         }
 
         viewModel.connection()
@@ -49,6 +56,11 @@ class JoinUserFragment : NetworkConnectionFragment<JoinUserViewModel.Base, JoinF
         viewModel.observeConnection(this) { connection ->
             connection.changeTitle(requireActivity() as ToolbarActivity)
         }
+    }
+
+    override fun onImageResult(uri: Uri) {
+        binding.profileImage.setImageURI(uri)
+        imageProfile = ImageProfile.Base(uri)
     }
 
     override fun back(navigation: Navigation) = navigation.exit()

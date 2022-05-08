@@ -12,7 +12,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractDiffUtil
 import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractViewHolder
 import java.lang.IllegalStateException
 
- open class ChatAdapter(
+open class ChatAdapter(
      diffUtil: AbstractDiffUtil<UiMessage>,
      private val listener: EditMessageListener
  ) : androidx.recyclerview.widget.ListAdapter<UiMessage, ChatAdapter.BaseViewHolder>(diffUtil) {
@@ -78,7 +78,7 @@ import java.lang.IllegalStateException
      override fun onBindViewHolder(holder: BaseViewHolder, position: Int)
         = holder.bind(getItem(position))
 
-    abstract class BaseViewHolder(
+     abstract class BaseViewHolder(
         view: View
     ) : AbstractViewHolder<UiMessage>(view) {
 
@@ -92,9 +92,13 @@ import java.lang.IllegalStateException
             private val editImage = view.findViewById<ImageView>(R.id.edit_image)
 
             override fun bind(item: UiMessage) {
+                if (item is UiMessage.Received.Found) {
+                    Log.d("zinoviewk","bind found $item")
+                }
                 item.bind(contentTv,stateImage,editImage)
                 editImage.setOnClickListener { item.edit(listener) }
             }
+
         }
 
         class Empty(

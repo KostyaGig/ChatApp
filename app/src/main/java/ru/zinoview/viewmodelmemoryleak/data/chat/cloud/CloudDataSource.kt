@@ -1,7 +1,9 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.core.chat.Messages
+import ru.zinoview.viewmodelmemoryleak.core.chat.ShowNotificationMessage
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketData
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
 import ru.zinoview.viewmodelmemoryleak.data.chat.SendMessage
@@ -11,13 +13,16 @@ import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationService
 
-interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMessage, EditMessage, ReadMessages {
+interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMessage, EditMessage, ReadMessages, ShowNotificationMessage {
 
     override fun readMessages(range: Pair<Int, Int>) = Unit
 
     override suspend fun messages(block: (List<CloudMessage>) -> Unit) = Unit
 
     suspend fun toTypeMessage(isTyping: Boolean,senderNickName: String) : T
+
+    // todo test
+    override suspend fun showNotificationMessage(messageId: String) = Unit
 
     class Base(
         private val socketWrapper: SocketWrapper,
@@ -38,6 +43,8 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
                 val messages = data.data(modelMessages)
 
                 processingMessages.update(messages)
+
+                Log.d("zinoviewk","messages branch PUSH")
                 messagesStore.addMessages(messages)
             }
             socketWrapper.emit(MESSAGES,SocketData.Empty)
@@ -107,6 +114,17 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
             socketWrapper.emit(TO_TYPE_MESSAGE,data)
         }
 
+        override suspend fun showNotificationMessage(messageId: String) {
+            Log.d("zinoviewk","SHOW NOITIFICATION")
+            val data = SocketData.Base(
+                json.json(
+                    Pair(NOTIFICATION_MESSAGE_ID,messageId)
+                )
+            )
+            Log.d("zinoviewk","emit json $messageId")
+            socketWrapper.emit(SHOW_NOTIFICATION_MESSAGE,data)
+        }
+
         override fun disconnect(arg: Unit)  = Unit
     }
 
@@ -116,12 +134,14 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
         private const val EDIT_MESSAGE = "edit_message"
         private const val READ_MESSAGE = "read_message"
         private const val TO_TYPE_MESSAGE = "to_type_message"
+        private const val SHOW_NOTIFICATION_MESSAGE = "show_notification_message"
 
         private const val SENDER_ID_KEY = "senderId"
         private const val SENDER_NICK_NAME_KEY = "senderNickName"
         private const val MESSAGE_CONTENT_KEY = "content"
         private const val MESSAGE_ID_KEY = "id"
         private const val IS_TYPING_KEY = "isTyping"
+        private const val NOTIFICATION_MESSAGE_ID = "messageId"
     }
 
 }

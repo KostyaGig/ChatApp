@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
@@ -25,6 +26,8 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
 
     fun toTypeMessage(isTyping: Boolean)
 
+    fun showNotificationMessage(messageId: String)
+
     class Base(
         private val interactor: ChatInteractor,
         private val work: ChatWork,
@@ -49,7 +52,6 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
             }
 
         override fun messages() {
-            communication.postValue(listOf(UiMessage.Progress))
             work.doBackground(viewModelScope) {
                 interactor.messages { domain ->
                     val uiMessages = domain.map { it.map(mapper) }
@@ -67,6 +69,12 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
                 interactor.toTypeMessage(isTyping)
             }
 
+        override fun showNotificationMessage(messageId: String)
+            = work.doBackground(viewModelScope) {
+                Log.d("zinoviewk","VIEWMODEL -> showNotificationMessage($messageId)")
+                interactor.showNotificationMessage(messageId)
+            }
+
 
         override fun readMessages(range: Pair<Int, Int>) = interactor.readMessages(range)
 
@@ -80,12 +88,17 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
         override fun observeConnection(owner: LifecycleOwner,observer: Observer<UiConnection>)
             = connectionWrapper.observeConnection(owner, observer)
 
-        override fun connection() = connectionWrapper.connection(viewModelScope)
+        override fun connection() {
+            communication.postValue(listOf(UiMessage.Progress))
+            connectionWrapper.connection(viewModelScope)
+        }
 
-        override fun updateNetworkState(isConnected: Boolean,arg: Unit)
-            = work.doBackground(viewModelScope) {
+        override fun updateNetworkState(isConnected: Boolean,arg: Unit) {
+            Log.d("zinoviewk","update network state")
+            work.doBackground(viewModelScope) {
                 connectionWrapper.updateNetworkState(isConnected,viewModelScope)
             }
+        }
 
     }
 }

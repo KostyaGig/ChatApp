@@ -41,5 +41,6 @@ class CoreNetworkModule : Module {
 
     private companion object {
         private const val URI = "http://10.0.2.2:3000"
+        private const val TEST = "ws://intense-lake-75802.herokuapp.com/"
     }
 }

@@ -2,6 +2,8 @@ package ru.zinoview.viewmodelmemoryleak.data.chat.notification.cloud
 
 import android.content.Context
 import ru.zinoview.viewmodelmemoryleak.R
+import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationMessageActivity
+import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationMessageService
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.MainActivity
 
@@ -22,7 +24,7 @@ interface CloudMessage {
                 CHANNEL,"")
 
             val intentNotificationBuilder = ru.zinoview.viewmodelmemoryleak.ui.chat.notification.Notification.Intent(notification)
-            val intentNotification = intentNotificationBuilder.intentNotification(context,MainActivity::class.java,id)
+            val intentNotification = intentNotificationBuilder.intentNotification(context, NotificationMessageService::class.java,id)
 
             return NotificationWrapper.Push(id,intentNotification.build())
         }

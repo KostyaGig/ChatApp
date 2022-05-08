@@ -9,14 +9,18 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
 
     <application
+        android:name=".core.ChatApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ViewModelMemoryLeak"
-        android:usesCleartextTraffic="true"
-        android:name=".core.ChatApp">
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".ui.chat.notification.NotificationMessageActivity"
+            android:exported="false"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".ui.authentication.AuthActivity"
             android:exported="true">
@@ -28,7 +32,9 @@
         </activity>
         <activity
             android:name=".ui.core.MainActivity"
-            android:exported="true"/>
+            android:exported="true"
+            android:windowSoftInputMode="stateHidden" />
+
         <receiver
             android:name=".ui.chat.NetworkConnectionReceiver$Base"
             android:exported="true">
@@ -45,6 +51,7 @@
             android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
             tools:node="merge">
+
             <!-- If you are using androidx.startup to initialize other components -->
             <meta-data
                 android:name="androidx.work.WorkManagerInitializer"
@@ -59,7 +66,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
+        <service android:name=".ui.chat.notification.NotificationMessageService"
+            android:exported="false"/>
     </application>
 
 </manifest>

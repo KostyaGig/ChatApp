@@ -2,14 +2,16 @@ package ru.zinoview.viewmodelmemoryleak.ui.core
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.databinding.ActivityMainBinding
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatFragment
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.*
+import ru.zinoview.viewmodelmemoryleak.ui.join.ImageResult
 
-class MainActivity : AppCompatActivity(), Navigation,  ToolbarActivity {
+class MainActivity : AppCompatActivity(), Navigation,  ToolbarActivity, ResultApiActivity {
 
     private var _binding: ActivityMainBinding? = null
     private val binding by lazy {
@@ -17,6 +19,11 @@ class MainActivity : AppCompatActivity(), Navigation,  ToolbarActivity {
     }
 
     private val fragmentIntent = getKoin().get<Intent<String>>()
+
+    private val image = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        val fragment = supportFragmentManager.fragments.first() as ImageResult
+        uri?.let { fragment.onImageResult(it) }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,16 +37,8 @@ class MainActivity : AppCompatActivity(), Navigation,  ToolbarActivity {
         } else {
             fragmentIntent.navigate(intent,this)
         }
-    }
 
-    override fun onNewIntent(intent: android.content.Intent?) {
-        super.onNewIntent(intent)
-        // todo rewrite
-        val messageNotificationId = intent?.getStringExtra("message_id") ?: ""
-        val fragment = supportFragmentManager.fragments.first() as ChatFragment
-        fragment.showNotificationMessageInRecyclerView(messageNotificationId)
     }
-
 
     override fun navigateTo(fragment: Fragment,notificationMessageId: String) {
         fragmentIntent.saveFragment(fragment)
@@ -48,15 +47,18 @@ class MainActivity : AppCompatActivity(), Navigation,  ToolbarActivity {
             .replace(R.id.fragment_container,fragment)
             .commitNow()
 
-        if (fragment is ChatFragment) {
-            fragment.showNotificationMessageInRecyclerView(notificationMessageId)
-        }
+//        if (fragment is ChatFragment) {
+//            fragment.showNotificationMessageInRecyclerView(notificationMessageId)
+//        }
     }
 
     override fun back() {
         val fragment = supportFragmentManager.fragments.first() as Back
         fragment.back(this)
     }
+
+    override fun image() = image.launch("image/*")
+
 
     override fun onDestroy() {
         super.onDestroy()
