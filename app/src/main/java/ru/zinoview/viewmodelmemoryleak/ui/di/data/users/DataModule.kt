@@ -22,7 +22,7 @@ class DataModule(
                 ru.zinoview.viewmodelmemoryleak.ui.join.Bitmap.Base(
                     contentResolver
                 ),
-                ExceptionMapper.User(get()),
+                ExceptionMapper.Abstract.User(get()),
                 get()
             )
         }

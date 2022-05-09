@@ -14,7 +14,7 @@ class DataModule : Module {
                 get(),
                 get(),
                 get(),
-                ExceptionMapper.Join(get())
+                ExceptionMapper.Abstract.Join(get())
             )
         }
     }

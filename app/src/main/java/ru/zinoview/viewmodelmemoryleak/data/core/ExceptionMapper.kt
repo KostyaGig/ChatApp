@@ -10,45 +10,48 @@ import java.lang.Exception
 
 interface ExceptionMapper : Mapper<Exception,String> {
 
-    class Base(
+    abstract class Abstract(
         private val resourceProvider: ResourceProvider
     ) : ExceptionMapper {
 
-        // todo move boilerplate code
+        abstract fun errorMessageId(e: Exception) : Int
+
         override fun map(src: Exception): String {
             val idString =  when(src) {
                 is SocketConnectionException -> R.string.socket_connection_error
-                else -> R.string.something_went_wrong
+                else -> errorMessageId(src)
             }
             return resourceProvider.string(idString)
         }
-    }
 
-    class Join(
-        private val resourceProvider: ResourceProvider
-    ) : ExceptionMapper {
-
-        override fun map(src: Exception): String {
-            val idString =  when(src) {
-                is SocketConnectionException -> R.string.socket_connection_error
-                is EmptyNickNameException -> R.string.nickname_is_empty_text
-                else -> R.string.something_went_wrong
-            }
-            return resourceProvider.string(idString)
+        class Base(
+            resourceProvider: ResourceProvider
+        ) : Abstract(resourceProvider) {
+            override fun errorMessageId(e: Exception): Int = -1
         }
-    }
 
-    class User(
-        private val resourceProvider: ResourceProvider
-    ) : ExceptionMapper {
+        class Join(
+            resourceProvider: ResourceProvider
+        ) : Abstract(resourceProvider) {
 
-        override fun map(src: Exception): String {
-            val idString =  when(src) {
-                is SocketConnectionException -> R.string.socket_connection_error
-                is EmptyUsersException -> R.string.users_are_empty_text
-                else -> R.string.something_went_wrong
+            override fun errorMessageId(e: Exception): Int {
+                return when(e) {
+                    is EmptyNickNameException -> R.string.nickname_is_empty_text
+                    else -> R.string.something_went_wrong
+                }
             }
-            return resourceProvider.string(idString)
+        }
+
+        class User(
+            resourceProvider: ResourceProvider
+        ) : Abstract(resourceProvider) {
+
+            override fun errorMessageId(e: Exception): Int {
+                return when(e) {
+                    is EmptyUsersException -> R.string.users_are_empty_text
+                    else -> R.string.something_went_wrong
+                }
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ class CoreDataModule(
     private val coreDataModule = module {
 
         single<ExceptionMapper> {
-            ExceptionMapper.Base(
+            ExceptionMapper.Abstract.Base(
                 get()
             )
         }
