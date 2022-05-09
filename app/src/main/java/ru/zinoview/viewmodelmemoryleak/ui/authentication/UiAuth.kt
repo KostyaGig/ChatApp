@@ -12,7 +12,7 @@ interface UiAuth : Navigate<ActivityNavigation> {
     object Success : UiAuth {
 
         override fun navigate(navigation: ActivityNavigation)
-            = navigation.navigateTo(MainActivity(), TypeFragment.Chat)
+            = navigation.navigateTo(MainActivity(), TypeFragment.Users)
     }
 
     object Failure : UiAuth {

@@ -6,10 +6,10 @@ interface DataToUiConnectionMapper : Connection.Mapper<UiConnection> {
     class Base : DataToUiConnectionMapper {
 
         override fun mapSuccess(message: String)
-                = UiConnection.Success(message)
+            = UiConnection.Success(message)
 
         override fun mapMessage(message: String)
-                = UiConnection.Message(message)
+            = UiConnection.Message(message)
 
     }
 }

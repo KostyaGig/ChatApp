@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.connection
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.data.connection.cloud.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.core.SuspendObserve
 import ru.zinoview.viewmodelmemoryleak.ui.core.NetworkConnection
@@ -15,6 +16,7 @@ interface ConnectionRepository<T> : SuspendObserve<DataConnection>, NetworkConne
         override suspend fun observe(block: (DataConnection) -> Unit) {
             cloudDataSource.observe { cloudConnection ->
                 val data = cloudConnection.map(mapper)
+                Log.d("zinoviewk","connection repo $cloudConnection , data - $data")
                 block.invoke(data)
             }
         }

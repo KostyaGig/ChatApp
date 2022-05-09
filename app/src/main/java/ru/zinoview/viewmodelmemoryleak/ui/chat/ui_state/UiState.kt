@@ -4,6 +4,7 @@ import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatAdapter
 import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
+import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
 
 interface UiState : IsNotEmpty<Unit> {
 
@@ -11,7 +12,7 @@ interface UiState : IsNotEmpty<Unit> {
         editText: ViewWrapper,
         viewWrapper: ViewWrapper,
         messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession,
-        adapter: ChatAdapter
+        adapter: Adapter<List<UiMessage>>
     )
 
     data class EditText(
@@ -22,7 +23,7 @@ interface UiState : IsNotEmpty<Unit> {
             editText: ViewWrapper,
             viewWrapper: ViewWrapper,
             messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession,
-            adapter: ChatAdapter
+            adapter: Adapter<List<UiMessage>>
         ) {
             editText.show(Unit,text)
         }
@@ -40,7 +41,7 @@ interface UiState : IsNotEmpty<Unit> {
             editText: ViewWrapper,
             viewWrapper: ViewWrapper,
             messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession,
-            adapter: ChatAdapter
+            adapter: Adapter<List<UiMessage>>
         ) {
             viewWrapper.show(Unit,oldMessageText)
 
@@ -63,8 +64,8 @@ interface UiState : IsNotEmpty<Unit> {
             editText: ViewWrapper,
             viewWrapper: ViewWrapper,
             messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession,
-            adapter: ChatAdapter
-        ) = adapter.submitList(messages)
+            adapter: Adapter<List<UiMessage>>
+        ) = adapter.update(messages)
 
         override fun isNotEmpty(arg: Unit): Boolean = messages.isNotEmpty()
     }
@@ -75,7 +76,7 @@ interface UiState : IsNotEmpty<Unit> {
             editText: ViewWrapper,
             viewWrapper: ViewWrapper,
             messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession,
-            adapter: ChatAdapter
+            adapter: Adapter<List<UiMessage>>
         ) = Unit
 
         override fun isNotEmpty(arg: Unit) = false

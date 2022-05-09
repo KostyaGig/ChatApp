@@ -24,4 +24,5 @@ interface Bitmap {
             return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
         }
     }
+
 }

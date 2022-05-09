@@ -22,6 +22,6 @@ interface SocketConnection : Disconnect<SocketWrapper>,ServerState, Connect<Sock
             = activity.serverState(socket)
 
         override fun disconnect(socket: SocketWrapper)
-            = socket.disconnect(Unit)
+            = socket.disconnect("")
     }
 }

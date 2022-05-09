@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Time
 
 interface TypeMessageTimer {
@@ -16,6 +17,7 @@ interface TypeMessageTimer {
         private var timeOfTimer = 0L
 
         override fun startTyping() {
+            Log.d("zinoviewk2","start time ${time.time()}")
             timeOfTimer = time.time()
             viewModel.toTypeMessage(true)
         }
@@ -23,6 +25,8 @@ interface TypeMessageTimer {
         override suspend fun stopTyping() {
             val currentTime = time.time()
             val difference = currentTime - timeOfTimer
+
+            Log.d("zinoviewk2","stop typing,$currentTime")
 
             if (difference >= MAX_TIME_AFTER_STOP_TYPING) {
                 viewModel.toTypeMessage(false)

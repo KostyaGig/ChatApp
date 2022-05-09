@@ -68,11 +68,17 @@ class ChatApp : Application(), Configuration.Provider {
         val processingMessagesDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.processing_messages.DataModule()
         val processingMessagesNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.processing_messages.NetworkModule()
 
+        val usersNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.users.NetworkModule()
+        val usersDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.users.DataModule(contentResolver)
+        val usersDomainModule = ru.zinoview.viewmodelmemoryleak.ui.di.domain.users.DomainModule()
+        val usersUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.users.UiModule()
+
         val chatDomainModule = DomainModule()
         val connectionDomainModule = ru.zinoview.viewmodelmemoryleak.ui.di.domain.connection.DomainModule()
 
         val coreUiModule = CoreUiModule()
 
+        // todo global scope
         val chatUiModule = UiModule(GlobalScope)
 
         val authenticationUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.authentication.UiModule(this)
@@ -105,12 +111,15 @@ class ChatApp : Application(), Configuration.Provider {
         modules.add(authenticationUiModule)
         modules.add(joinUiModule)
         modules.add(connectionUiModule)
+        modules.add(usersNetworkModule)
+        modules.add(usersDataModule)
+        modules.add(usersDomainModule)
+        modules.add(usersUiModule)
 
         val koinModules = mutableListOf<Module>()
         modules.forEach { module ->
             module.add(koinModules)
         }
-
 
         startKoin(this,koinModules)
         WorkManager.initialize(this,workManagerConfiguration)

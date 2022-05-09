@@ -5,6 +5,7 @@ import ru.zinoview.viewmodelmemoryleak.core.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnectionException
 import ru.zinoview.viewmodelmemoryleak.data.join.EmptyNickNameException
+import ru.zinoview.viewmodelmemoryleak.data.users.cloud.EmptyUsersException
 import java.lang.Exception
 
 interface ExceptionMapper : Mapper<Exception,String> {
@@ -13,6 +14,7 @@ interface ExceptionMapper : Mapper<Exception,String> {
         private val resourceProvider: ResourceProvider
     ) : ExceptionMapper {
 
+        // todo move boilerplate code
         override fun map(src: Exception): String {
             val idString =  when(src) {
                 is SocketConnectionException -> R.string.socket_connection_error
@@ -30,6 +32,20 @@ interface ExceptionMapper : Mapper<Exception,String> {
             val idString =  when(src) {
                 is SocketConnectionException -> R.string.socket_connection_error
                 is EmptyNickNameException -> R.string.nickname_is_empty_text
+                else -> R.string.something_went_wrong
+            }
+            return resourceProvider.string(idString)
+        }
+    }
+
+    class User(
+        private val resourceProvider: ResourceProvider
+    ) : ExceptionMapper {
+
+        override fun map(src: Exception): String {
+            val idString =  when(src) {
+                is SocketConnectionException -> R.string.socket_connection_error
+                is EmptyUsersException -> R.string.users_are_empty_text
                 else -> R.string.something_went_wrong
             }
             return resourceProvider.string(idString)

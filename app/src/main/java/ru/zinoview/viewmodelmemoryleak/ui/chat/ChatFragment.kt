@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBarHeight
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.connection.ConnectionViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
 
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
@@ -29,7 +31,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
     ChatViewModel.Base::class
 ) {
 
-    private var adapter: ChatAdapter = ChatAdapter.Empty
+    private var adapter: Adapter<List<UiMessage>> = Adapter.Empty()
     private var scrollListener: ChatRecyclerViewScrollListener = ChatRecyclerViewScrollListener.Empty
 
     private var messageSession: MessageSession = MessageSession.Empty
@@ -99,7 +101,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         val manager = LinearLayoutManager(requireContext())
 
         binding.chatRv.layoutManager = manager
-        binding.chatRv.adapter = adapter
+        binding.chatRv.adapter = adapter as ChatAdapter
 
         memento = UiChatMessagesMemento.Base(
             ToUiFoundMessageMapper.Base(),
@@ -129,7 +131,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
         viewModel.observe(this) { messages ->
             messages.last().changeTitle(requireActivity() as ToolbarActivity)
-            adapter.submitList(messages)
+            adapter.update(messages)
         }
 
         viewModel.observeScrollCommunication(this) { uiScroll ->
@@ -138,7 +140,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
         connectionViewModel.observe(this) { connection ->
             connection.changeTitle(requireActivity() as ToolbarActivity)
-            connection.messages(viewModel)
+            connection.doAction { viewModel.messages() }
         }
 
 

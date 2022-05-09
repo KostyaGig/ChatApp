@@ -3,13 +3,14 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat
 import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import ru.zinoview.viewmodelmemoryleak.core.Update
+import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
 
 interface UiChatMessagesMemento : Update<List<UiMessage>>, FindItem<String> {
 
     class Base(
         private val mapper: ToUiFoundMessageMapper,
         private val recyclerView: RecyclerView,
-        private val adapter: ChatAdapter
+        private val adapter: Adapter<List<UiMessage>>
     ) : UiChatMessagesMemento {
 
         private val actualMessages = ArrayList<UiMessage>()
@@ -35,7 +36,7 @@ interface UiChatMessagesMemento : Update<List<UiMessage>>, FindItem<String> {
                 Log.d("zinoviewk","found message after $foundMessage, $actualMessages")
                 recyclerView.layoutManager?.smoothScrollToPosition(recyclerView, RecyclerView.State(),index)
                 Log.d("zinoviewk","UPDATE MEMENTO")
-                adapter.submitList(actualMessages)
+                adapter.update(actualMessages)
             }
 
         }

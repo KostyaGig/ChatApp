@@ -10,17 +10,20 @@ import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractDiffUtil
 import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractViewHolder
+import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
 import java.lang.IllegalStateException
 
-open class ChatAdapter(
+class ChatAdapter(
      diffUtil: AbstractDiffUtil<UiMessage>,
      private val listener: EditMessageListener
- ) : androidx.recyclerview.widget.ListAdapter<UiMessage, ChatAdapter.BaseViewHolder>(diffUtil) {
+ ) : androidx.recyclerview.widget.ListAdapter<UiMessage, ChatAdapter.BaseViewHolder>(diffUtil),Adapter<List<UiMessage>> {
 
-     object Empty : ChatAdapter(AbstractDiffUtil.Empty, EditMessageListener.Empty)
+    override fun update(data: List<UiMessage>)
+        = submitList(data)
 
     override fun getItemViewType(position: Int): Int {
         return when(getItem(position)) {
+            // todo move to class
             is UiMessage.Sent.Read -> 1
             is UiMessage.Sent.Unread -> 2
             is UiMessage.ProgressMessage -> 3

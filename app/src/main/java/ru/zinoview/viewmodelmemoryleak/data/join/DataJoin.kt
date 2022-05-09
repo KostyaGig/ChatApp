@@ -14,7 +14,7 @@ interface DataJoin : Join {
         private val message: String
     ) : DataJoin {
         override fun <T> map(mapper: Mapper<T>): T
-            = mapper.map(message)
+            = mapper.mapFailure(message)
     }
 
     data class Test(

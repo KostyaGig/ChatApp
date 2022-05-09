@@ -1,12 +1,9 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
-import android.graphics.Color
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
@@ -20,7 +17,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.*
 
 interface UiMessage :
-    DiffSame<UiMessage>, UiSame, Bind, Ui, ChangeTitle<ToolbarActivity>,
+    DiffSame<UiMessage>, UiSame, MessageBind, Ui, ChangeTitle<ToolbarActivity>,
     Message, Show<ViewWrapper>{
 
     override fun isContentTheSame(item: UiMessage) = false
@@ -31,7 +28,6 @@ interface UiMessage :
     override fun sameFound(isFounded: Boolean) = false
 
     override fun bind(view: TextView) = Unit
-    override fun bind(view: TextView, stateImage: ImageView,editImage: ImageView) = Unit
     override fun changeTitle(toolbar: ToolbarActivity) = Unit
 
     override fun <T> map(mapper: Mapper<T>): T = mapper.map()

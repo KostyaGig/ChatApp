@@ -44,7 +44,6 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
 
                 processingMessages.update(messages)
 
-                Log.d("zinoviewk","messages branch PUSH")
                 messagesStore.addMessages(messages)
             }
             socketWrapper.emit(MESSAGES,SocketData.Empty)

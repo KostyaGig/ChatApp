@@ -8,6 +8,6 @@ interface AbstractCloudDataSource : Disconnect<Unit> {
         private val socket: SocketWrapper
     ) : Disconnect<Unit> {
 
-        override fun disconnect(arg: Unit) = socket.disconnect(Unit)
+        override fun disconnect(arg: Unit) = socket.disconnect("")
     }
 }

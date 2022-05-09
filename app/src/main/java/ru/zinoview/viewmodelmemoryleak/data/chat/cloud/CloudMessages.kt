@@ -4,6 +4,7 @@ import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
 import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
+import ru.zinoview.viewmodelmemoryleak.data.users.cloud.CloudUser
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationMapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationWrapper
 
@@ -169,6 +170,35 @@ class TypingValue(
 class WrapperMessages (
     private val values: ArrayList<Value>
 ) : Mapper.Base<List<CloudMessage>>(emptyList()) {
+
+    override fun map(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ) = values.map { value ->
+        value.map(id, senderId, content, senderNickname)
+    }
+}
+
+
+class ValueUsers(
+    private val nameValuePairs: CloudUser.Base
+) : Mapper.Base<CloudUser>(CloudUser.Empty) {
+
+
+    override fun map(
+        id: String,
+        senderId: Int,
+        content: String,
+        senderNickname: String
+    ) = nameValuePairs
+
+}
+
+class WrapperUsers (
+    private val values: ArrayList<ValueUsers>
+) : Mapper.Base<List<CloudUser>>(emptyList()) {
 
     override fun map(
         id: String,

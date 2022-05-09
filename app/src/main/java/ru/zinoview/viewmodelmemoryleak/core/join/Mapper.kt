@@ -1,8 +1,8 @@
 package ru.zinoview.viewmodelmemoryleak.core.join
 
-interface Mapper<T> {
+import ru.zinoview.viewmodelmemoryleak.core.FailureMapper
+
+interface Mapper<T> : FailureMapper.String<T> {
 
     fun map() : T
-
-    fun map(message: String) : T
 }

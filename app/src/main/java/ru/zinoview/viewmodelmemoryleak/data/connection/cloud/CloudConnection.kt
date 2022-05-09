@@ -4,12 +4,12 @@ import ru.zinoview.viewmodelmemoryleak.core.connection.Connection
 
 interface CloudConnection : Connection {
 
-    class Success(
+    data class Success(
         private val message: String
     ) : CloudConnection {
 
         override fun <T> map(mapper: Connection.Mapper<T>): T
-            = mapper.mapMessage(message)
+            = mapper.mapSuccess(message)
     }
 
     class Message(

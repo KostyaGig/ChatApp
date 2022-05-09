@@ -7,7 +7,7 @@ import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.*
 
-class AuthActivity : AppCompatActivity() {
+class  AuthActivity : AppCompatActivity() {
 
 
     private val viewModel by lazy {
@@ -26,6 +26,7 @@ class AuthActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
+
 
         viewModel.auth()
     }

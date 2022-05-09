@@ -7,6 +7,5 @@ class DataToUiAuthMapper :
 
     override fun map() = UiAuth.Success
 
-    override fun mapFailure() = UiAuth.Failure
-
+    override fun mapFailure(message: Unit) = UiAuth.Failure
 }

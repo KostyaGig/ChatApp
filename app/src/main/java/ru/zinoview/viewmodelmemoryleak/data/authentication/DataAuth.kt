@@ -12,6 +12,6 @@ interface DataAuth : Auth {
 
     object Failure: DataAuth {
         override fun <T> map(mapper: Mapper<T>): T
-            = mapper.mapFailure()
+            = mapper.mapFailure(Unit)
     }
 }

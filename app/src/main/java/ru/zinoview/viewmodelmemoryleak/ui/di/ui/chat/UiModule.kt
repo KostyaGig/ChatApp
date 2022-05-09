@@ -10,6 +10,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStateWork
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStatesMapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.user_status.UiMessagesNotificationCommunication
 import ru.zinoview.viewmodelmemoryleak.ui.chat.user_status.UserStatusViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
 
 class UiModule(
@@ -59,10 +60,10 @@ class UiModule(
             )
         }
 
-        single<TypeMessageTextWatcher> {
+        factory<TypeMessageTextWatcher> {
             TypeMessageTextWatcher.Base(
                 TypeMessageTimer.Base(get(),Time.Base()),
-                get(),
+                Dispatcher.Delay(),
                 scope
             )
         }

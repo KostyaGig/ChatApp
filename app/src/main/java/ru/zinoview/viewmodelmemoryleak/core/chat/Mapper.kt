@@ -1,8 +1,8 @@
 package ru.zinoview.viewmodelmemoryleak.core.chat
 
-import android.util.Log
+import ru.zinoview.viewmodelmemoryleak.core.FailureMapper
 
-interface Mapper<T> {
+interface Mapper<T> : FailureMapper<T,String>{
 
     abstract class Base<T>(
         private val empty: T
@@ -12,7 +12,7 @@ interface Mapper<T> {
              = empty
 
         override fun mapFailure(message: String)
-             = empty
+            = empty
 
         override fun mapProgress(
             senderId: Int,
@@ -50,8 +50,6 @@ interface Mapper<T> {
         content: String = "",
         senderNickname: String = ""
     ) : T
-
-    fun mapFailure(message: String) : T
 
     fun mapProgress(
         senderId: Int = -1,

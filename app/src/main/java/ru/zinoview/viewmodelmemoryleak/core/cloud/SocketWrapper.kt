@@ -6,7 +6,7 @@ import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.IsNotActive
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.SocketConnection
 
-interface SocketWrapper : Emit,Connect<String>, Subscribe,Disconnect<Unit>, IsNotActive {
+interface SocketWrapper : Emit,Connect<String>, Subscribe,Disconnect<String>, IsNotActive {
 
     class Base(
         private val socket: Socket,
@@ -37,10 +37,14 @@ interface SocketWrapper : Emit,Connect<String>, Subscribe,Disconnect<Unit>, IsNo
             }
         }
 
-        override fun disconnect(arg: Unit) {
-            if (socket.isActive) {
-                branches.forEach { branch ->
-                    socket.off(branch)
+        override fun disconnect(branch: String) {
+            if (branch.isNotEmpty()) {
+                socket.off(branch)
+            } else {
+                if (socket.isActive) {
+                    branches.forEach { branch ->
+                        socket.off(branch)
+                    }
                 }
             }
         }

@@ -2,6 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
 
