@@ -1,17 +1,18 @@
 package ru.zinoview.viewmodelmemoryleak.ui.users
 
 import android.graphics.Bitmap
+import android.widget.ImageView
 import android.widget.TextView
 import ru.zinoview.viewmodelmemoryleak.ui.core.*
 
-sealed class UiUser : DiffSame<UiUser>, SameOne<String>, Same<String,Unit>, Bind<TextView> {
+sealed class UiUser : DiffSame<UiUser>, SameOne<String>, Same<String,Unit>, Bind<Pair<TextView,ImageView>> {
 
     override fun isContentTheSame(item: UiUser) = false
     override fun isItemTheSame(item: UiUser) = false
     override fun same(data: String) = false
     override fun same(arg1: String, arg2: Unit) = false
 
-    override fun bind(view: TextView) = Unit
+    override fun bind(view: Pair<TextView, ImageView>) = Unit
     class Base(
         private val id: String,
         private val nickName: String,
@@ -30,8 +31,9 @@ sealed class UiUser : DiffSame<UiUser>, SameOne<String>, Same<String,Unit>, Bind
         override fun same(nickName: String, arg2: Unit)
             = this.nickName == nickName
 
-        override fun bind(view: TextView) {
-            view.text = nickName
+        override fun bind(view: Pair<TextView, ImageView>) {
+            view.first.text = nickName
+//            view.second.setImageBitmap(image)
         }
 
     }
