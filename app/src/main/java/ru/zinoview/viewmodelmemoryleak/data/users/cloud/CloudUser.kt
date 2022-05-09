@@ -9,7 +9,7 @@ interface CloudUser {
 
     fun <T> map(mapper: UserMapper<T>,bitmap: Bitmap) : T
 
-    class Base(
+    data class Base(
         private val id: String,
         private val nickName: String,
         private val image: String
