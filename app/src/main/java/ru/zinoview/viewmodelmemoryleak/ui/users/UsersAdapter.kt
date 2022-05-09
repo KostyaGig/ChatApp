@@ -3,10 +3,9 @@ package ru.zinoview.viewmodelmemoryleak.ui.users
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import ru.zinoview.viewmodelmemoryleak.R
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatAdapter
-import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
 import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractDiffUtil
 import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractViewHolder
 import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
@@ -53,10 +52,14 @@ class UsersAdapter(
         ) : BaseViewHolder(view) {
 
             private val nickName = view.findViewById<TextView>(R.id.user_nickname_tv)
+            private val imageProfile = view.findViewById<ImageView>(R.id.user_image_profile)
 
             override fun bind(item: UiUser) {
-                item.bind(nickName)
+                item.bind(Pair(
+                    nickName,imageProfile
+                ))
             }
         }
     }
+
 }

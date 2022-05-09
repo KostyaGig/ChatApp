@@ -2,7 +2,6 @@ package ru.zinoview.viewmodelmemoryleak.data.core.cloud
 
 import com.google.gson.Gson
 import org.json.JSONObject
-import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.WrapperMessages
 
 interface Json {
 

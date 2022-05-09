@@ -9,7 +9,6 @@ import java.lang.Exception
 
 interface UsersRepository : Data<DataUsers> {
 
-    // todo test
     class Base(
         private val cloudDataSource: CloudDataSource,
         private val mapper: CloudToAbstractUserMapper,

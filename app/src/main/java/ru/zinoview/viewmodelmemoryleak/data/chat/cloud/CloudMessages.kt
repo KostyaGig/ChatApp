@@ -1,10 +1,8 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
 import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
-import ru.zinoview.viewmodelmemoryleak.data.users.cloud.CloudUser
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationMapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationWrapper
 
@@ -23,13 +21,15 @@ interface CloudMessage : Message, CloudSame {
 
     fun addUnreadMessageId(userId: String,unreadMessages: MutableList<String>) = Unit
 
-    data class Base(
+    open class Base(
         private val id: String,
         private val senderId: Int,
         private val content: String,
         private val senderNickName: String,
         private val isRead: Boolean,
     ) : CloudMessage {
+
+        object Empty : Base("",-1,"","",false)
 
         override fun <T> map(content: String, mapper: Mapper<T>): T
             = mapper.map(id, senderId, content, senderNickName)
@@ -51,11 +51,12 @@ interface CloudMessage : Message, CloudSame {
         }
     }
 
-    data class Typing(
+    open class Typing(
         private val senderNickName: String,
-        private val isTyping: Boolean,
-        private val isCloud: Boolean = false
+        private val isTyping: Boolean
     ) : CloudMessage {
+
+        object Empty : Typing("",false)
 
 
         override fun map(mapper: CloudToDataMessageMapper) : DataMessage {
@@ -65,8 +66,6 @@ interface CloudMessage : Message, CloudSame {
                 mapper.mapIsNotTyping(senderNickName)
             }
         }
-
-        fun isCloud() = isCloud
     }
 
     data class Failure(
@@ -137,76 +136,6 @@ interface CloudMessage : Message, CloudSame {
     object Empty : CloudMessage {
         override fun <T> map(mapper: Mapper<T>): T
             = mapper.map()
-    }
-}
-
-class Value(
-    private val nameValuePairs: CloudMessage.Base
-) : Mapper.Base<CloudMessage>(CloudMessage.Empty) {
-
-
-    override fun map(
-        id: String,
-        senderId: Int,
-        content: String,
-        senderNickname: String
-    ) = nameValuePairs
-
-}
-
-class TypingValue(
-    private val nameValuePairs: CloudMessage.Typing
-) : Mapper.Base<CloudMessage>(CloudMessage.Empty) {
-
-    override fun map(
-        id: String,
-        senderId: Int,
-        content: String,
-        senderNickname: String
-    ) = nameValuePairs
-
-}
-
-class WrapperMessages (
-    private val values: ArrayList<Value>
-) : Mapper.Base<List<CloudMessage>>(emptyList()) {
-
-    override fun map(
-        id: String,
-        senderId: Int,
-        content: String,
-        senderNickname: String
-    ) = values.map { value ->
-        value.map(id, senderId, content, senderNickname)
-    }
-}
-
-
-class ValueUsers(
-    private val nameValuePairs: CloudUser.Base
-) : Mapper.Base<CloudUser>(CloudUser.Empty) {
-
-
-    override fun map(
-        id: String,
-        senderId: Int,
-        content: String,
-        senderNickname: String
-    ) = nameValuePairs
-
-}
-
-class WrapperUsers (
-    private val values: ArrayList<ValueUsers>
-) : Mapper.Base<List<CloudUser>>(emptyList()) {
-
-    override fun map(
-        id: String,
-        senderId: Int,
-        content: String,
-        senderNickname: String
-    ) = values.map { value ->
-        value.map(id, senderId, content, senderNickname)
     }
 }
 

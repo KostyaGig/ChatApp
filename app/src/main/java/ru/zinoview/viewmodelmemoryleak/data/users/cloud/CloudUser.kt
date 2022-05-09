@@ -9,11 +9,13 @@ interface CloudUser {
 
     fun <T> map(mapper: UserMapper<T>,bitmap: Bitmap) : T
 
-    data class Base(
+    open class Base(
         private val id: String,
         private val nickName: String,
         private val image: String
     ) : CloudUser {
+
+        object Empty : Base("","","")
 
         override fun <T> map(mapper: UserMapper<T>,bitmap: Bitmap) : T {
             val bitmapImage = bitmap.bitmap(image)

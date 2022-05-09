@@ -3,4 +3,6 @@
     <dimen name="found_message_padding">10dp</dimen>
     <dimen name="profile_image_width">96dp</dimen>
     <dimen name="profile_image_height">96dp</dimen>
+    <dimen name="recycler_view_image_profile_height">40dp</dimen>
+    <dimen name="recycler_view_image_profile_width">40dp</dimen>
 </resources>
