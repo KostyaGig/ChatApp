@@ -27,7 +27,7 @@ class ConnectionRepositoryTest {
 
     @Test
     fun test_success_connection() = runBlocking {
-        val expected = DataConnection.Success
+        val expected = DataConnection.Success("")
         repository?.connection(true)
         val actual = repository?.connection(true)
         assertEquals(expected,actual)
@@ -35,14 +35,14 @@ class ConnectionRepositoryTest {
 
     @Test
     fun test_failure_connection_waiting_for_network() = runBlocking {
-        val expected = DataConnection.Failure("Waiting for network...")
+        val expected = DataConnection.Message("Waiting for network...")
         val actual = repository?.connection(false)
         assertEquals(expected,actual)
     }
 
     @Test
     fun test_failure_connection_waiting_for_server() = runBlocking {
-        val expected = DataConnection.Failure("Waiting for server...")
+        val expected = DataConnection.Message("Waiting for server...")
         val actual = repository?.connection(true)
         assertEquals(expected,actual)
     }
@@ -82,7 +82,7 @@ class ConnectionRepositoryTest {
                 val result = if (count % 2 == 0) {
                     CloudConnection.Message("Waiting for server...")
                 } else {
-                    CloudConnection.Success
+                    CloudConnection.Success("")
                 }
                 count++
                 result

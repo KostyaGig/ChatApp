@@ -6,6 +6,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import ru.zinoview.viewmodelmemoryleak.data.join.cloud.CloudDataSource
+import ru.zinoview.viewmodelmemoryleak.ui.join.ImageProfile
 
 
 /**
@@ -25,14 +26,14 @@ class JoinUserRepositoryTest {
     @Test
     fun test_success_join_user()  = runBlocking {
         var expected = DataJoin.Test("0")
-        var actual = repository?.joinedUserId("Kostya")
+        var actual = repository?.joinedUserId(ImageProfile.Empty,"Kostya")
 
         assertEquals(expected, actual)
 
-        repository?.joinedUserId("")
+        repository?.joinedUserId(ImageProfile.Empty,"")
 
         expected = DataJoin.Test("1")
-        actual = repository?.joinedUserId("Nusha")
+        actual = repository?.joinedUserId(ImageProfile.Empty,"Nusha")
 
         assertEquals(expected, actual)
     }
@@ -40,7 +41,7 @@ class JoinUserRepositoryTest {
     @Test
     fun test_failure_join_user_empty_nickname() = runBlocking {
         val expected = DataJoin.Failure("User nickname must not be empty")
-        val actual = repository?.joinedUserId("")
+        val actual = repository?.joinedUserId(ImageProfile.Empty,"")
         assertEquals(expected, actual)
     }
 
@@ -54,8 +55,8 @@ class JoinUserRepositoryTest {
         private val cloudDataSource: CloudDataSource
     ) : JoinUserRepository {
 
-        override suspend fun joinedUserId(nickname: String): DataJoin {
-            val userId = cloudDataSource.joinedUserId(nickname)
+        override suspend fun joinedUserId(image: ImageProfile,nickname: String): DataJoin {
+            val userId = cloudDataSource.joinedUserId(image,nickname)
 
             return if (userId == "-1") {
                 DataJoin.Failure("User nickname must not be empty")
@@ -71,7 +72,7 @@ class JoinUserRepositoryTest {
 
         private var id = -1
 
-        override suspend fun joinedUserId(nickname: String): String {
+        override suspend fun joinedUserId(image: ImageProfile,nickname: String): String {
             return if (nickname.isEmpty()) {
                 "-1"
             } else {

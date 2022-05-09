@@ -52,7 +52,5 @@ class AuthenticationRepositoryTest {
             isAuth = isAuth.not()
             return result
         }
-
-        override fun clean() = Unit
     }
 }

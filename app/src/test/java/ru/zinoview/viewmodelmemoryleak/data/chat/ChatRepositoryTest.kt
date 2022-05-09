@@ -177,6 +177,8 @@ class ChatRepositoryTest {
         override suspend fun toTypeMessage(isTyping: Boolean)
             = cloudDataSource.toTypeMessage(isTyping,"Bob").first().map(mapper)
 
+        override suspend fun showNotificationMessage(messageId: String) = Unit
+
         fun messages() : List<DataMessage> = cloudDataSource.messages().map { it.map(mapper) }
     }
 
