@@ -3,7 +3,8 @@ package ru.zinoview.viewmodelmemoryleak.core
 import android.app.Application
 import androidx.work.Configuration
 import androidx.work.WorkManager
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import org.koin.android.ext.android.startKoin
 import org.koin.dsl.module.Module
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.*
@@ -78,8 +79,8 @@ class ChatApp : Application(), Configuration.Provider {
 
         val coreUiModule = CoreUiModule()
 
-        // todo global scope
-        val chatUiModule = UiModule(GlobalScope)
+        val scope = CoroutineScope(Job())
+        val chatUiModule = UiModule(scope)
 
         val authenticationUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.authentication.UiModule(this)
         val joinUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.join.UiModule()
@@ -124,7 +125,6 @@ class ChatApp : Application(), Configuration.Provider {
         startKoin(this,koinModules)
         WorkManager.initialize(this,workManagerConfiguration)
     }
-
 
     override fun getWorkManagerConfiguration()
         = ru.zinoview.viewmodelmemoryleak.core.WorkManager.Base(notification).workManager(this)

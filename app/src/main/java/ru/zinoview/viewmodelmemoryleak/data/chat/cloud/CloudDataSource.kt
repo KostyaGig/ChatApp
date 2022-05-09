@@ -96,7 +96,8 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
         override suspend fun toTypeMessage(isTyping: Boolean,senderNickName: String) {
             socketWrapper.subscribe(TO_TYPE_MESSAGE) { cloudData ->
                 val jsonTypingMessage = json.json(cloudData.first())
-                val typingMessage = json.objectFromJson(jsonTypingMessage,TypingMessagesWrapperDataWrapper::class.java).map().first()
+                val typingMessage = json.objectFromJson(jsonTypingMessage,TypingMessageValue::class.java).map()
+
                 messagesStore.add(typingMessage)
                 messagesStore.remove(typingMessage)
             }

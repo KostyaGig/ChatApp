@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
 import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
@@ -55,6 +56,10 @@ interface CloudMessage : Message, CloudSame {
         private val senderNickName: String,
         private val isTyping: Boolean
     ) : CloudMessage {
+
+        override fun toString(): String {
+            return "nick $senderNickName, isTyping $isTyping"
+        }
 
         object Empty : Typing("",false)
 

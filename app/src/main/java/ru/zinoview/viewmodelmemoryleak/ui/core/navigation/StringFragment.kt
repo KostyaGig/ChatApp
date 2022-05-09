@@ -34,15 +34,6 @@ interface StringFragment : Mapper<String, TypeFragment> {
             }
         }
 
-        // todo remove
-//        override fun mapReverseFragment(srcFragment: String): String {
-//            return when(srcFragment) {
-//                JOIN -> CHAT
-//                CHAT -> JOIN
-//                else -> throw IllegalArgumentException("TypeFragmentToExtraMapper doesn't process $srcFragment")
-//            }
-//        }
-
         override fun map(src: Fragment): String {
             return when(src.javaClass) {
                 JoinUserFragment::class.java -> JOIN

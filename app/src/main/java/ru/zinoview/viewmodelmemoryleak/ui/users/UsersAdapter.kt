@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import ru.zinoview.viewmodelmemoryleak.R
+import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractAdapter
 import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractDiffUtil
 import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractViewHolder
 import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
@@ -13,15 +14,11 @@ import java.lang.IllegalArgumentException
 
 class UsersAdapter(
     diffUtil: AbstractDiffUtil<UiUser>
-) : Adapter<List<UiUser>>,
-    androidx.recyclerview.widget.ListAdapter<UiUser, UsersAdapter.BaseViewHolder>(diffUtil) {
+) : AbstractAdapter<UiUser>(diffUtil) {
 
     object Empty : Adapter<List<UiUser>> {
         override fun update(data: List<UiUser>) = Unit
     }
-
-    override fun update(data: List<UiUser>)
-        = submitList(data)
 
     override fun getItemViewType(position: Int): Int {
         return when(getItem(position)) {
@@ -39,9 +36,6 @@ class UsersAdapter(
             else -> throw IllegalArgumentException("UsersAdapter onCreateViewHolder, viewType -  $viewType")
         }
     }
-
-    override fun onBindViewHolder(holder: BaseViewHolder, position: Int)
-        = holder.bind(getItem(position))
 
     abstract class BaseViewHolder(
         view: View

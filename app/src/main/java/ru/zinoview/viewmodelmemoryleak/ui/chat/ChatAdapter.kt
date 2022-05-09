@@ -8,18 +8,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
+import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractAdapter
 import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractDiffUtil
 import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractViewHolder
-import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
 import java.lang.IllegalStateException
 
 class ChatAdapter(
      diffUtil: AbstractDiffUtil<UiMessage>,
      private val listener: EditMessageListener
- ) : androidx.recyclerview.widget.ListAdapter<UiMessage, ChatAdapter.BaseViewHolder>(diffUtil),Adapter<List<UiMessage>> {
-
-    override fun update(data: List<UiMessage>)
-        = submitList(data)
+ ) : AbstractAdapter<UiMessage>(diffUtil) {
 
     override fun getItemViewType(position: Int): Int {
         return when(getItem(position)) {
@@ -78,8 +75,6 @@ class ChatAdapter(
         }
     }
 
-     override fun onBindViewHolder(holder: BaseViewHolder, position: Int)
-        = holder.bind(getItem(position))
 
      abstract class BaseViewHolder(
         view: View
@@ -95,13 +90,9 @@ class ChatAdapter(
             private val editImage = view.findViewById<ImageView>(R.id.edit_image)
 
             override fun bind(item: UiMessage) {
-                if (item is UiMessage.Received.Found) {
-                    Log.d("zinoviewk","bind found $item")
-                }
                 item.bind(contentTv,stateImage,editImage)
                 editImage.setOnClickListener { item.edit(listener) }
             }
-
         }
 
         class Empty(
@@ -120,11 +111,7 @@ class ChatAdapter(
         ) : BaseViewHolder(view) {
 
             private val senderNicknameTextView = view.findViewById<TextView>(R.id.sender_nickname_tv)
-
             override fun bind(item: UiMessage) = item.bind(senderNicknameTextView)
         }
     }
-
-
-
 }
