@@ -19,6 +19,9 @@ var messages = [];
 
 var offlineUserNotificationTokens = [];
 
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb://localhost:27017/";
+
 // base uri - http://10.0.2.2:3000
 
 io.on('connection', (socket) => {
@@ -26,15 +29,57 @@ io.on('connection', (socket) => {
 	console.log("connection " + socket.id)
 
 	socket.on('join_user', (clientUser) => {
-		var user = Object();
-		userId++;
-		user.id = userId;
-		user.nickname = clientUser.nickname;
-		users.push(user)
 
-		io.emit('join_user',userId)
+		var nickName = clientUser['nickname']
+		var image = clientUser['image']
+
+
+		MongoClient.connect(url, function(err, db) {
+  			if (err) throw err;
+  			var database = db.db("chat_app_db");
+  			var count = database.collection("user").count({}, function(error, count){
+            if(error) return 0;
+
+            var userId = count + 1
+            console.log(userId, nickName)
+
+            var user = {
+  				userId: userId,
+  				userNickName: nickName,
+  				userImage: image
+  			}
+
+  			database.collection("user").insertOne(user, function(err, res) {
+    			if (err) throw err;
+
+				io.emit('join_user',userId)
+
+    			db.close();
+  			});
+        });
+
+		})
 	})
 
+	socket.on('users',() => {
+		MongoClient.connect(url, function(err, db) {
+  			if (err) throw err;
+  			var database = db.db("chat_app_db");
+  			var count = database.collection("user").find({}).toArray(function(err, result) {
+    			if (err) throw err;
+    			var users = []
+    			for(const currentUser of result) {
+    				var user = Object()
+    				user.id = currentUser['userId']
+    				user.nickName = currentUser['userNickName']
+    				user.image = currentUser['userImage']
+    				users.push(user)
+				}
+    			io.emit('users',users)
+    			db.close();
+  			});
+		})
+	})
 
 	socket.on('send_message', (clientMessage) => {
 		var message = Object();
@@ -110,6 +155,7 @@ io.on('connection', (socket) => {
   				newMessage.content = content;
   				newMessage.senderNickName = item.senderNickName;
 
+  				// todo if was updated change isRead -> false
   				newMessage.isRead = false
 
   				indexEditingContentMessage = index;
@@ -179,7 +225,6 @@ io.on('connection', (socket) => {
 		var senderNickName = message['senderNickName']
 
 		objectMessage.senderNickName = senderNickName
-		objectMessage.isCloud = true
 
 		if (isTyping) {
 			if(isTypingYet == false) {
@@ -192,7 +237,7 @@ io.on('connection', (socket) => {
 			if(isTypingYet == true) {
 				objectMessage.isTyping = false
 				isTypingYet = false
-				io.emit('to_type_message',objectMessage)
+				io.emit('to_type_messaage',objectMessage)
 				console.log('push',objectMessage)
 			}
 		}
