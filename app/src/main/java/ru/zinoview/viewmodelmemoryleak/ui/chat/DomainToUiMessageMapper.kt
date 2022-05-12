@@ -14,30 +14,30 @@ interface DomainToUiMessageMapper : Mapper<UiMessage> {
 
         override fun mapReceived(
             id: String,
-            senderId: Int,
+            senderId: String,
             content: String,
             senderNickname: String
         ): UiMessage
                 = UiMessage.Received.Base(
-            id,content,senderId.toString(),senderNickname
+            id,content, senderId,senderNickname
         )
 
-        override fun mapProgress(senderId: Int, content: String)
-            = UiMessage.ProgressMessage(senderId.toString(),content)
+        override fun mapProgress(senderId: String, content: String)
+            = UiMessage.ProgressMessage(senderId,content)
 
         override fun mapRead(
             id: String,
-            senderId: Int,
+            senderId: String,
             content: String,
             senderNickname: String
-        ) = UiMessage.Sent.Read(id,content,senderId.toString(),senderNickname)
+        ) = UiMessage.Sent.Read(id,content, senderId,senderNickname)
 
         override fun mapUnRead(
             id: String,
-            senderId: Int,
+            senderId: String,
             content: String,
             senderNickname: String
-        ) =  UiMessage.Sent.Unread(id,content,senderId.toString(),senderNickname)
+        ) =  UiMessage.Sent.Unread(id,content,senderId,senderNickname)
 
         override fun mapIsTyping(senderNickname: String)
             = UiMessage.Typing.Is("$senderNickname $SUFFIX")

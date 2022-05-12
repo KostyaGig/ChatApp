@@ -24,13 +24,13 @@ interface CloudMessage : Message, CloudSame {
 
     open class Base(
         private val id: String,
-        private val senderId: Int,
+        private val senderId: String,
         private val content: String,
         private val senderNickName: String,
         private val isRead: Boolean,
     ) : CloudMessage {
 
-        object Empty : Base("",-1,"","",false)
+        object Empty : Base("","-1","","",false)
 
         override fun <T> map(content: String, mapper: Mapper<T>): T
             = mapper.map(id, senderId, content, senderNickName)
@@ -46,7 +46,7 @@ interface CloudMessage : Message, CloudSame {
             = this.content == content
 
         override fun addUnreadMessageId(userId: String, unreadMessages: MutableList<String>) {
-            if (isRead.not() && senderId.toString() != userId) {
+            if (isRead.not() && senderId != userId) {
                 unreadMessages.add(id)
             }
         }
@@ -89,7 +89,7 @@ interface CloudMessage : Message, CloudSame {
         ) : Progress {
 
             override fun map(mapper: CloudToDataMessageMapper)
-                = mapper.mapProgress(senderId.toInt(), content)
+                = mapper.mapProgress(senderId, content)
 
             override fun same(item: CloudMessage) = item.sameContent(content)
 
@@ -128,10 +128,10 @@ interface CloudMessage : Message, CloudSame {
     ) : CloudMessage {
 
         override fun <T> map(mapper: Mapper<T>): T
-                = mapper.map(id, senderId.toInt(), content, senderNickname)
+                = mapper.map(id, senderId, content, senderNickname)
 
         override fun map(mapper: CloudToDataMessageMapper)
-             = mapper.map(id, senderId.toInt(), content, senderNickname, isRead)
+             = mapper.map(id, senderId, content, senderNickname, isRead)
 
         fun updated(content: String) = Test(id,senderId, content,isRead ,senderNickname)
 

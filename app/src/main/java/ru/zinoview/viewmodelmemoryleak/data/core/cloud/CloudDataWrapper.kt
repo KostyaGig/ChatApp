@@ -7,6 +7,6 @@ abstract class CloudDataWrapper<E,T : Mapper<E>>(
     empty: E
 ) : Mapper.Base<List<E>>(listOf(empty)) {
 
-    override fun map(id: String, senderId: Int, content: String, senderNickname: String) =
+    override fun map(id: String, senderId: String, content: String, senderNickname: String) =
         values.map { it.map(id, senderId, content, senderNickname) }
 }

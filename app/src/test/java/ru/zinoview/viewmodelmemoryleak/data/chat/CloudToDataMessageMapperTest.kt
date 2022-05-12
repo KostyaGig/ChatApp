@@ -23,10 +23,10 @@ class CloudToDataMessageMapperTest {
     @Test
     fun test_map_received_data_to_ui_received_message() {
         val data =  DataTestMessage.Received(
-            "1",123,"Hi, John!","Bob"
+            "1","123","Hi, John!","Bob"
         )
         val expected = UiTestMessage.Received(
-            "1",123,"Hi, John!","Bob"
+            "1","123","Hi, John!","Bob"
         )
         val actual = data.map(mapper!!)
         assertEquals(expected, actual)
@@ -35,10 +35,10 @@ class CloudToDataMessageMapperTest {
     @Test
     fun test_map_received_data_to_ui_sent_message() {
         val data =  DataTestMessage.Sent(
-            "2",321,"How are you?","Bob"
+            "2","321","How are you?","Bob"
         )
         val expected = UiTestMessage.Sent(
-            "2",321,"How are you?","Bob"
+            "2","321","How are you?","Bob"
         )
         val actual = data.map(mapper!!)
         assertEquals(expected, actual)
@@ -73,14 +73,14 @@ class CloudToDataMessageMapperTest {
 
         override fun map(
             id: String,
-            senderId: Int,
+            senderId: String,
             content: String,
             senderNickname: String
         ): UiTestMessage = UiTestMessage.Sent(id, senderId, content, senderNickname)
 
         override fun mapReceived(
             id: String,
-            senderId: Int,
+            senderId: String,
             content: String,
             senderNickname: String
         ): UiTestMessage = UiTestMessage.Received(id, senderId, content, senderNickname)
@@ -93,7 +93,7 @@ class CloudToDataMessageMapperTest {
 
         class Sent(
             private val id: String,
-            private val senderId: Int,
+            private val senderId: String,
             private val content: String,
             private val senderNickname: String
         ) : DataTestMessage {
@@ -103,7 +103,7 @@ class CloudToDataMessageMapperTest {
 
         class Received(
             private val id: String,
-            private val senderId: Int,
+            private val senderId: String,
             private val content: String,
             private val senderNickname: String
         ) : DataTestMessage {
@@ -130,7 +130,7 @@ class CloudToDataMessageMapperTest {
 
         data class Sent(
             private val id: String,
-            private val senderId: Int,
+            private val senderId: String,
             private val content: String,
             private val senderNickname: String
         ) : UiTestMessage {
@@ -140,7 +140,7 @@ class CloudToDataMessageMapperTest {
 
         data class Received(
             private val id: String,
-            private val senderId: Int,
+            private val senderId: String,
             private val content: String,
             private val senderNickname: String
         ) : UiTestMessage {
@@ -165,11 +165,11 @@ class CloudToDataMessageMapperTest {
 
         override fun map(
             id: String,
-            senderId: Int,
+            senderId: String,
             content: String,
             senderNickname: String
         ): DataTestMessage {
-            return if (senderId == 1) {
+            return if (senderId == "1") {
                 DataTestMessage.Sent(id, senderId, content, senderNickname)
             } else {
                 DataTestMessage.Received(id, senderId, content, senderNickname)

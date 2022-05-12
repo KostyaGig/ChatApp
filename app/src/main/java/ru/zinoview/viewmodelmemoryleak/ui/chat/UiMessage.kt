@@ -113,7 +113,7 @@ interface UiMessage :
 
         override fun edit(listener: EditMessageListener) = listener.edit(this)
         override fun <T> map(mapper: Mapper<T>)
-            = mapper.map(id,senderId.toInt(),content, senderNickname)
+            = mapper.map(id,senderId,content, senderNickname)
 
         override fun show(view: ViewWrapper) = view.show(Unit,content)
 
@@ -150,12 +150,7 @@ interface UiMessage :
             private val senderNickname: String
         ) : Received(id, content, senderId, senderNickname,false) {
 
-            override fun <T> map(mapper: Mapper<T>): T
-            // todo change senderId type to String
-            {
-                Log.d("zinoviewk","MAP UNREAD MESSAGE")
-                return mapper.map(id,senderId.toInt(),content, senderNickname)
-            }
+            override fun <T> map(mapper: Mapper<T>) = mapper.map(id,senderId,content, senderNickname)
 
         }
 

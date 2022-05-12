@@ -9,8 +9,8 @@ class ToProgressEditMessageMapper(
 
     override fun map(
         id: String,
-        senderId: Int,
+        senderId: String,
         content: String,
         senderNickname: String
-    ): CloudMessage = CloudMessage.Progress.Edit(senderId.toString(),content,time.time())
+    ): CloudMessage = CloudMessage.Progress.Edit(senderId,content,time.time())
 }

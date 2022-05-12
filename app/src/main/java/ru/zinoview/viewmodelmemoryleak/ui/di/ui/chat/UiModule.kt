@@ -11,6 +11,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStatesMapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.user_status.UiMessagesNotificationCommunication
 import ru.zinoview.viewmodelmemoryleak.ui.chat.user_status.UserStatusViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
+import ru.zinoview.viewmodelmemoryleak.ui.core.ViewInflater
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
 
 class UiModule(
@@ -60,6 +61,10 @@ class UiModule(
             )
         }
 
+        single<UiMessagesKeysMapper> {
+            UiMessagesKeysMapper.Base(ViewInflater.Base())
+        }
+
         factory<TypeMessageTextWatcher> {
             TypeMessageTextWatcher.Base(
                 TypeMessageTimer.Base(get(),Time.Base()),
@@ -76,6 +81,6 @@ class UiModule(
     }
 
     private companion object {
-        const val SCOPE_NAME = "cufScope"
+        const val SCOPE_NAME = "chatScope"
     }
 }

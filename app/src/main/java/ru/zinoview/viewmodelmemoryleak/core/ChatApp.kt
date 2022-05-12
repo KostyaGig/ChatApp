@@ -8,6 +8,7 @@ import kotlinx.coroutines.Job
 import org.koin.android.ext.android.startKoin
 import org.koin.dsl.module.Module
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.*
+import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.KoinScope
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.CoreModule
 import ru.zinoview.viewmodelmemoryleak.ui.di.data.cache.CoreCacheModule
 import ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.DataModule
@@ -68,6 +69,8 @@ class ChatApp : Application(), Configuration.Provider {
 
         val processingMessagesDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.processing_messages.DataModule()
         val processingMessagesNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.processing_messages.NetworkModule()
+
+        val koinScope = KoinScope.Base()
 
         val usersNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.users.NetworkModule()
         val usersDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.users.DataModule(contentResolver)

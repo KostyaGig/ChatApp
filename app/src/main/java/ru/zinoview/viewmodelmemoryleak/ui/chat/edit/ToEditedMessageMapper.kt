@@ -7,7 +7,7 @@ class ToEditedMessageMapper : Mapper.Base<UiMessage.EditedMessage>(UiMessage.Edi
 
     override fun map(
         id: String,
-        senderId: Int,
+        senderId: String,
         content: String,
         senderNickname: String
     ) = UiMessage.EditedMessage.Base(id)

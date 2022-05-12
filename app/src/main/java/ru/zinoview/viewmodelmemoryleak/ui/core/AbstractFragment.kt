@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
 import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.core.Clean
+import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.KoinScope
+import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.ScreenScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Back
 import kotlin.reflect.KClass
 
@@ -16,11 +18,15 @@ abstract class AbstractFragment<VM : ViewModel, B: ViewBinding>(
     private val viewModelClass: KClass<VM>,
 ) : Fragment(), Back {
 
-    abstract fun dependenciesScope() : String
+    private val scope = KoinScope.Base()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        getKoin().getOrCreateScope(dependenciesScope())
+
+        val scope = KoinScope.Base()
+        koinScopes().forEach { screenScope ->
+            scope.scope(screenScope,getKoin())
+        }
     }
 
     protected val viewModel: VM by lazy {
@@ -28,6 +34,8 @@ abstract class AbstractFragment<VM : ViewModel, B: ViewBinding>(
     }
 
     abstract fun initBinding(inflater: LayoutInflater,container: ViewGroup?) : B
+
+    abstract fun koinScopes() : List<ScreenScope>
 
     private var _binding: B? = null
     protected val binding: B by lazy {
@@ -48,7 +56,7 @@ abstract class AbstractFragment<VM : ViewModel, B: ViewBinding>(
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        getKoin().getScope(dependenciesScope()).close()
+        scope.clean(getKoin())
         (viewModel as Clean).clean()
     }
 }

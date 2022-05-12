@@ -15,6 +15,7 @@ class CoreUiModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
         single<Text> {
             Text.Base()
         }
+
     }
 
     override fun add(modules: MutableList<org.koin.dsl.module.Module>) {

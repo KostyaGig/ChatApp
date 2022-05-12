@@ -11,7 +11,7 @@ interface DataToDomainMessageMapper : Mapper<DomainMessage> {
 
         override fun mapReceived(
             id: String,
-            senderId: Int,
+            senderId: String,
             content: String,
             senderNickname: String
         ): DomainMessage
@@ -19,19 +19,19 @@ interface DataToDomainMessageMapper : Mapper<DomainMessage> {
             id,senderId,content,senderNickname
         )
 
-        override fun mapProgress(senderId: Int, content: String)
+        override fun mapProgress(senderId: String, content: String)
                 = DomainMessage.Progress(senderId,content)
 
         override fun mapRead(
             id: String,
-            senderId: Int,
+            senderId: String,
             content: String,
             senderNickname: String
         ) = DomainMessage.Sent.Read(id,senderId,content,senderNickname)
 
         override fun mapUnRead(
             id: String,
-            senderId: Int,
+            senderId: String,
             content: String,
             senderNickname: String
         ) =  DomainMessage.Sent.Unread(id,senderId,content,senderNickname)

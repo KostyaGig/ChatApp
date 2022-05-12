@@ -22,7 +22,7 @@ class ChatRepositoryTest {
     fun setUp() {
         repository = TestChatRepository(
             TestCloudDataSource(),
-            TestCloudToDataMessageMapper(1)
+            TestCloudToDataMessageMapper("1")
         )
     }
 
@@ -43,10 +43,10 @@ class ChatRepositoryTest {
         repository?.sendMessage("I'm fine")
 
         val expected = listOf(
-            DataMessage.Sent.Unread("-1",1,"Hi,Bob","-1"),
-            DataMessage.Received("-1",2,"Hello!","-1"),
-            DataMessage.Sent.Unread("-1",1,"How are you?","-1"),
-            DataMessage.Received("-1",2,"I'm fine","-1"),
+            DataMessage.Sent.Unread("-1","1","Hi,Bob","-1"),
+            DataMessage.Received("-1","2","Hello!","-1"),
+            DataMessage.Sent.Unread("-1","1","How are you?","-1"),
+            DataMessage.Received("-1","2","I'm fine","-1"),
         )
         repository?.messages()
         val actual = repository?.messages()
@@ -76,10 +76,10 @@ class ChatRepositoryTest {
         repository?.sendMessage("I'm fine")
 
         val expected = listOf(
-            DataMessage.Sent.Unread("-1",1,"Hi,Bob","-1"),
-            DataMessage.Received("-1",2,"Hello!","-1"),
-            DataMessage.Sent.Unread("-1",1,"What are you doing?","-1"),
-            DataMessage.Received("-1",2,"I'm fine","-1"),
+            DataMessage.Sent.Unread("-1","1","Hi,Bob","-1"),
+            DataMessage.Received("-1","2","Hello!","-1"),
+            DataMessage.Sent.Unread("-1","1","What are you doing?","-1"),
+            DataMessage.Received("-1","2","I'm fine","-1"),
         )
 
         repository?.editMessage("3","What are you doing?")
@@ -96,10 +96,10 @@ class ChatRepositoryTest {
         repository?.sendMessage("I'm fine")
 
         var expected = listOf(
-            DataMessage.Sent.Unread("-1",1,"Hi,Bob","-1"),
-            DataMessage.Received("-1",2,"Hello!","-1"),
-            DataMessage.Sent.Unread("-1",1,"What are you doing?","-1"),
-            DataMessage.Received("-1",2,"I'm fine","-1"),
+            DataMessage.Sent.Unread("-1","1","Hi,Bob","-1"),
+            DataMessage.Received("-1","2","Hello!","-1"),
+            DataMessage.Sent.Unread("-1","1","What are you doing?","-1"),
+            DataMessage.Received("-1","2","I'm fine","-1"),
         )
 
         repository?.editMessage("3","What are you doing?")
@@ -108,10 +108,10 @@ class ChatRepositoryTest {
         assertEquals(expected, actual)
 
         expected = listOf(
-            DataMessage.Sent.Read("-1",1,"Hi,Bob","-1"),
-            DataMessage.Received("-1",2,"Hello!","-1"),
-            DataMessage.Sent.Read("-1",1,"What are you doing?","-1"),
-            DataMessage.Received("-1",2,"I'm fine","-1"),
+            DataMessage.Sent.Read("-1","1","Hi,Bob","-1"),
+            DataMessage.Received("-1","2","Hello!","-1"),
+            DataMessage.Sent.Read("-1","1","What are you doing?","-1"),
+            DataMessage.Received("-1","2","I'm fine","-1"),
         )
 
         repository?.readMessages(Pair(0,3))
@@ -225,13 +225,13 @@ class ChatRepositoryTest {
     }
 
     private inner class TestCloudToDataMessageMapper(
-        private val senderId: Int
+        private val senderId: String
     ) : CloudToDataMessageMapper,Mapper.Base<DataMessage>(
         DataMessage.Empty
     ) {
         override fun map(
             id: String,
-            senderId: Int,
+            senderId: String,
             content: String,
             senderNickname: String,
             isRead: Boolean

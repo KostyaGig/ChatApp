@@ -3,7 +3,6 @@ package ru.zinoview.viewmodelmemoryleak.ui.di.ui.authentication
 import android.content.Context
 import org.koin.dsl.module.module
 import ru.zinoview.viewmodelmemoryleak.data.cache.SharedPreferencesReader
-import ru.zinoview.viewmodelmemoryleak.data.core.EmptyString
 import ru.zinoview.viewmodelmemoryleak.ui.authentication.AuthWorker
 import ru.zinoview.viewmodelmemoryleak.ui.authentication.AuthenticationCommunication
 import ru.zinoview.viewmodelmemoryleak.ui.authentication.AuthenticationViewModel
@@ -61,6 +60,6 @@ class UiModule(
     }
 
     private companion object {
-        private const val SCOPE_NAME = "aufScope"
+        private const val SCOPE_NAME = "authScope"
     }
 }

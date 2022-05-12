@@ -1,7 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +22,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.connection.ConnectionViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
 
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
+import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.ScreenScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NetworkConnectionFragment
 
@@ -39,7 +39,6 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
     private var memento: UiChatMessagesMemento = UiChatMessagesMemento.Empty
 
     private val connectionViewModel by lazy {
-        getKoin().getOrCreateScope(CONNECTION_SCOPE)
         get<ConnectionViewModel.Base>()
     }
 
@@ -52,6 +51,8 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
     }
 
     private val typeMessageTextWatcher by lazy { get<TypeMessageTextWatcher>() }
+
+    private val mapper by lazy { get<UiMessagesKeysMapper>() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,7 +97,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
                 messageSession.show(Unit)
                 messageSession.add(message)
             }
-        })
+        },mapper)
 
         val manager = LinearLayoutManager(requireContext())
 
@@ -170,11 +171,5 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
     override fun initBinding(inflater: LayoutInflater, container: ViewGroup?): ChatFragmentBinding
         = ChatFragmentBinding.inflate(layoutInflater,container,false)
 
-    override fun dependenciesScope() = SCOPE_NAME
-
-    private companion object {
-        private const val SCOPE_NAME = "cufScope"
-        // todo move const to single file
-        private const val CONNECTION_SCOPE = "cvfScope"
-    }
+    override fun koinScopes() = listOf(ScreenScope.Connection(),ScreenScope.Chat())
 }

@@ -1,7 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -11,70 +9,20 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractAdapter
 import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractDiffUtil
 import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractViewHolder
-import java.lang.IllegalStateException
 
 class ChatAdapter(
      diffUtil: AbstractDiffUtil<UiMessage>,
-     private val listener: EditMessageListener
+     private val listener: EditMessageListener,
+     private val mapper: UiMessagesKeysMapper
  ) : AbstractAdapter<UiMessage>(diffUtil) {
 
-    override fun getItemViewType(position: Int): Int {
-        return when(getItem(position)) {
-            // todo move to class
-            is UiMessage.Sent.Read -> 1
-            is UiMessage.Sent.Unread -> 2
-            is UiMessage.ProgressMessage -> 3
-            is UiMessage.Received.Base -> 4
-            is UiMessage.Progress, UiMessage.Empty, is UiMessage.Typing.IsNot -> 5
-            is UiMessage.Empty, is UiMessage.Typing.Is -> 6
-            is UiMessage.Received.Found -> 7
-            is UiMessage.Failure -> 8
-            else -> {
-                Log.d("zinoviewk","else ${getItem(position)}")
-                -1
-            }
-        }
-    }
+    override fun getItemViewType(position: Int)
+        = mapper.map(getItem(position))
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): BaseViewHolder {
-        return when(viewType) {
-            1 -> BaseViewHolder.Message(
-                LayoutInflater.from(parent.context).inflate(R.layout.sent_read,parent,false),
-                listener
-            )
-            2 -> BaseViewHolder.Message(
-                LayoutInflater.from(parent.context).inflate(R.layout.sent_unread,parent,false),
-                listener
-            )
-            3 -> BaseViewHolder.Message(
-                LayoutInflater.from(parent.context).inflate(R.layout.progress,parent,false),
-                listener
-            )
-            4 -> BaseViewHolder.Message(
-                LayoutInflater.from(parent.context).inflate(R.layout.received,parent,false),
-                listener
-            )
-            5 -> BaseViewHolder.Empty(
-                    LayoutInflater.from(parent.context).inflate(R.layout.empty,parent,false)
-                )
-            6 -> BaseViewHolder.Typing(
-                LayoutInflater.from(parent.context).inflate(R.layout.typing,parent,false)
-            )
-            7 -> BaseViewHolder.Message(
-                LayoutInflater.from(parent.context).inflate(R.layout.found_received,parent,false),
-                listener
-            )
-            8-> BaseViewHolder.Failure(
-                LayoutInflater.from(parent.context).inflate(R.layout.error,parent,false)
-            )
-
-            else -> throw IllegalStateException("ChatAdapter.onCreateViewHolder else branch")
-        }
-    }
-
+    ) = mapper.map(viewType,parent,listener)
 
      abstract class BaseViewHolder(
         view: View
@@ -98,7 +46,6 @@ class ChatAdapter(
         class Empty(
             view: View
         ) : BaseViewHolder(view)
-
 
         class Failure(
             view: View

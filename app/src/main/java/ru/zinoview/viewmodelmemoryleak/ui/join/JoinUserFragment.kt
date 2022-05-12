@@ -14,6 +14,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.connection.ConnectionViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.core.ResultApiActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.Text
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
+import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.ScreenScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NetworkConnectionFragment
 
@@ -26,7 +27,6 @@ class JoinUserFragment : NetworkConnectionFragment<JoinUserViewModel.Base, JoinF
     private val text = getKoin().get<Text>()
 
     private val connectionViewModel by lazy {
-        getKoin().getOrCreateScope(CONNECTION_SCOPE)
         get<ConnectionViewModel.Base>()
     }
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -74,10 +74,5 @@ class JoinUserFragment : NetworkConnectionFragment<JoinUserViewModel.Base, JoinF
         override fun initBinding(inflater: LayoutInflater, container: ViewGroup?): JoinFragmentBinding
                 = JoinFragmentBinding.inflate(inflater,container,false)
 
-        override fun dependenciesScope() = SCOPE_NAME
-
-        private companion object {
-            private const val SCOPE_NAME = "jufScope"
-            private const val CONNECTION_SCOPE = "cvfScope"
-        }
+    override fun koinScopes() = listOf(ScreenScope.Join(),ScreenScope.Connection())
 }

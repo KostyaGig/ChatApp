@@ -26,6 +26,6 @@ class UiModule : Module {
     }
 
     private companion object {
-        private const val SCOPE_NAME = "jufScope"
+        private const val SCOPE_NAME = "joinScope"
     }
 }

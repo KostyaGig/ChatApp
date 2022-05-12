@@ -20,7 +20,7 @@ interface DomainMessage : Message {
 
     abstract class Message(
         private val id: String,
-        private val senderId: Int,
+        private val senderId: String,
         private val content: String,
         private val senderNickname: String
     ) : DomainMessage {
@@ -31,7 +31,7 @@ interface DomainMessage : Message {
 
     abstract class Sent(
         id: String,
-        senderId: Int,
+        senderId: String,
         content: String,
         senderNickname: String
     ) : Message(id, senderId, content, senderNickname) {
@@ -39,7 +39,7 @@ interface DomainMessage : Message {
 
         data class Read(
             private val id: String,
-            private val senderId: Int,
+            private val senderId: String,
             private val content: String,
             private val senderNickname: String
         ) : Sent(id, senderId, content, senderNickname) {
@@ -50,7 +50,7 @@ interface DomainMessage : Message {
 
         data class Unread(
             private val id: String,
-            private val senderId: Int,
+            private val senderId: String,
             private val content: String,
             private val senderNickname: String
         ) : Sent(id, senderId, content, senderNickname) {
@@ -62,7 +62,7 @@ interface DomainMessage : Message {
 
     data class Received(
         private val id: String,
-        private val senderId: Int,
+        private val senderId: String,
         private val content: String,
         private val senderNickname: String
     ) : Message(id, senderId, content, senderNickname) {
@@ -72,7 +72,7 @@ interface DomainMessage : Message {
     }
 
     class Progress(
-        private val senderId: Int,
+        private val senderId: String,
         private val content: String,
     ) : DomainMessage {
 

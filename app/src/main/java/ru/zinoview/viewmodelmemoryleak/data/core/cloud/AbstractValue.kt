@@ -7,6 +7,6 @@ abstract class AbstractValue<T>(
     empty: T
 ) : Mapper.Base<T>(empty) {
 
-    override fun map(id: String, senderId: Int, content: String, senderNickname: String): T
+    override fun map(id: String, senderId: String, content: String, senderNickname: String): T
             = nameValuePairs
 }

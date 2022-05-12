@@ -5,13 +5,15 @@ import android.os.Bundle
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.R
+import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.KoinScope
+import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.ScreenScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.*
 
 class  AuthActivity : AppCompatActivity() {
 
+    private val scope = KoinScope.Base()
 
     private val viewModel by lazy {
-        getKoin().getOrCreateScope(SCOPE_NAME)
         get<AuthenticationViewModel.Base>()
     }
 
@@ -27,6 +29,7 @@ class  AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
+        scope.scope(ScreenScope.Auth(),getKoin())
 
         viewModel.auth()
     }
@@ -42,10 +45,7 @@ class  AuthActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        getKoin().getScope(SCOPE_NAME).close()
+        scope.clean(getKoin())
     }
 
-    private companion object {
-        private const val SCOPE_NAME = "aufScope"
-    }
 }

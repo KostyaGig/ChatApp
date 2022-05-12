@@ -7,7 +7,7 @@ class ToOldMessageMapper : Mapper.Base<UiMessage.OldMessage>(UiMessage.OldMessag
 
     override fun map(
         id: String,
-        senderId: Int,
+        senderId: String,
         content: String,
         senderNickname: String
     ) = UiMessage.OldMessage.Base(id,content)

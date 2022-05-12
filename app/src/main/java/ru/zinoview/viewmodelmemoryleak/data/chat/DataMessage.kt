@@ -19,7 +19,7 @@ interface DataMessage : Message {
 
     abstract class Message(
         private val id: String,
-        private val senderId: Int,
+        private val senderId: String,
         private val content: String,
         private val senderNickname: String
     ) : DataMessage {
@@ -30,7 +30,7 @@ interface DataMessage : Message {
 
     abstract class Sent(
         id: String,
-        senderId: Int,
+        senderId: String,
         content: String,
         senderNickname: String
     ) : Message(id, senderId, content, senderNickname) {
@@ -38,7 +38,7 @@ interface DataMessage : Message {
 
         data class Read(
             private val id: String,
-            private val senderId: Int,
+            private val senderId: String,
             private val content: String,
             private val senderNickname: String
         ) : Sent(id, senderId, content, senderNickname) {
@@ -49,7 +49,7 @@ interface DataMessage : Message {
 
         data class Unread(
             private val id: String,
-            private val senderId: Int,
+            private val senderId: String,
             private val content: String,
             private val senderNickname: String
         ) : Sent(id, senderId, content, senderNickname) {
@@ -61,7 +61,7 @@ interface DataMessage : Message {
 
     data class Received(
         private val id: String,
-        private val senderId: Int,
+        private val senderId: String,
         private val content: String,
         private val senderNickname: String
     ) : Message(id, senderId, content, senderNickname) {
@@ -71,7 +71,7 @@ interface DataMessage : Message {
     }
 
     class Progress(
-        private val senderId: Int,
+        private val senderId: String,
         private val content: String,
     ) : DataMessage {
 

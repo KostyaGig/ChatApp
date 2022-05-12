@@ -28,6 +28,6 @@ class UiModule : Module {
     }
 
     private companion object {
-        const val SCOPE_NAME = "cvfScope"
+        const val SCOPE_NAME = "connectionScope"
     }
 }

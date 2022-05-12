@@ -8,9 +8,9 @@ interface ToUiFoundMessageMapper : Mapper<UiMessage> {
 
         override fun map(
             id: String,
-            senderId: Int,
+            senderId: String,
             content: String,
             senderNickname: String
-        ): UiMessage = UiMessage.Received.Found(id,content,senderId.toString(),senderNickname)
+        ): UiMessage = UiMessage.Received.Found(id,content, senderId,senderNickname)
     }
 }

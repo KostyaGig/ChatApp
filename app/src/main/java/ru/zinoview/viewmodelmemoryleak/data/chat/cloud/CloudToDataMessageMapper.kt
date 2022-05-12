@@ -8,7 +8,7 @@ interface CloudToDataMessageMapper : Mapper<DataMessage> {
 
     fun map(
         id: String = "",
-        senderId: Int = -1,
+        senderId: String = "-1",
         content: String = "",
         senderNickname: String = "",
         isRead: Boolean
@@ -20,12 +20,12 @@ interface CloudToDataMessageMapper : Mapper<DataMessage> {
 
         override fun map(
             id: String,
-            senderId: Int,
+            senderId: String,
             content: String,
             senderNickname: String,
             isRead: Boolean
         ): DataMessage {
-            return if (idSharedPreferences.read(Unit) == senderId.toString()) {
+            return if (idSharedPreferences.read(Unit) == senderId) {
                 if (isRead) {
                     DataMessage.Sent.Read(id, senderId, content, senderNickname)
                 } else {
@@ -39,7 +39,7 @@ interface CloudToDataMessageMapper : Mapper<DataMessage> {
         override fun mapFailure(message: String)
             = DataMessage.Failure(message)
 
-        override fun mapProgress(senderId: Int, content: String)
+        override fun mapProgress(senderId: String, content: String)
             = DataMessage.Progress(senderId, content)
 
         override fun mapIsTyping(senderNickname: String)
