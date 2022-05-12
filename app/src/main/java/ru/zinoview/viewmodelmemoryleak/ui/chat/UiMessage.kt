@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,7 +17,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.*
 
 interface UiMessage :
     DiffSame<UiMessage>, UiSame, MessageBind, Ui, ChangeTitle<ToolbarActivity>,
-    Message, Show<ViewWrapper>{
+    Message, Show<ViewWrapper>, UiItem, OnClick<EditMessageListener> {
 
     override fun isContentTheSame(item: UiMessage) = false
     override fun isItemTheSame(item: UiMessage) = false
@@ -31,7 +30,8 @@ interface UiMessage :
     override fun changeTitle(toolbar: ToolbarActivity) = Unit
 
     override fun <T> map(mapper: Mapper<T>): T = mapper.map()
-    fun edit(listener: EditMessageListener) = Unit
+
+    override fun onClick(item: EditMessageListener) = Unit
 
     override fun show(arg: ViewWrapper) = Unit
 
@@ -111,7 +111,8 @@ interface UiMessage :
             editImage.visibility = View.VISIBLE
         }
 
-        override fun edit(listener: EditMessageListener) = listener.edit(this)
+        override fun onClick(listener: EditMessageListener) = listener.onClick(this)
+
         override fun <T> map(mapper: Mapper<T>)
             = mapper.map(id,senderId,content, senderNickname)
 

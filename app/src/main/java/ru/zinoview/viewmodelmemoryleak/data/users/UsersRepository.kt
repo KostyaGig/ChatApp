@@ -3,6 +3,7 @@ package ru.zinoview.viewmodelmemoryleak.data.users
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.core.Data
 import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
+import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.core.ExceptionMapper
 import ru.zinoview.viewmodelmemoryleak.data.users.cloud.CloudDataSource
 import java.lang.Exception
@@ -14,12 +15,14 @@ interface UsersRepository : Data<DataUsers> {
         private val mapper: CloudToAbstractUserMapper,
         private val bitmap: ru.zinoview.viewmodelmemoryleak.ui.join.Bitmap,
         private val exceptionMapper: ExceptionMapper,
-        private val resourceProvider: ResourceProvider
+        private val resourceProvider: ResourceProvider,
+        private val prefs: IdSharedPreferences<String,Unit>
     ) : UsersRepository {
 
         override suspend fun data(): DataUsers {
             return try {
-                val users = cloudDataSource.data().map { cloudUser -> cloudUser.map(mapper, bitmap) }
+                val userId = prefs.read(Unit)
+                val users = cloudDataSource.users(userId).map { cloudUser -> cloudUser.map(mapper, bitmap) }
                 return if (users.isEmpty()) {
                     DataUsers.Failure(resourceProvider.string(R.string.users_are_empty_text))
                 } else {

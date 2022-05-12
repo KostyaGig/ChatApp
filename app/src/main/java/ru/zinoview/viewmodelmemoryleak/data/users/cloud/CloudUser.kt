@@ -12,14 +12,15 @@ interface CloudUser {
     open class Base(
         private val id: String,
         private val nickName: String,
-        private val image: String
+        private val image: String,
+        private val lastMessage: String
     ) : CloudUser {
 
-        object Empty : Base("","","")
+        object Empty : Base("","","","")
 
         override fun <T> map(mapper: UserMapper<T>,bitmap: Bitmap) : T {
             val bitmapImage = bitmap.bitmap(image)
-            return mapper.map(id,nickName,bitmapImage)
+            return mapper.map(id, "$nickName - $lastMessage",bitmapImage)
         }
     }
 

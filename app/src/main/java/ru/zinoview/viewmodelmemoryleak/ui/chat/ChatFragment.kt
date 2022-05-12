@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -90,7 +91,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
         val diffUtil = ChatMessageDiffUtil()
         adapter = ChatAdapter(diffUtil, object : EditMessageListener {
-            override fun edit(message: UiMessage) {
+            override fun onClick(message: UiMessage) {
                 val text = ViewWrapper.Text(binding.oldMessageTv)
                 message.show(text)
 

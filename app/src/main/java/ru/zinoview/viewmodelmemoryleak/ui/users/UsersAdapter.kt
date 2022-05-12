@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import ru.zinoview.viewmodelmemoryleak.R
+import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractAdapter
 import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractDiffUtil
 import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractViewHolder
@@ -13,7 +14,8 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
 import java.lang.IllegalArgumentException
 
 class UsersAdapter(
-    diffUtil: AbstractDiffUtil<UiUser>
+    diffUtil: AbstractDiffUtil<UiUser>,
+    private val listener: UserItemClickListener
 ) : AbstractAdapter<UiUser>(diffUtil) {
 
     object Empty : Adapter<List<UiUser>> {
@@ -31,7 +33,8 @@ class UsersAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         return when(viewType) {
             1 -> BaseViewHolder.User(
-                LayoutInflater.from(parent.context).inflate(R.layout.user,parent,false)
+                LayoutInflater.from(parent.context).inflate(R.layout.user,parent,false),
+                listener
             )
             else -> throw IllegalArgumentException("UsersAdapter onCreateViewHolder, viewType -  $viewType")
         }
@@ -42,7 +45,8 @@ class UsersAdapter(
     ): AbstractViewHolder<UiUser>(view) {
 
         class User(
-            view: View
+            view: View,
+            private val listener: UserItemClickListener
         ) : BaseViewHolder(view) {
 
             private val nickName = view.findViewById<TextView>(R.id.user_nickname_tv)
@@ -52,6 +56,10 @@ class UsersAdapter(
                 item.bind(Pair(
                     nickName,imageProfile
                 ))
+
+                itemView.setOnClickListener {
+                    item.onClick(listener)
+                }
             }
         }
     }

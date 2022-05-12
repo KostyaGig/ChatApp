@@ -23,6 +23,7 @@ class DataModule(
                     contentResolver
                 ),
                 ExceptionMapper.Abstract.User(get()),
+                get(),
                 get()
             )
         }

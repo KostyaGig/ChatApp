@@ -4,8 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import org.koin.android.ext.android.get
+import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.databinding.UsersFragmentBinding
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatFragment
 import ru.zinoview.viewmodelmemoryleak.ui.chat.NetworkConnectionReceiver
 import ru.zinoview.viewmodelmemoryleak.ui.connection.ConnectionViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
@@ -28,7 +31,17 @@ class UsersFragment : NetworkConnectionFragment<UsersViewModel.Base,UsersFragmen
         networkConnectionReceiver = NetworkConnectionReceiver.Base(connectionViewModel)
 
         val diffUtil = UsersDiffUtil()
-        adapter = UsersAdapter(diffUtil)
+        adapter = UsersAdapter(diffUtil,object : UserItemClickListener {
+            override fun onClick(id: String) {
+                // todo continue doing this feature
+                requireActivity()
+                    .supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container,ChatFragment().apply {
+                        arguments = bundleOf(Pair("userId",id))
+                    })
+            }
+        })
 
         binding.usersRecView.adapter = adapter as UsersAdapter
 

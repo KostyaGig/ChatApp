@@ -39,7 +39,7 @@ class ChatAdapter(
 
             override fun bind(item: UiMessage) {
                 item.bind(contentTv,stateImage,editImage)
-                editImage.setOnClickListener { item.edit(listener) }
+                editImage.setOnClickListener { item.onClick(listener) }
             }
         }
 

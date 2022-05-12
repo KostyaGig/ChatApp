@@ -1,12 +1,12 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.edit
 
 import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
+import ru.zinoview.viewmodelmemoryleak.ui.core.ItemClickListener
 
-interface EditMessageListener {
+interface EditMessageListener : ItemClickListener<UiMessage> {
 
-    fun edit(message: UiMessage)
 
     object Empty : EditMessageListener {
-        override fun edit(message: UiMessage) = Unit
+        override fun onClick(item: UiMessage) = Unit
     }
 }
