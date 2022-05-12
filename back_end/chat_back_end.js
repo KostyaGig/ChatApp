@@ -61,22 +61,78 @@ io.on('connection', (socket) => {
 		})
 	})
 
-	socket.on('users',() => {
+	socket.on('users', async (user) => {
+		var userId = user['userId']
 		MongoClient.connect(url, function(err, db) {
   			if (err) throw err;
   			var database = db.db("chat_app_db");
-  			var count = database.collection("user").find({}).toArray(function(err, result) {
+  			database.collection("user").find({}).toArray(async function(err, result) {
     			if (err) throw err;
+
+    			var messagesCollection = database.collection("messages")
+
     			var users = []
     			for(const currentUser of result) {
     				var user = Object()
-    				user.id = currentUser['userId']
+    				var currentUserId = currentUser['userId'].toString();
+    				user.id = currentUserId
     				user.nickName = currentUser['userNickName']
     				user.image = currentUser['userImage']
+
+    				var firstMessagesJson = {
+    					senderId: userId,
+    					receiverId: currentUserId
+    				}
+
+    				var secondMessagesJson = {
+    					senderId: currentUserId,
+    					receiverId: userId
+    				}
+
+    				// todo remove later
+
+    				// var secondMessagesJson = {
+    				// 	senderId: "4",
+    				// 	receiverId: "6"
+    				// 	messages: [
+    				// 		{
+    				// 			content: "Content for the fourth user"
+    				// 		},
+    				// 		{
+    				// 			content: "LAST CONTENT for the fourth user"
+    				// 		}]}
+
+    				console.log("THE FIRST - ", firstMessagesJson)
+    				console.log("----------------------------------")
+    				console.log("THE SECOND - ", secondMessagesJson)
+
+    				var firstResult = await messagesCollection.findOne(firstMessagesJson)
+    				var secondResult = await messagesCollection.findOne(secondMessagesJson)
+
+    				if (firstResult == null && secondResult == null) {
+    					user.lastMessage = "Messages are empty! Start chatting now!"
+    				} else {
+    					if (firstResult == null && secondResult != null) {
+    						var messages = secondResult['messages']
+    						if (messages.length != 0) {
+    							var contentOfTheLastMessage = messages[messages.length - 1]
+    							console.log('the last message - ',contentOfTheLastMessage)
+    						}
+    					} else {
+    						var messages = firstResult['messages']
+    						if (messages.length != 0) {
+    							var contentOfTheLastMessage = messages[messages.length - 1]
+    							console.log('the last message - ',contentOfTheLastMessage)
+    						}
+
+    					}
+    				}
+
     				users.push(user)
 				}
-    			io.emit('users',users)
-    			db.close();
+
+    			// io.emit('users',users)
+    			// db.close();
   			});
 		})
 	})
