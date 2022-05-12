@@ -115,14 +115,14 @@ io.on('connection', (socket) => {
     					if (firstResult == null && secondResult != null) {
     						var messages = secondResult['messages']
     						if (messages.length != 0) {
-    							var contentOfTheLastMessage = messages[messages.length - 1]
-    							console.log('the last message - ',contentOfTheLastMessage)
+    							var contentOfTheLastMessage = messages[messages.length - 1]['content']
+    							user.lastMessage = contentOfTheLastMessage
     						}
     					} else {
     						var messages = firstResult['messages']
     						if (messages.length != 0) {
-    							var contentOfTheLastMessage = messages[messages.length - 1]
-    							console.log('the last message - ',contentOfTheLastMessage)
+    							var contentOfTheLastMessage = messages[messages.length - 1]['content']
+    							user.lastMessage = contentOfTheLastMessage
     						}
 
     					}
@@ -131,8 +131,9 @@ io.on('connection', (socket) => {
     				users.push(user)
 				}
 
-    			// io.emit('users',users)
-    			// db.close();
+				console.log('push users ',users)
+    			io.emit('users',users)
+    			db.close();
   			});
 		})
 	})
