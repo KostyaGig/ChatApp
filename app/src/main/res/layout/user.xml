@@ -16,7 +16,7 @@
             android:layout_width="@dimen/recycler_view_image_profile_height"
             android:layout_height="@dimen/recycler_view_image_profile_height"
             android:layout_margin="10dp"
-            android:src="@drawable/ic_default_image"/>
+            android:src="@drawable/profile_default_image"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/purple_200"/>
+        android:background="@color/under_line_user_color"/>
 
 
 </LinearLayout>

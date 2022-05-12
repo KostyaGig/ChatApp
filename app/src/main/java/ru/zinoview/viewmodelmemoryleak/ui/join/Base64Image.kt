@@ -1,20 +1,12 @@
 package ru.zinoview.viewmodelmemoryleak.ui.join
 
 import android.content.ContentResolver
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import java.io.ByteArrayOutputStream
 import android.util.Base64
-import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
-import android.R.drawable
-import android.graphics.Canvas
-import android.graphics.drawable.Drawable
-import android.widget.ImageView
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 
 

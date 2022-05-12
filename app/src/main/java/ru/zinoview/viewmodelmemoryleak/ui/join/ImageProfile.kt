@@ -16,6 +16,6 @@ interface ImageProfile : ru.zinoview.viewmodelmemoryleak.core.join.Base64Image<B
     object Empty : ImageProfile {
 
         override fun base64Image(base64Image: Base64Image)
-            = base64Image.base64Image(R.drawable.ic_default_image)
+            = base64Image.base64Image(R.drawable.profile_default_image)
     }
 }

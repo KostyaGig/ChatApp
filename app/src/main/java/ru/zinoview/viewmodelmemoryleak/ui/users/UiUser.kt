@@ -33,7 +33,7 @@ sealed class UiUser : DiffSame<UiUser>, SameOne<String>, Same<String,Unit>, Bind
 
         override fun bind(view: Pair<TextView, ImageView>) {
             view.first.text = nickName
-//            view.second.setImageBitmap(image)
+            view.second.setImageBitmap(image)
         }
 
     }

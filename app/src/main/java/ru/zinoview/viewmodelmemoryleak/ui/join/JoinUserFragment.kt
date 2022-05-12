@@ -65,6 +65,8 @@ class JoinUserFragment : NetworkConnectionFragment<JoinUserViewModel.Base, JoinF
         }
 
         override fun onImageResult(uri: Uri) {
+            // todo if user with name already exists -> show snack bar with error
+            // todo restore state after killed the app
             binding.profileImage.setImageURI(uri)
             imageProfile = ImageProfile.Base(uri)
         }
@@ -72,7 +74,7 @@ class JoinUserFragment : NetworkConnectionFragment<JoinUserViewModel.Base, JoinF
         override fun back(navigation: Navigation) = navigation.exit()
 
         override fun initBinding(inflater: LayoutInflater, container: ViewGroup?): JoinFragmentBinding
-                = JoinFragmentBinding.inflate(inflater,container,false)
+            = JoinFragmentBinding.inflate(inflater,container,false)
 
     override fun koinScopes() = listOf(ScreenScope.Join(),ScreenScope.Connection())
 }

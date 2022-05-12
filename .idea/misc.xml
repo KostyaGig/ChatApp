@@ -3,14 +3,20 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.175" />
         <entry key="app/src/main/res/drawable-v24/ic_progress_black.xml" value="0.2898148148148148" />
         <entry key="app/src/main/res/drawable/ic_camera.xml" value="0.29444444444444445" />
+        <entry key="app/src/main/res/drawable/ic_cancel.xml" value="0.175" />
         <entry key="app/src/main/res/drawable/ic_close.xml" value="0.29074074074074074" />
         <entry key="app/src/main/res/drawable/ic_default_image.xml" value="0.25462962962962965" />
         <entry key="app/src/main/res/drawable/ic_edit.xml" value="0.29074074074074074" />
+        <entry key="app/src/main/res/drawable/ic_edit_notification.xml" value="0.175" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.175" />
         <entry key="app/src/main/res/drawable/ic_progress.xml" value="0.2898148148148148" />
+        <entry key="app/src/main/res/drawable/ic_progress_purple.xml" value="0.175" />
         <entry key="app/src/main/res/drawable/ic_read.xml" value="0.27685185185185185" />
         <entry key="app/src/main/res/drawable/ic_send.xml" value="0.28425925925925927" />
+        <entry key="app/src/main/res/drawable/ic_send_notification.xml" value="0.175" />
         <entry key="app/src/main/res/drawable/ic_unread.xml" value="0.13854166666666667" />
         <entry key="app/src/main/res/layout/activity_auth.xml" value="0.275" />
         <entry key="app/src/main/res/layout/activity_chat.xml" value="0.2953703703703704" />
