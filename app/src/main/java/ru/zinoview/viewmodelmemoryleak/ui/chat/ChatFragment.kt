@@ -1,7 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,24 +32,17 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 ) {
 
     private var adapter: Adapter<List<UiMessage>> = Adapter.Empty()
-    private var scrollListener: ChatRecyclerViewScrollListener = ChatRecyclerViewScrollListener.Empty
+    private var scrollListener: ChatRecyclerViewScrollListener =
+        ChatRecyclerViewScrollListener.Empty
 
     private var messageSession: MessageSession = MessageSession.Empty
 
     private var memento: UiChatMessagesMemento = UiChatMessagesMemento.Empty
 
-    private val connectionViewModel by lazy {
-        get<ConnectionViewModel.Base>()
-    }
+    private val connectionViewModel by lazy { get<ConnectionViewModel.Base>() }
 
-    private val uiStateViewModel by lazy {
-        getKoin().get<UiStateViewModel.Base>()
-    }
-
-    private val userStatusViewModel by lazy {
-        getKoin().get<UserStatusViewModel.Base>()
-    }
-
+    private val uiStateViewModel by lazy { getKoin().get<UiStateViewModel.Base>() }
+    private val userStatusViewModel by lazy { getKoin().get<UserStatusViewModel.Base>() }
     private val typeMessageTextWatcher by lazy { get<TypeMessageTextWatcher>() }
 
     private val mapper by lazy { get<UiMessagesKeysMapper>() }
@@ -98,7 +90,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
                 messageSession.show(Unit)
                 messageSession.add(message)
             }
-        },mapper)
+        }, mapper)
 
         val manager = LinearLayoutManager(requireContext())
 
@@ -120,7 +112,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
         binding.sendMessageBtn.setOnClickListener {
             val message = binding.messageField.text.toString().trim()
-            messageSession.sendMessage(viewModel,message)
+            messageSession.sendMessage(viewModel, message)
         }
 
         connectionViewModel.connection()
@@ -137,12 +129,15 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         }
 
         viewModel.observeScrollCommunication(this) { uiScroll ->
-            uiScroll.scroll(binding.chatRv,scrollListener)
+            uiScroll.scroll(binding.chatRv, scrollListener)
         }
 
         connectionViewModel.observe(this) { connection ->
             connection.changeTitle(requireActivity() as ToolbarActivity)
-            connection.doAction { viewModel.messages() }
+
+            // todo
+            val userId = arguments?.getString("userId")!!
+            connection.doAction { viewModel.messages(userId) }
         }
 
 
@@ -151,7 +146,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
         uiStateViewModel.observe(this) { states ->
             states.forEach { state ->
-                state.recover(editText,text,messageSession,adapter)
+                state.recover(editText, text, messageSession, adapter)
             }
         }
     }
@@ -160,7 +155,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         super.onPause()
 
         val editTextState = UiState.EditText(binding.messageField.text.toString())
-        messageSession.saveState(uiStateViewModel,editTextState)
+        messageSession.saveState(uiStateViewModel, editTextState)
 
         viewModel.showProcessingMessages()
         userStatusViewModel.offline()
@@ -169,8 +164,9 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
     override fun back(navigation: Navigation) = navigation.exit()
 
-    override fun initBinding(inflater: LayoutInflater, container: ViewGroup?): ChatFragmentBinding
-        = ChatFragmentBinding.inflate(layoutInflater,container,false)
+    override fun initBinding(inflater: LayoutInflater, container: ViewGroup?): ChatFragmentBinding =
+        ChatFragmentBinding.inflate(layoutInflater, container, false)
 
-    override fun koinScopes() = listOf(ScreenScope.Connection(),ScreenScope.Chat())
+    override fun koinScopes() = listOf(ScreenScope.Connection(), ScreenScope.Chat())
+    override fun cleans() = listOf(connectionViewModel,viewModel)
 }

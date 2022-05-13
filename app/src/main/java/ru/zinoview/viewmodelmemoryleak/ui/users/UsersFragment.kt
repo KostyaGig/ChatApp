@@ -21,10 +21,7 @@ class UsersFragment : NetworkConnectionFragment<UsersViewModel.Base,UsersFragmen
 ) {
 
     private var adapter: Adapter<List<UiUser>> = Adapter.Empty()
-
-    private val connectionViewModel by lazy {
-        get<ConnectionViewModel.Base>()
-    }
+    private val connectionViewModel by lazy { get<ConnectionViewModel.Base>() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
@@ -34,12 +31,14 @@ class UsersFragment : NetworkConnectionFragment<UsersViewModel.Base,UsersFragmen
         adapter = UsersAdapter(diffUtil,object : UserItemClickListener {
             override fun onClick(id: String) {
                 // todo continue doing this feature
+                connectionViewModel.clean()
                 requireActivity()
                     .supportFragmentManager
                     .beginTransaction()
                     .replace(R.id.fragment_container,ChatFragment().apply {
                         arguments = bundleOf(Pair("userId",id))
                     })
+                    .commitNow()
             }
         })
 
@@ -68,4 +67,6 @@ class UsersFragment : NetworkConnectionFragment<UsersViewModel.Base,UsersFragmen
     ) = UsersFragmentBinding.inflate(inflater,container,false)
 
     override fun koinScopes() = listOf(ScreenScope.Users(),ScreenScope.Connection())
+
+    override fun cleans() = listOf(connectionViewModel,viewModel)
 }

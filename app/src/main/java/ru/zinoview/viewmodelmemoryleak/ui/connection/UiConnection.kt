@@ -8,6 +8,7 @@ interface UiConnection : ChangeTitle<ToolbarActivity>, SameOne<UiConnection> {
     override fun changeTitle(arg: ToolbarActivity) = Unit
     override fun same(data: UiConnection) = false
     fun doAction(action:() -> Unit) = Unit
+
     data class Success(
         private val message: String
     ) : UiConnection {

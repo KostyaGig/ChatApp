@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.core
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,8 @@ abstract class AbstractFragment<VM : ViewModel, B: ViewBinding>(
 
     abstract fun koinScopes() : List<ScreenScope>
 
+    abstract fun cleans() : List<Clean>
+
     private var _binding: B? = null
     protected val binding: B by lazy {
         checkNotNull(_binding)
@@ -57,6 +60,6 @@ abstract class AbstractFragment<VM : ViewModel, B: ViewBinding>(
         super.onDestroyView()
         _binding = null
         scope.clean(getKoin())
-        (viewModel as Clean).clean()
+        cleans().forEach { clean -> clean.clean() }
     }
 }

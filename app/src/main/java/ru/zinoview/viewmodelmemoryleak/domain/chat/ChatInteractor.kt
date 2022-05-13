@@ -42,8 +42,8 @@ interface ChatInteractor : Messages<DomainMessage>, SendMessage,
         override fun readMessages(range: Pair<Int, Int>) = chatRepository.readMessages(range)
 
 
-        override suspend fun messages(block: (List<DomainMessage>) -> Unit) {
-            chatRepository.messages { dataMessages ->
+        override suspend fun messages(receiverId: String,block: (List<DomainMessage>) -> Unit) {
+            chatRepository.messages(receiverId) { dataMessages ->
                 val domainMessages = dataMessages.map { it.map(mapper)}
                 block.invoke(domainMessages)
             }

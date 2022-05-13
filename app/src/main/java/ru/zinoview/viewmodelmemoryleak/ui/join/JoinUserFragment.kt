@@ -77,4 +77,5 @@ class JoinUserFragment : NetworkConnectionFragment<JoinUserViewModel.Base, JoinF
             = JoinFragmentBinding.inflate(inflater,container,false)
 
     override fun koinScopes() = listOf(ScreenScope.Join(),ScreenScope.Connection())
+    override fun cleans() = listOf(connectionViewModel,viewModel)
 }

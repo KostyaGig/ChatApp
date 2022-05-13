@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.*
 import ru.zinoview.viewmodelmemoryleak.core.chat.SendMessage
@@ -15,7 +14,7 @@ interface ChatRepository<T> : Messages<DataMessage>, SendMessage, EditMessage ,
 
     override fun showProcessingMessages() = Unit
 
-    override suspend fun messages(block: (List<DataMessage>) -> Unit) = Unit
+    override suspend fun messages(receiverId: String,block: (List<DataMessage>) -> Unit) = Unit
 
     class Base(
         private val cloudDataSource: CloudDataSource<Unit>,
@@ -51,9 +50,8 @@ interface ChatRepository<T> : Messages<DataMessage>, SendMessage, EditMessage ,
             override fun readMessages(range: Pair<Int,Int>)
                 = cloudDataSource.readMessages(range)
 
-            override suspend fun messages(block: (List<DataMessage>) -> Unit) {
-                Log.d("zinoviewk","repo -> messages()")
-                cloudDataSource.messages { cloud ->
+            override suspend fun messages(receiverId:String,block: (List<DataMessage>) -> Unit) {
+                cloudDataSource.messages(userSharedPreferences.id(),receiverId) { cloud ->
                     val data = cloud.map { it.map(mapper) }
                     block.invoke(data)
                 }

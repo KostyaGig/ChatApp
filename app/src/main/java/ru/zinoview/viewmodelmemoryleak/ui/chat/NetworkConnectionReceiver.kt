@@ -44,12 +44,7 @@ interface NetworkConnectionReceiver {
     }
 
     object Empty : NetworkConnectionReceiver {
-        override fun register(context: Context) {
-            Log.d("zinoviewk","reg receiver empty")
-        }
-
-        override fun unRegister(context: Context) {
-            Log.d("zinoviewk","unreg receiver empty")
-        }
+        override fun register(context: Context) = Unit
+        override fun unRegister(context: Context) = Unit
     }
 }

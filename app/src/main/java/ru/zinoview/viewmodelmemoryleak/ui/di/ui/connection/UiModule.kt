@@ -11,20 +11,23 @@ import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
 class UiModule : Module {
 
     private val uiConnectionModule = module {
+        factory {
+            ConnectionCommunication()
+        }
         scope(SCOPE_NAME) {
             val mapper = DataToUiConnectionMapper.Base()
             ConnectionViewModel.Base(
                 get(),
                 NetworkConnectionWork.Base(get(), mapper),
                 get(),
-                ConnectionCommunication(),
+                get(),
                 mapper
             )
         }
     }
 
     override fun add(modules: MutableList<org.koin.dsl.module.Module>) {
-         modules.add(uiConnectionModule)
+        modules.add(uiConnectionModule)
     }
 
     private companion object {

@@ -2,7 +2,6 @@ package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
 import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
-import ru.zinoview.viewmodelmemoryleak.core.chat.Messages
 import ru.zinoview.viewmodelmemoryleak.core.chat.ShowNotificationMessage
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketData
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
@@ -13,11 +12,11 @@ import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationService
 
-interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMessage, EditMessage, ReadMessages, ShowNotificationMessage {
+interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadMessages, ShowNotificationMessage {
 
     override fun readMessages(range: Pair<Int, Int>) = Unit
 
-    override suspend fun messages(block: (List<CloudMessage>) -> Unit) = Unit
+    suspend fun messages(senderUserId: String,receiverUserId: String,block: (List<CloudMessage>) -> Unit) = Unit
 
     suspend fun toTypeMessage(isTyping: Boolean,senderNickName: String) : T
 
@@ -33,7 +32,7 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
         private val notificationService: NotificationService
     ) : AbstractCloudDataSource.Base(socketWrapper), CloudDataSource<Unit> {
 
-        override suspend fun messages(block:(List<CloudMessage>) -> Unit) {
+        override suspend fun messages(senderUserId: String,receiverUserId: String,block:(List<CloudMessage>) -> Unit) {
             messagesStore.subscribe(block)
 
             socketWrapper.subscribe(MESSAGES) {cloudData ->
@@ -46,7 +45,16 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
 
                 messagesStore.addMessages(messages)
             }
-            socketWrapper.emit(MESSAGES,SocketData.Empty)
+
+            val json = json.json(
+                Pair(
+                    SENDER_ID_KEY,senderUserId
+                ),
+                Pair(
+                    RECEIVER_ID_KEY,receiverUserId
+                )
+            )
+            socketWrapper.emit(MESSAGES,SocketData.Base(json))
         }
 
         override suspend fun sendMessage(userId: String,nickName: String,content: String) {
@@ -137,6 +145,7 @@ interface CloudDataSource<T> : Messages<CloudMessage>, Disconnect<Unit>, SendMes
         private const val SHOW_NOTIFICATION_MESSAGE = "show_notification_message"
 
         private const val SENDER_ID_KEY = "senderId"
+        private const val RECEIVER_ID_KEY = "receiverId"
         private const val SENDER_NICK_NAME_KEY = "senderNickName"
         private const val MESSAGE_CONTENT_KEY = "content"
         private const val MESSAGE_ID_KEY = "id"

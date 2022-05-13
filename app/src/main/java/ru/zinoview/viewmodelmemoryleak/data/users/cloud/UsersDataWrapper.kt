@@ -4,4 +4,4 @@ import ru.zinoview.viewmodelmemoryleak.data.core.cloud.CloudDataWrapper
 
 class UsersDataWrapper(
     values: ArrayList<UsersValue>
-) : CloudDataWrapper<CloudUser.Base, UsersValue>(values,CloudUser.Base.Empty)
+) : CloudDataWrapper<CloudUser.Base, UsersValue>(values, CloudUser.Base.Empty)

@@ -17,13 +17,13 @@ interface ConnectionViewModel : CommunicationObserve<UiConnection>,Connection,Up
         private val interactor: ConnectionInteractor,
         private val communication: ConnectionCommunication,
         private val mapper: DataToUiConnectionMapper
-    ) : BaseViewModel<UiConnection>(communication), ConnectionViewModel {
+    ) : BaseViewModel<UiConnection>(communication, listOf(communication)), ConnectionViewModel {
+
 
         override fun connection() {
             work.doBackground(viewModelScope) {
                 interactor.observe { data ->
                     val ui = data.map(mapper)
-                    Log.d("zinoviewk","ui state $ui")
                     dispatcher.doUi(viewModelScope) {
                         communication.postValue(ui)
                     }
