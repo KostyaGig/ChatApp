@@ -14,7 +14,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.Show
 
 interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit>, SaveState, Add<UiMessage> {
 
-    fun sendMessage(viewModel: ChatViewModel, content: String) = Unit
+    fun sendMessage(viewModel: ChatViewModel,receiverId: String,content: String) = Unit
 
     override fun add(data: UiMessage) = Unit
     override fun show(arg: Unit) = Unit
@@ -43,7 +43,7 @@ interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit>, SaveState,
             = oldMessage.saveState(viewModel, editText)
         override fun editContent(content: String) = editedMessage.editContent(content)
 
-        override fun sendMessage(viewModel: ChatViewModel,content: String) {
+        override fun sendMessage(viewModel: ChatViewModel,receiverId:String,content: String) {
             editTextWrapper.disconnect(Unit)
             if (editedMessage.isNotEmpty(Unit)) {
                 editedMessage.editContent(content)
@@ -51,7 +51,7 @@ interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit>, SaveState,
             }
             else {
                 if (content.isNotEmpty()) {
-                    viewModel.sendMessage(content)
+                    viewModel.sendMessage(receiverId,content)
                 } else {
                     snackBar.show(Unit)
                 }

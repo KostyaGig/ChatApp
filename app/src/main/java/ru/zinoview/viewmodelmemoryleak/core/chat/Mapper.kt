@@ -17,6 +17,7 @@ interface Mapper<T> : FailureMapper<T,String>{
         override fun mapProgress(
             senderId: String,
             content: String,
+            senderNickname: String
         )  = empty
 
         override fun mapRead(
@@ -54,6 +55,7 @@ interface Mapper<T> : FailureMapper<T,String>{
     fun mapProgress(
         senderId: String = "-1",
         content: String = "",
+        senderNickname: String = ""
     ) : T
 
     fun mapReceived(

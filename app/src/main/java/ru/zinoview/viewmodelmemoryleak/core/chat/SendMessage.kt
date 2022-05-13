@@ -2,5 +2,5 @@ package ru.zinoview.viewmodelmemoryleak.core.chat
 
 interface SendMessage {
 
-    suspend fun sendMessage(content: String)
+    suspend fun sendMessage(receiverId: String,content: String)
 }

@@ -19,8 +19,8 @@ interface DataToDomainMessageMapper : Mapper<DomainMessage> {
             id,senderId,content,senderNickname
         )
 
-        override fun mapProgress(senderId: String, content: String)
-                = DomainMessage.Progress(senderId,content)
+        override fun mapProgress(senderId: String, content: String,senderNickname: String)
+            = DomainMessage.Progress(senderId,content,senderNickname)
 
         override fun mapRead(
             id: String,

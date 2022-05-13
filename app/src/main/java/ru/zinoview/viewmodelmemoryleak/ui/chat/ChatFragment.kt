@@ -112,7 +112,11 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
         binding.sendMessageBtn.setOnClickListener {
             val message = binding.messageField.text.toString().trim()
-            messageSession.sendMessage(viewModel, message)
+
+            // todo
+            val receiverId = arguments?.getString("receiverId")!!
+
+            messageSession.sendMessage(viewModel,receiverId, message)
         }
 
         connectionViewModel.connection()
@@ -136,10 +140,21 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
             connection.changeTitle(requireActivity() as ToolbarActivity)
 
             // todo
-            val userId = arguments?.getString("userId")!!
-            connection.doAction { viewModel.messages(userId) }
+            val receiverId = arguments?.getString("receiverId")!!
+            connection.doAction { viewModel.messages(receiverId) }
         }
 
+        // todo server: when we "messages" we need to generate query
+        // query have to contain senderId and receiver id I check only one case
+        // for example query = {
+        //  senderId: '6',
+        //  receiverId: '3'
+        // }
+        // but I also must check the second case query = {
+        //        //  senderId: '3',
+        //        //  receiverId: '6'
+        //        // } I don't do it yet
+        //
 
         val editText = ViewWrapper.EditText(binding.messageField)
         val text = ViewWrapper.Text(binding.oldMessageTv)

@@ -18,10 +18,10 @@ interface ChatInteractor : Messages<DomainMessage>, SendMessage,
         private val mapper: DataToDomainMessageMapper
     ) : ChatInteractor {
 
-        override suspend fun sendMessage(content: String) {
-            processingMessagesRepository.sendMessage(content)
-            updateChatRepository.sendMessage(content)
-            chatRepository.sendMessage(content)
+        override suspend fun sendMessage(receiverId: String,content: String) {
+            processingMessagesRepository.sendMessage(receiverId,content)
+            updateChatRepository.sendMessage(receiverId,content)
+            chatRepository.sendMessage(receiverId,content)
         }
 
         override suspend fun editMessage(messageId: String, content: String) {

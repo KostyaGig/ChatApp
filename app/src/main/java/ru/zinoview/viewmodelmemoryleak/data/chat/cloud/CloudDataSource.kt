@@ -16,7 +16,7 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
 
     override fun readMessages(range: Pair<Int, Int>) = Unit
 
-    suspend fun messages(senderUserId: String,receiverUserId: String,block: (List<CloudMessage>) -> Unit) = Unit
+    suspend fun messages(senderId: String,receiverId: String,block: (List<CloudMessage>) -> Unit) = Unit
 
     suspend fun toTypeMessage(isTyping: Boolean,senderNickName: String) : T
 
@@ -32,7 +32,7 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
         private val notificationService: NotificationService
     ) : AbstractCloudDataSource.Base(socketWrapper), CloudDataSource<Unit> {
 
-        override suspend fun messages(senderUserId: String,receiverUserId: String,block:(List<CloudMessage>) -> Unit) {
+        override suspend fun messages(senderId: String, receiverId: String, block:(List<CloudMessage>) -> Unit) {
             messagesStore.subscribe(block)
 
             socketWrapper.subscribe(MESSAGES) {cloudData ->
@@ -48,19 +48,22 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
 
             val json = json.json(
                 Pair(
-                    SENDER_ID_KEY,senderUserId
+                    SENDER_ID_KEY,senderId
                 ),
                 Pair(
-                    RECEIVER_ID_KEY,receiverUserId
+                    RECEIVER_ID_KEY,receiverId
                 )
             )
             socketWrapper.emit(MESSAGES,SocketData.Base(json))
         }
 
-        override suspend fun sendMessage(userId: String,nickName: String,content: String) {
+        override suspend fun sendMessage(senderId: String, receiverId: String,nickName: String, content: String) {
             val data = SocketData.Base(json.json(
                 Pair(
-                    SENDER_ID_KEY,userId
+                    SENDER_ID_KEY,senderId
+                ),
+                Pair(
+                    RECEIVER_ID_KEY,receiverId
                 ),
                 Pair(
                     SENDER_NICK_NAME_KEY,nickName

@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.*
 import ru.zinoview.viewmodelmemoryleak.core.chat.SendMessage
@@ -25,11 +24,11 @@ interface ChatRepository<T> : Messages<DataMessage>, SendMessage, EditMessage ,
     ) : ChatRepository<Unit>,
         CleanRepository(cloudDataSource) {
 
-        override suspend fun sendMessage(content: String) {
-            val userId = userSharedPreferences.id()
+        override suspend fun sendMessage(receiverId: String,content: String) {
+            val senderId = userSharedPreferences.id()
             val userNickName = userSharedPreferences.nickName()
 
-            val data = listOf(userId,userNickName,content)
+            val data = listOf(senderId,receiverId,userNickName,content)
 
             chatActions.sendMessage(data)
         }

@@ -85,10 +85,11 @@ interface CloudMessage : Message, CloudSame {
         abstract class Base(
             private val senderId: String,
             private val content: String,
+            private val senderNickName: String
         ) : Progress {
 
             override fun map(mapper: CloudToDataMessageMapper)
-                = mapper.mapProgress(senderId, content)
+                = mapper.mapProgress(senderId, content,senderNickName)
 
             override fun same(item: CloudMessage) = item.sameContent(content)
 
@@ -99,8 +100,9 @@ interface CloudMessage : Message, CloudSame {
         class Send(
             senderId: String,
             private val content: String,
-            private val time: String
-        ) : Base(senderId, content) {
+            private val time: String,
+            senderNickName: String
+        ) : Base(senderId, content,senderNickName) {
 
             override fun mapNotification(mapper: NotificationMapper)
                 = mapper.mapSend(content,time)
@@ -109,8 +111,9 @@ interface CloudMessage : Message, CloudSame {
         data class Edit(
             private val senderId: String,
             private val content: String,
-            private val time: String
-        ) : Base(senderId, content) {
+            private val time: String,
+            private val senderNickName: String
+        ) : Base(senderId, content,senderNickName) {
 
             override fun mapNotification(mapper: NotificationMapper)
                 = mapper.mapEdit(content,time)

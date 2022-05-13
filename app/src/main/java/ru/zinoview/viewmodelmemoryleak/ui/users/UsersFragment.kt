@@ -36,7 +36,7 @@ class UsersFragment : NetworkConnectionFragment<UsersViewModel.Base,UsersFragmen
                     .supportFragmentManager
                     .beginTransaction()
                     .replace(R.id.fragment_container,ChatFragment().apply {
-                        arguments = bundleOf(Pair("userId",id))
+                        arguments = bundleOf(Pair("receiverId",id))
                     })
                     .commitNow()
             }

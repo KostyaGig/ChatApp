@@ -39,8 +39,8 @@ interface CloudToDataMessageMapper : Mapper<DataMessage> {
         override fun mapFailure(message: String)
             = DataMessage.Failure(message)
 
-        override fun mapProgress(senderId: String, content: String)
-            = DataMessage.Progress(senderId, content)
+        override fun mapProgress(senderId: String, content: String,senderNickname: String)
+            = DataMessage.Progress(senderId, content,senderNickname)
 
         override fun mapIsTyping(senderNickname: String)
             = DataMessage.Typing.Is(senderNickname)

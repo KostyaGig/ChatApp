@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat
 
-import android.util.Log
 import androidx.work.Data
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.chat.workmanager.Worker
@@ -43,22 +42,23 @@ interface ChatAction {
     ) : Abstract(notification) {
 
         override suspend fun sendMessage(data: Data, cloudDataSource: CloudDataSource<Unit>) {
-            Log.d("zinoviewk","send Message from Action Worker")
-            val userId = data.getString(USER_ID_KEY)
+            val senderId = data.getString(SENDER_ID_KEY)
+            val receiverId = data.getString(RECEIVER_ID_KEY)
             val userNickName = data.getString(USER_NICK_NAME_KEY)
             val content = data.getString(MESSAGE_CONTENT_KEY)
-            cloudDataSource.sendMessage(userId!!,userNickName!!,content!!)
+            cloudDataSource.sendMessage(senderId!!,receiverId!!,userNickName!!,content!!)
 
             disconnect(content)
         }
 
-        override fun keys() = listOf(USER_ID_KEY,USER_NICK_NAME_KEY ,MESSAGE_CONTENT_KEY)
+        override fun keys() = listOf(SENDER_ID_KEY,RECEIVER_ID_KEY,USER_NICK_NAME_KEY ,MESSAGE_CONTENT_KEY)
 
         override fun doAction(worker: Worker, workerData: List<Pair<String, String>>)
             = worker.sendMessage(workerData)
 
         private companion object {
-            private const val USER_ID_KEY = "userId"
+            private const val SENDER_ID_KEY = "senderId"
+            private const val RECEIVER_ID_KEY = "receiverId"
             private const val USER_NICK_NAME_KEY = "userNickName"
             private const val MESSAGE_CONTENT_KEY = "message_content"
         }

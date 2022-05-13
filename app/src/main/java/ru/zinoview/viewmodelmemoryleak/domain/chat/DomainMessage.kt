@@ -2,7 +2,6 @@ package ru.zinoview.viewmodelmemoryleak.domain.chat
 
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
-import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
 
 interface DomainMessage : Message {
 
@@ -74,10 +73,11 @@ interface DomainMessage : Message {
     class Progress(
         private val senderId: String,
         private val content: String,
+        private val senderNickname: String,
     ) : DomainMessage {
 
         override fun <T> map(mapper: Mapper<T>): T
-            = mapper.mapProgress(senderId, content)
+            = mapper.mapProgress(senderId, content,senderNickname)
     }
 
     abstract class Typing : DomainMessage {

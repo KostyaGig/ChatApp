@@ -18,33 +18,33 @@ interface UiMessagesKeysMapper {
 
         override fun map(key: Int,parent: ViewGroup,listener: EditMessageListener) : ChatAdapter.BaseViewHolder {
             return when(key) {
-                1 -> ChatAdapter.BaseViewHolder.Message(
+                READ -> ChatAdapter.BaseViewHolder.Message(
                     inflater.inflate(parent,R.layout.sent_read),
                     listener
                 )
-                2 -> ChatAdapter.BaseViewHolder.Message(
+                UNREAD -> ChatAdapter.BaseViewHolder.Message(
                     inflater.inflate(parent,R.layout.sent_unread),
                     listener
                 )
-                3 -> ChatAdapter.BaseViewHolder.Message(
+                PROGRESS -> ChatAdapter.BaseViewHolder.Message(
                     inflater.inflate(parent,R.layout.progress),
                     listener
                 )
-                4 -> ChatAdapter.BaseViewHolder.Message(
+                RECEIVED -> ChatAdapter.BaseViewHolder.Message(
                     inflater.inflate(parent,R.layout.received),
                     listener
                 )
-                5 -> ChatAdapter.BaseViewHolder.Empty(
+                EMPTY -> ChatAdapter.BaseViewHolder.Empty(
                     inflater.inflate(parent,R.layout.empty),
                 )
-                6 -> ChatAdapter.BaseViewHolder.Typing(
+                TYPING -> ChatAdapter.BaseViewHolder.Typing(
                     inflater.inflate(parent,R.layout.typing),
                 )
-                7 -> ChatAdapter.BaseViewHolder.Message(
+                FOUND -> ChatAdapter.BaseViewHolder.Message(
                     inflater.inflate(parent,R.layout.found_received),
                     listener
                 )
-                8-> ChatAdapter.BaseViewHolder.Failure(
+                FAILURE-> ChatAdapter.BaseViewHolder.Failure(
                     inflater.inflate(parent,R.layout.error),
                 )
                 else -> throw IllegalStateException("UiMessagesKeysMapper.map else branch doesn't handle $key")

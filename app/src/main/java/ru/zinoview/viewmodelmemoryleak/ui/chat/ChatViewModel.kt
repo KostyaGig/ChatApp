@@ -17,7 +17,7 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
 
     fun messages(receiverId: String)
 
-    fun sendMessage(content: String)
+    fun sendMessage(receiverId: String,content: String)
 
     fun editMessage(messageId: String, content: String)
 
@@ -36,9 +36,9 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
         communication,listOf(interactor,scroll)
     ), ChatViewModel {
 
-        override fun sendMessage(content: String)
+        override fun sendMessage(receiverId: String,content: String)
             = work.doBackground(viewModelScope) {
-                interactor.sendMessage(content)
+                interactor.sendMessage(receiverId,content)
         }
 
         override fun editMessage(messageId: String, content: String)

@@ -73,10 +73,11 @@ interface DataMessage : Message {
     class Progress(
         private val senderId: String,
         private val content: String,
+        private val senderNickname: String,
     ) : DataMessage {
 
         override fun <T> map(mapper: Mapper<T>): T
-            = mapper.mapProgress(senderId, content)
+            = mapper.mapProgress(senderId, content,senderNickname)
     }
 
     abstract class Typing : DataMessage {

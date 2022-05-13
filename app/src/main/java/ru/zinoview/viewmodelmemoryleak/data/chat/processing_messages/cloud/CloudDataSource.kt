@@ -18,7 +18,8 @@ interface CloudDataSource : SendMessageWithSenderData, EditMessage, Show<Unit> {
             val progressMessage = CloudMessage.Progress.Send(
                 userId,
                 content,
-                time.time()
+                time.time(),
+                nickName
             )
 
             processingMessages.add(progressMessage)
