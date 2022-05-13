@@ -2,10 +2,8 @@ package ru.zinoview.viewmodelmemoryleak.data.chat.notification.cloud
 
 import android.content.Context
 import ru.zinoview.viewmodelmemoryleak.R
-import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationMessageActivity
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationMessageService
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationWrapper
-import ru.zinoview.viewmodelmemoryleak.ui.core.MainActivity
 
 interface CloudMessage {
 

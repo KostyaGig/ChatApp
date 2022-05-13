@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.*
 import ru.zinoview.viewmodelmemoryleak.core.chat.SendMessage
