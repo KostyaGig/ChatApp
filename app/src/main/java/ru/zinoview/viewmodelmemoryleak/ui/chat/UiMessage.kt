@@ -174,12 +174,15 @@ interface UiMessage :
     class ProgressMessage(
         private val senderId: String,
         private val content: String,
+        private val senderNickname: String
     ) : Abstract(senderId,content,false) {
 
         override fun bind(view: TextView, stateImage: ImageView,editImage: ImageView) {
             super.bind(view)
             stateImage.visibility = View.VISIBLE
         }
+
+        override fun bindNickName(view: TextView) { view.text = senderNickname }
 
         override fun addScroll(scrollCommunication: ScrollCommunication) = Unit
 

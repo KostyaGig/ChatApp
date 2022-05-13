@@ -16,8 +16,8 @@ interface ProcessingChatMessagesRepository : SendMessage,EditMessage, Show<Unit>
         private val userSharedPreferences: UserSharedPreferences
     ) : ProcessingChatMessagesRepository {
 
-        override suspend fun sendMessage(content: String) {
-            val id = userSharedPreferences.id().toString()
+        override suspend fun sendMessage(receiverId: String,content: String) {
+            val id = userSharedPreferences.id()
             val nickName = userSharedPreferences.nickName()
 
             cloudDataSource.sendMessage(id,nickName,content)

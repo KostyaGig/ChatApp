@@ -12,5 +12,5 @@ class ToProgressEditMessageMapper(
         senderId: String,
         content: String,
         senderNickname: String
-    ): CloudMessage = CloudMessage.Progress.Edit(senderId,content,time.time())
+    ): CloudMessage = CloudMessage.Progress.Edit(senderId,content,time.time(),senderNickname)
 }
