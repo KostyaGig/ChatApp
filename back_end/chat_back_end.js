@@ -114,11 +114,10 @@ io.on('connection', (socket) => {
     						}
     					}
     				}
-
-    				users.push(user)
+    				if (user.id != userId) {
+    					users.push(user)
+    				}
 				}
-
-				console.log('push users ',users)
     			io.emit('users',users)
     			db.close();
   			});
@@ -126,20 +125,54 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('send_message', (clientMessage) => {
+		var senderId = clientMessage.senderId;
+		var receiverId = clientMessage.receiverId;
+
 		var message = Object();
 		var messageId = crypto.randomUUID();
-		var senderId = clientMessage.senderId;
 
 		message.id = messageId;
 		message.senderId = senderId;
 		message.content = clientMessage.content;
 		message.isRead = false;
 		message.senderNickName = clientMessage.senderNickName;
-		messages.push(message)
 
-		io.emit('messages',messages)
+		var query = {
+			senderId: '7',
+			receiverId: '7'
+		}
 
-		console.log("send message ",message)
+		MongoClient.connect(url, function(err, db) {
+  			if (err) throw err;
+  			var database = db.db("chat_app_db");
+  				database.collection("messages").find(query).toArray(async function(err, result) {
+    			if (err) throw err;
+
+    			var listOfMessages = []
+
+    			result.forEach(function(item, index, array) {
+    				var messages = item['messages']
+
+    				messages.forEach(function(item, index, array) {
+    					var message = Object();
+
+    					message.id = item.id;
+    					message.senderId = item.senderId;
+    					message.content = item.content;
+						message.isRead = item.isRead;
+						message.senderNickName = item.senderNickName;
+
+						listOfMessages.push(message)
+    				})
+    			})
+
+    			console.log('sendMessage',"senderId",senderId,"receiverId",receiverId,"msg",listOfMessages)
+
+    		})
+  		})
+
+
+		// io.emit('messages',messages)
 
 		sendNotification(message.id,message.senderNickName,message.content)
 	})
@@ -202,7 +235,6 @@ io.on('connection', (socket) => {
 
     			result.forEach(function(item, index, array) {
     				var messages = item['messages']
-    				console.log("Messages ",messages)
 
     				messages.forEach(function(item, index, array) {
     					var message = Object();
@@ -218,7 +250,6 @@ io.on('connection', (socket) => {
 
     			})
 
-    			console.log('listOfMessages',listOfMessages)
 				io.emit('messages',listOfMessages)
     		});
   		});
