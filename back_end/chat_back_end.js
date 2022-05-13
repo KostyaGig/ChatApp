@@ -109,22 +109,27 @@ io.on('connection', (socket) => {
     				var firstResult = await messagesCollection.findOne(firstMessagesJson)
     				var secondResult = await messagesCollection.findOne(secondMessagesJson)
 
-    				if (firstResult == null && secondResult == null) {
-    					user.lastMessage = "Messages are empty! Start chatting now!"
-    				} else {
-    					if (firstResult == null && secondResult != null) {
-    						var messages = secondResult['messages']
-    						if (messages.length != 0) {
-    							var contentOfTheLastMessage = messages[messages.length - 1]['content']
-    							user.lastMessage = contentOfTheLastMessage
-    						}
-    					} else {
-    						var messages = firstResult['messages']
-    						if (messages.length != 0) {
-    							var contentOfTheLastMessage = messages[messages.length - 1]['content']
-    							user.lastMessage = contentOfTheLastMessage
-    						}
+    				if (firstResult == null && secondResult != null) {
+    					var messages = secondResult['messages']
+    					if (messages.length != 0) {
+    						var theLastMessage = messages[messages.length - 1]
+    						var content = theLastMessage['content']
+    						var senderNickName = theLastMessage['senderNickName']
 
+    						user.lastMessage = content
+    						user.lastMessageSenderNickName = senderNickName
+    					}
+    				} else {
+    					if (firstResult != null) {
+    						var messages = firstResult['messages']
+    							if (messages.length != 0) {
+    							var theLastMessage = messages[messages.length - 1]
+    							var content = theLastMessage['content']
+    							var senderNickName = theLastMessage['senderNickName']
+
+    							user.lastMessage = content
+    							user.lastMessageSenderNickName = senderNickName
+    						}
     					}
     				}
 
@@ -443,12 +448,12 @@ var url = "mongodb://localhost:27017/";
     			database.collection("user").updateOne(query,newMessages, function(err, res) {
     				if (err) throw err;
     				console.log("1 document inserted");
-    				db.close();
+    				    db.close();
   				});
 
-  			});
+  			     });
 
-		});
+		    });
 	})
 
 
