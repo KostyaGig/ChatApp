@@ -88,24 +88,6 @@ io.on('connection', (socket) => {
     					senderId: currentUserId,
     					receiverId: userId
     				}
-
-    				// todo remove later
-
-    				// var secondMessagesJson = {
-    				// 	senderId: "4",
-    				// 	receiverId: "6"
-    				// 	messages: [
-    				// 		{
-    				// 			content: "Content for the fourth user"
-    				// 		},
-    				// 		{
-    				// 			content: "LAST CONTENT for the fourth user"
-    				// 		}]}
-
-    				console.log("THE FIRST - ", firstMessagesJson)
-    				console.log("----------------------------------")
-    				console.log("THE SECOND - ", secondMessagesJson)
-
     				var firstResult = await messagesCollection.findOne(firstMessagesJson)
     				var secondResult = await messagesCollection.findOne(secondMessagesJson)
 
@@ -199,8 +181,47 @@ io.on('connection', (socket) => {
 	}
 
 
-	socket.on('messages', () => {
-		io.emit('messages',messages)
+	socket.on('messages', (data) => {
+		var senderId = data['senderId']
+		var receiverId = data['receiverId']
+
+		var query = {
+			senderId: senderId,
+			receiverId: receiverId
+		}
+
+		console.log(query)
+
+		MongoClient.connect(url, function(err, db) {
+  			if (err) throw err;
+  			var database = db.db("chat_app_db");
+  				database.collection("messages").find(query).toArray(async function(err, result) {
+    			if (err) throw err;
+    			var listOfMessages = []
+
+
+    			result.forEach(function(item, index, array) {
+    				var messages = item['messages']
+    				console.log("Messages ",messages)
+
+    				messages.forEach(function(item, index, array) {
+    					var message = Object();
+
+    					message.id = item.id;
+    					message.senderId = item.senderId;
+    					message.content = item.content;
+						message.isRead = item.isRead;
+						message.senderNickName = item.senderNickName;
+
+						listOfMessages.push(message)
+    				})
+
+    			})
+
+    			console.log('listOfMessages',listOfMessages)
+				io.emit('messages',listOfMessages)
+    		});
+  		});
 	})
 
 	socket.on('edit_message',(clientMessage) => {
@@ -448,12 +469,12 @@ var url = "mongodb://localhost:27017/";
     			database.collection("user").updateOne(query,newMessages, function(err, res) {
     				if (err) throw err;
     				console.log("1 document inserted");
-    				    db.close();
+    				db.close();
   				});
 
-  			     });
+  			});
 
-		    });
+		});
 	})
 
 
