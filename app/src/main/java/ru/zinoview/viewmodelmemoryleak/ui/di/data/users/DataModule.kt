@@ -7,6 +7,7 @@ import ru.zinoview.viewmodelmemoryleak.data.core.ExceptionMapper
 import ru.zinoview.viewmodelmemoryleak.data.join.JoinUserRepository
 import ru.zinoview.viewmodelmemoryleak.data.users.CloudToAbstractUserMapper
 import ru.zinoview.viewmodelmemoryleak.data.users.UsersRepository
+import ru.zinoview.viewmodelmemoryleak.data.users.cloud.CloudMessageMapper
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
 
 class DataModule(
@@ -18,7 +19,7 @@ class DataModule(
         single<UsersRepository> {
             UsersRepository.Base(
                 get(),
-                CloudToAbstractUserMapper.Base(),
+                CloudMessageMapper.Base(),
                 ru.zinoview.viewmodelmemoryleak.ui.join.Bitmap.Base(
                     contentResolver
                 ),

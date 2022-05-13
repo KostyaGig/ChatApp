@@ -5,7 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import ru.zinoview.viewmodelmemoryleak.ui.core.*
 
-sealed class UiUser : DiffSame<UiUser>, SameOne<String>, Same<String,Unit>, Bind<Pair<TextView,ImageView>>, UiItem, OnClick<UserItemClickListener> {
+sealed class UiUser : DiffSame<UiUser>, SameOne<String>, Same<String,Unit>, UserBind, UiItem, OnClick<UserItemClickListener> {
 
     override fun isContentTheSame(item: UiUser) = false
     override fun isItemTheSame(item: UiUser) = false
@@ -13,11 +13,14 @@ sealed class UiUser : DiffSame<UiUser>, SameOne<String>, Same<String,Unit>, Bind
     override fun same(arg1: String, arg2: Unit) = false
 
     override fun bind(view: Pair<TextView, ImageView>) = Unit
+    override fun bindLastMessage(view: TextView) = Unit
+
     override fun onClick(item: UserItemClickListener) = Unit
 
     class Base(
         private val id: String,
         private val nickName: String,
+        private val lastMessageText: String,
         private val image: Bitmap,
     ): UiUser() {
 
@@ -36,6 +39,10 @@ sealed class UiUser : DiffSame<UiUser>, SameOne<String>, Same<String,Unit>, Bind
         override fun bind(view: Pair<TextView, ImageView>) {
             view.first.text = nickName
             view.second.setImageBitmap(image)
+        }
+
+        override fun bindLastMessage(view: TextView) {
+            view.text = lastMessageText
         }
 
         override fun onClick(listener: UserItemClickListener) = listener.onClick(id)

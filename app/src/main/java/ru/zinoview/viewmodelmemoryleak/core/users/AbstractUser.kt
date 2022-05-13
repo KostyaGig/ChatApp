@@ -8,14 +8,15 @@ interface AbstractUser {
 
     fun <T> map(mapper: UserMapper<T>) : T
 
-    class Base(
+    data class Base(
         private val id: String,
         private val nickName: String,
+        private val lastMessageText: String,
         private val image: Bitmap
     ) : AbstractUser {
 
         override fun <T> map(mapper: UserMapper<T>)
-            = mapper.map(id,nickName, image)
+            = mapper.map(id,nickName, lastMessageText,image)
     }
 
     data class Test(

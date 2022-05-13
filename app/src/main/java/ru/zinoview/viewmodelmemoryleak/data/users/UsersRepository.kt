@@ -1,18 +1,21 @@
 package ru.zinoview.viewmodelmemoryleak.data.users
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.core.Data
 import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
+import ru.zinoview.viewmodelmemoryleak.core.users.AbstractUser
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.core.ExceptionMapper
 import ru.zinoview.viewmodelmemoryleak.data.users.cloud.CloudDataSource
+import ru.zinoview.viewmodelmemoryleak.data.users.cloud.CloudMessageMapper
 import java.lang.Exception
 
 interface UsersRepository : Data<DataUsers> {
 
     class Base(
         private val cloudDataSource: CloudDataSource,
-        private val mapper: CloudToAbstractUserMapper,
+        private val mapper: CloudMessageMapper<AbstractUser>,
         private val bitmap: ru.zinoview.viewmodelmemoryleak.ui.join.Bitmap,
         private val exceptionMapper: ExceptionMapper,
         private val resourceProvider: ResourceProvider,

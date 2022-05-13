@@ -7,7 +7,7 @@ import ru.zinoview.viewmodelmemoryleak.core.users.UserMapper
 interface CloudToAbstractUserMapper : UserMapper<AbstractUser> {
 
     class Base : CloudToAbstractUserMapper {
-        override fun map(userId: String, nickName: String, image: Bitmap)
-            = AbstractUser.Base(userId,nickName, image)
+        override fun map(userId: String, nickName: String, lastMessageText: String, image: Bitmap)
+            = AbstractUser.Base(userId,nickName, lastMessageText,image)
     }
 }

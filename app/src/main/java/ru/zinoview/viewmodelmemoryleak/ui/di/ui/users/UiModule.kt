@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.di.ui.users
 
 import org.koin.dsl.module.module
+import ru.zinoview.viewmodelmemoryleak.ui.core.UiText
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
 import ru.zinoview.viewmodelmemoryleak.ui.users.AbstractToUiUserMapper
 import ru.zinoview.viewmodelmemoryleak.ui.users.DomainToUiUserMapper
@@ -20,7 +21,11 @@ class UiModule : Module {
                 get(),
                 get(),
                 DomainToUiUserMapper.Base(
-                    AbstractToUiUserMapper.Base(),
+                    AbstractToUiUserMapper.Base(
+                        UiText.Base(
+                            30
+                        )
+                    ),
                     get()
                 ),
                 UsersCommunication()

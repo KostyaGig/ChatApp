@@ -7,7 +7,5 @@ interface EmptyString {
     class Base : EmptyString {
 
         override fun string(src: String?,default: String) = src ?: default
-
-
     }
 }

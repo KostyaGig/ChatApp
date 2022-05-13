@@ -84,7 +84,7 @@ class UsersRepositoryTest {
                 isNotSuccess = false
                 DataUsers.Failure("No connection")
             } else {
-                val users = cloudDataSource.data().map { it as CloudUser.Test }.map {
+                val users = cloudDataSource.users("").map { it as CloudUser.Test }.map {
                     it.map(mapper)
                 }
                 return if (users.isEmpty()) {
@@ -101,7 +101,7 @@ class UsersRepositoryTest {
 
         private var isEmpty = true
 
-        override suspend fun data(): List<CloudUser> {
+        override suspend fun users(userId: String): List<CloudUser> {
             return if (isEmpty) {
                 isEmpty = false
                 emptyList()

@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.users.cloud
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketData
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
@@ -19,7 +18,6 @@ interface CloudDataSource {
         override suspend fun users(userId: String) = suspendCoroutine<List<CloudUser>> {  continuation ->
             socketWrapper.subscribe(USERS) { cloudData ->
                 val stringJson = json.json(cloudData.first())
-                Log.d("zinoviewk","json users $stringJson")
                 val users = json.objectFromJson(stringJson,UsersDataWrapper::class.java).map()
                 continuation.resume(users)
                 socketWrapper.disconnect(USERS)

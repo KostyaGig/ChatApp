@@ -51,11 +51,14 @@ class UsersAdapter(
 
             private val nickName = view.findViewById<TextView>(R.id.user_nickname_tv)
             private val imageProfile = view.findViewById<ImageView>(R.id.user_image_profile)
+            private val lastMessage = view.findViewById<TextView>(R.id.last_message_tv)
 
             override fun bind(item: UiUser) {
                 item.bind(Pair(
                     nickName,imageProfile
                 ))
+
+                item.bindLastMessage(lastMessage)
 
                 itemView.setOnClickListener {
                     item.onClick(listener)
