@@ -27,6 +27,8 @@ interface UiMessage :
     override fun sameFound(isFounded: Boolean) = false
 
     override fun bind(view: TextView) = Unit
+    override fun bindNickName(view: TextView) = Unit
+
     override fun changeTitle(toolbar: ToolbarActivity) = Unit
 
     override fun <T> map(mapper: Mapper<T>): T = mapper.map()
@@ -67,6 +69,10 @@ interface UiMessage :
 
         override fun bind(view: TextView) {
             view.text = content
+        }
+
+        override fun bindNickName(view: TextView) {
+            view.text = senderNickname
         }
 
         override fun bind(view: TextView, stateImage: ImageView,editImage: ImageView) {

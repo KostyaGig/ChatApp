@@ -34,11 +34,13 @@ class ChatAdapter(
         ) : BaseViewHolder(view) {
 
             private val contentTv = view.findViewById<TextView>(R.id.message_content_tv)
+            private val nicknameTextView = view.findViewById<TextView>(R.id.nickname_tv)
             private val stateImage = view.findViewById<ImageView>(R.id.state_send_image)
             private val editImage = view.findViewById<ImageView>(R.id.edit_image)
 
             override fun bind(item: UiMessage) {
                 item.bind(contentTv,stateImage,editImage)
+                item.bindNickName(nicknameTextView)
                 editImage.setOnClickListener { item.onClick(listener) }
             }
         }
@@ -57,8 +59,8 @@ class ChatAdapter(
             view: View
         ) : BaseViewHolder(view) {
 
-            private val senderNicknameTextView = view.findViewById<TextView>(R.id.sender_nickname_tv)
-            override fun bind(item: UiMessage) = item.bind(senderNicknameTextView)
+            private val nicknameTextView = view.findViewById<TextView>(R.id.nickname_tv)
+            override fun bind(item: UiMessage) = item.bind(nicknameTextView)
         }
     }
 }

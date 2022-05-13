@@ -3,8 +3,13 @@
     <dimen name="found_message_padding">10dp</dimen>
     <dimen name="profile_image_width">96dp</dimen>
     <dimen name="profile_image_height">96dp</dimen>
-    <dimen name="recycler_view_image_profile_height">40dp</dimen>
-    <dimen name="recycler_view_image_profile_width">40dp</dimen>
+    <dimen name="user_recycler_view_image_profile_height">40dp</dimen>
+    <dimen name="user_recycler_view_image_profile_width">40dp</dimen>
+    <dimen name="chat_recycler_view_image_profile_width">30dp</dimen>
+    <dimen name="chat_recycler_view_image_profile_height">30dp</dimen>
     <dimen name="user_card_view_corner_radius">4dp</dimen>
     <dimen name="last_message_recycler_view_size">10sp</dimen>
+    <dimen name="user_nick_name_tv_size">18sp</dimen>
+    <dimen name="name_content_message_container_margin">20dp</dimen>
+    <dimen name="content_nick_name_tv_space">5dp</dimen>
 </resources>

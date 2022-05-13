@@ -8,18 +8,50 @@
     android:layout_margin="20dp"
     >
 
-    <TextView
-        android:id="@+id/message_content_tv"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_image_profile"
+        android:layout_width="@dimen/chat_recycler_view_image_profile_width"
+        android:layout_height="@dimen/chat_recycler_view_image_profile_height"
+        android:src="@drawable/profile_default_image"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Example of text"
-        android:layout_gravity="end"
-        android:gravity="end"
-        android:textColor="@color/purple_200"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/user_image_profile"
+        android:layout_marginEnd="@dimen/name_content_message_container_margin">
+
+        <TextView
+            android:id="@+id/nickname_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Example text"
+            android:layout_gravity="end"
+            android:gravity="end"
+            android:textColor="@color/purple_200"
+            android:textStyle="bold"
+            android:textSize="@dimen/user_nick_name_tv_size"
+            />
+
+        <TextView
+            android:id="@+id/message_content_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Example text"
+            android:layout_gravity="end"
+            android:gravity="end"
+            android:textColor="@color/purple_200"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/content_nick_name_tv_space"
+            />
+
+    </LinearLayout>
+
 
     <ImageView
         android:id="@+id/state_send_image"
