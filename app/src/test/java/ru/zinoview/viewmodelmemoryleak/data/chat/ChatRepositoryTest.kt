@@ -37,10 +37,10 @@ class ChatRepositoryTest {
     @Test
     fun test_success_send_messages() = runBlocking {
 
-        repository?.sendMessage("Hi,Bob")
-        repository?.sendMessage("Hello!")
-        repository?.sendMessage("How are you?")
-        repository?.sendMessage("I'm fine")
+        repository?.sendMessage("","Hi,Bob")
+        repository?.sendMessage("","Hello!")
+        repository?.sendMessage("","How are you?")
+        repository?.sendMessage("","I'm fine")
 
         val expected = listOf(
             DataMessage.Sent.Unread("-1","1","Hi,Bob","-1"),
@@ -57,7 +57,7 @@ class ChatRepositoryTest {
     @Test
     fun test_failure_send_messages() = runBlocking {
 
-        repository?.sendMessage("Hi,Bob")
+        repository?.sendMessage("","Hi,Bob")
 
         val expected = listOf(
             DataMessage.Failure("Messages are empty")
@@ -70,10 +70,10 @@ class ChatRepositoryTest {
     @Test
     fun test_update_content_message_by_id() = runBlocking {
 
-        repository?.sendMessage("Hi,Bob")
-        repository?.sendMessage("Hello!")
-        repository?.sendMessage("How are you?")
-        repository?.sendMessage("I'm fine")
+        repository?.sendMessage("","Hi,Bob")
+        repository?.sendMessage("","Hello!")
+        repository?.sendMessage("","How are you?")
+        repository?.sendMessage("","I'm fine")
 
         val expected = listOf(
             DataMessage.Sent.Unread("-1","1","Hi,Bob","-1"),
@@ -90,10 +90,10 @@ class ChatRepositoryTest {
 
     @Test
     fun test_read_messages() = runBlocking {
-        repository?.sendMessage("Hi,Bob")
-        repository?.sendMessage("Hello!")
-        repository?.sendMessage("How are you?")
-        repository?.sendMessage("I'm fine")
+        repository?.sendMessage("","Hi,Bob")
+        repository?.sendMessage("","Hello!")
+        repository?.sendMessage("","How are you?")
+        repository?.sendMessage("","I'm fine")
 
         var expected = listOf(
             DataMessage.Sent.Unread("-1","1","Hi,Bob","-1"),
@@ -165,12 +165,11 @@ class ChatRepositoryTest {
         override suspend fun editMessage(messageId: String, content: String)
                 = cloudDataSource.editMessage(messageId, content)
 
-        override suspend fun sendMessage(content: String) {
+        override suspend fun sendMessage(receiverId: String, content: String) {
             val userId = if (count % 2 == 0 ) 1 else 2
-            cloudDataSource.sendMessage(userId.toString(),"fake nick name",content)
+            cloudDataSource.sendMessage(userId.toString(),"","",content)
             count++
         }
-
         override fun readMessages(range: Pair<Int, Int>)
             = cloudDataSource.readMessages(range)
 
@@ -187,11 +186,16 @@ class ChatRepositoryTest {
         private val messages = mutableListOf<CloudMessage.Test>()
         private var isSuccess = false
 
-        override suspend fun sendMessage(userId: String, nickName: String ,content: String) {
+        override suspend fun sendMessage(
+            senderId: String,
+            receiverId: String,
+            nickName: String,
+            content: String
+        ) {
             messages.add(
                 CloudMessage.Test(
-                "-1",userId,content,false,"-1"
-            ))
+                    "-1",senderId,content,false,"-1"
+                ))
         }
 
         fun messages() : List<CloudMessage>{

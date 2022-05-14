@@ -4,7 +4,7 @@ import ru.zinoview.viewmodelmemoryleak.core.connection.Connection
 
 interface DataConnection : Connection {
 
-    class Success(
+    data class Success(
         private val message: String
     ) : DataConnection {
 

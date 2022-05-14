@@ -84,7 +84,7 @@ class UsersRepositoryTest {
                 isNotSuccess = false
                 DataUsers.Failure("No connection")
             } else {
-                val users = cloudDataSource.users("").map { it as CloudUser.Test }.map {
+                val users = cloudDataSource.users("").map { it as CloudUser.Base.Test }.map {
                     it.map(mapper)
                 }
                 return if (users.isEmpty()) {
@@ -108,13 +108,13 @@ class UsersRepositoryTest {
             } else {
                 isEmpty = true
                 listOf(
-                    CloudUser.Test(
+                    CloudUser.Base.Test(
                         "1","Bob","BobImage"
                     ),
-                    CloudUser.Test(
+                    CloudUser.Base.Test(
                         "2","Jake","JakeImage"
                     ),
-                    CloudUser.Test(
+                    CloudUser.Base.Test(
                         "3","Lifo","LifoImage"
                     )
                 )
