@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.users
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,16 +30,18 @@ class UsersFragment : NetworkConnectionFragment<UsersViewModel.Base,UsersFragmen
 
         val diffUtil = UsersDiffUtil()
         adapter = UsersAdapter(diffUtil,object : UserItemClickListener {
-            override fun onClick(id: String) {
+            override fun onClick(item: UiUser) {
                 // todo continue doing this feature
                 connectionViewModel.clean()
                 requireActivity()
                     .supportFragmentManager
                     .beginTransaction()
                     .replace(R.id.fragment_container,ChatFragment().apply {
-                        arguments = bundleOf(Pair("receiverId",id))
+                        arguments = bundleOf(Pair("user",
+                            item.map(UiToBundleUserMapper.Base())
+                        ))
                     })
-                    .commitNow()
+                    .commit()
             }
         })
 

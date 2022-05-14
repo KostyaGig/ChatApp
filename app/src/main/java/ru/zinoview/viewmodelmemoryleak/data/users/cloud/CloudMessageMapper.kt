@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.data.users.cloud
 
 import ru.zinoview.viewmodelmemoryleak.core.users.AbstractUser
+import ru.zinoview.viewmodelmemoryleak.core.users.UserBitmap
 
 interface CloudMessageMapper<T> {
 
@@ -18,7 +19,7 @@ interface CloudMessageMapper<T> {
             nickName: String,
             cloudLastMessage: CloudLastMessage,
             bitmap: android.graphics.Bitmap
-        ) = AbstractUser.Base(id,nickName,cloudLastMessage.map(Unit),bitmap)
+        ) = AbstractUser.Base(id,nickName,cloudLastMessage.map(Unit),UserBitmap.Base(bitmap))
 
     }
 }

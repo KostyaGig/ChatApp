@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.users.cloud
 
+import ru.zinoview.viewmodelmemoryleak.core.users.UserBitmap
 import ru.zinoview.viewmodelmemoryleak.core.users.UserMapper
 import ru.zinoview.viewmodelmemoryleak.ui.join.Bitmap
 import java.lang.IllegalStateException
@@ -27,7 +28,7 @@ interface CloudUser {
                 id,
                 nickName,
                 "",
-                bitmapImage
+                UserBitmap.Base(bitmapImage)
             )
         }
 

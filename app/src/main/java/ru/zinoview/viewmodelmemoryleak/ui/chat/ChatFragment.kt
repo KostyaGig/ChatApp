@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
+import ru.zinoview.viewmodelmemoryleak.ui.BundleUser
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.ToEditedMessageMapper
@@ -47,6 +48,8 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
     private val mapper by lazy { get<UiMessagesKeysMapper>() }
 
+    private var bundleUser: BundleUser = BundleUser.Empty
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -57,6 +60,9 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // todo
+        bundleUser = arguments?.getParcelable("user")!!
 
         networkConnectionReceiver = NetworkConnectionReceiver.Base(connectionViewModel)
 
@@ -82,6 +88,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         )
 
         val diffUtil = ChatMessageDiffUtil()
+
         adapter = ChatAdapter(diffUtil, object : EditMessageListener {
             override fun onClick(message: UiMessage) {
                 val text = ViewWrapper.Text(binding.oldMessageTv)
@@ -113,10 +120,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         binding.sendMessageBtn.setOnClickListener {
             val message = binding.messageField.text.toString().trim()
 
-            // todo
-            val receiverId = arguments?.getString("receiverId")!!
-
-            messageSession.sendMessage(viewModel,receiverId, message)
+            bundleUser.sendMessage(viewModel,messageSession,message)
         }
 
         connectionViewModel.connection()
@@ -128,7 +132,9 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         userStatusViewModel.online()
 
         viewModel.observe(this) { messages ->
-            messages.last().changeTitle(requireActivity() as ToolbarActivity)
+            messages.last().changeTitle(
+                Pair(requireActivity() as ToolbarActivity,bundleUser)
+            )
             adapter.update(messages)
         }
 
@@ -139,22 +145,8 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         connectionViewModel.observe(this) { connection ->
             connection.changeTitle(requireActivity() as ToolbarActivity)
 
-            // todo
-            val receiverId = arguments?.getString("receiverId")!!
-            connection.doAction { viewModel.messages(receiverId) }
+            connection.doAction { bundleUser.doAction(viewModel) }
         }
-
-        // todo server: when we "messages" we need to generate query
-        // query have to contain senderId and receiver id I check only one case
-        // for example query = {
-        //  senderId: '6',
-        //  receiverId: '3'
-        // }
-        // but I also must check the second case query = {
-        //        //  senderId: '3',
-        //        //  receiverId: '6'
-        //        // } I don't do it yet
-        //
 
         val editText = ViewWrapper.EditText(binding.messageField)
         val text = ViewWrapper.Text(binding.oldMessageTv)
@@ -173,6 +165,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         messageSession.saveState(uiStateViewModel, editTextState)
 
         viewModel.showProcessingMessages()
+        // todo make user offline when he leaves the app
         userStatusViewModel.offline()
         userStatusViewModel.clean()
     }

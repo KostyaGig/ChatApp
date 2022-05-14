@@ -6,6 +6,7 @@ import android.widget.TextView
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
+import ru.zinoview.viewmodelmemoryleak.ui.BundleUser
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditContent
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.SaveState
@@ -16,7 +17,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.*
 
 interface UiMessage :
-    DiffSame<UiMessage>, UiSame, MessageBind, Ui, ChangeTitle<ToolbarActivity>,
+    DiffSame<UiMessage>, UiSame, MessageBind, Ui, ChangeTitle<Pair<ToolbarActivity,BundleUser>>,
     Message, Show<ViewWrapper>, UiItem, OnClick<EditMessageListener> {
 
     override fun isContentTheSame(item: UiMessage) = false
@@ -29,7 +30,7 @@ interface UiMessage :
     override fun bind(view: TextView) = Unit
     override fun bindNickName(view: TextView) = Unit
 
-    override fun changeTitle(toolbar: ToolbarActivity) = Unit
+    override fun changeTitle(arg: Pair<ToolbarActivity, BundleUser>) = Unit
 
     override fun <T> map(mapper: Mapper<T>): T = mapper.map()
 
@@ -45,20 +46,19 @@ interface UiMessage :
         private val message: String
     ) : UiMessage {
 
-        override fun changeTitle(toolbar: ToolbarActivity)
-            = toolbar.changeTitle(message)
+        override fun changeTitle(pair: Pair<ToolbarActivity, BundleUser>)
+            = pair.first.changeTitle(message)
     }
 
     object Progress : UiMessage {
 
-        override fun changeTitle(toolbar: ToolbarActivity) {
-            toolbar.changeTitle(TITLE)
-        }
+        override fun changeTitle(pair: Pair<ToolbarActivity, BundleUser>)
+            = pair.first.changeTitle(TITLE)
 
         private const val TITLE = "Progress..."
     }
 
-    abstract class Abstract(
+    abstract class Base(
         private val id: String,
         private val content: String,
         private val isRead: Boolean,
@@ -93,15 +93,11 @@ interface UiMessage :
         override fun sameFound(isFounded: Boolean)
             = this.isFounded == isFounded
 
-        override fun changeTitle(toolbar: ToolbarActivity)
-            = toolbar.changeTitle(TITLE)
+        override fun changeTitle(pair: Pair<ToolbarActivity, BundleUser>)
+            = pair.second.changeTitle(pair.first)
 
         override fun addScroll(scrollCommunication: ScrollCommunication)
             = scrollCommunication.postValue(UiScroll.Base())
-
-        private companion object {
-            private const val TITLE = "Chat"
-        }
     }
 
     abstract class Sent(
@@ -110,7 +106,7 @@ interface UiMessage :
         private val senderId: String,
         private val senderNickname: String,
         isRead: Boolean
-    ) : Abstract(id,content,isRead,false,senderNickname,senderId) {
+    ) : Base(id,content,isRead,false,senderNickname,senderId) {
 
         override fun bind(view: TextView, stateImage: ImageView, editImage: ImageView) {
             super.bind(view, stateImage, editImage)
@@ -148,7 +144,7 @@ interface UiMessage :
         private val senderId: String,
         private val senderNickname: String,
         private val isFounded: Boolean
-    ) : Abstract(id,content,false,isFounded,senderNickname,senderId) {
+    ) : Base(id,content,false,isFounded,senderNickname,senderId) {
 
         data class Base(
             private val id: String,
@@ -175,7 +171,7 @@ interface UiMessage :
         private val senderId: String,
         private val content: String,
         private val senderNickname: String
-    ) : Abstract(senderId,content,false) {
+    ) : Base(senderId,content,false) {
 
         override fun bind(view: TextView, stateImage: ImageView,editImage: ImageView) {
             super.bind(view)
@@ -185,31 +181,29 @@ interface UiMessage :
         override fun bindNickName(view: TextView) { view.text = senderNickname }
 
         override fun addScroll(scrollCommunication: ScrollCommunication) = Unit
-
-        override fun changeTitle(toolbar: ToolbarActivity) = Unit
     }
 
-    abstract class Typing : UiMessage {
+    interface Typing : UiMessage {
+
+        abstract class Base(private val message: String) : Typing {
+
+            override fun changeTitle(pair: Pair<ToolbarActivity, BundleUser>)
+                = pair.first.changeTitle(message)
+
+        }
 
         class Is(
             private val message: String
-        ) : Typing() {
-
+        ) : Base(message) {
 
             override fun bind(view: TextView) {
                 view.text = message
             }
-
-            override fun changeTitle(toolbar: ToolbarActivity)
-                = toolbar.changeTitle(message)
         }
 
          class IsNot(
-             private val message: String
-         ) : Typing() {
-             override fun changeTitle(toolbar: ToolbarActivity)
-                = toolbar.changeTitle(message)
-         }
+             message: String
+         ) : Base(message)
 
     }
 

@@ -1,7 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.core.users
 
-import android.graphics.Bitmap
-import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 
 interface AbstractUser {
@@ -12,7 +10,7 @@ interface AbstractUser {
         private val id: String,
         private val nickName: String,
         private val lastMessageText: String,
-        private val image: Bitmap
+        private val image: UserBitmap
     ) : AbstractUser {
 
         override fun <T> map(mapper: UserMapper<T>)
