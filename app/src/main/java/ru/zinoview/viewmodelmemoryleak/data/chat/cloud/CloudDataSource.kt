@@ -41,6 +41,8 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
 
                 val messages = data.data(modelMessages)
 
+                Log.d("zinoviewk","messages $messages")
+
                 processingMessages.update(messages)
 
                 messagesStore.addMessages(messages)
@@ -90,18 +92,18 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
         }
 
         override fun readMessages(range: Pair<Int, Int>) {
-            socketWrapper.connect(READ_MESSAGE)
-            messagesStore.unreadMessageIds(range) { unreadMessageIds ->
-
-                val ids = CloudUnreadMessageIds.Base(unreadMessageIds)
-                val jsonIds = SocketData.Base(json.json(ids))
-
-                socketWrapper.emit(READ_MESSAGE,jsonIds)
-
-                unreadMessageIds.forEach { tag ->
-                    notificationService.disconnect(tag)
-                }
-            }
+//            socketWrapper.connect(READ_MESSAGE)
+//            messagesStore.unreadMessageIds(range) { unreadMessageIds ->
+//
+//                val ids = CloudUnreadMessageIds.Base(unreadMessageIds)
+//                val jsonIds = SocketData.Base(json.json(ids))
+//
+//                socketWrapper.emit(READ_MESSAGE,jsonIds)
+//
+//                unreadMessageIds.forEach { tag ->
+//                    notificationService.disconnect(tag)
+//                }
+//            }
         }
 
         override suspend fun toTypeMessage(isTyping: Boolean,senderNickName: String) {
@@ -126,13 +128,11 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
         }
 
         override suspend fun showNotificationMessage(messageId: String) {
-            Log.d("zinoviewk","SHOW NOITIFICATION")
             val data = SocketData.Base(
                 json.json(
                     Pair(NOTIFICATION_MESSAGE_ID,messageId)
                 )
             )
-            Log.d("zinoviewk","emit json $messageId")
             socketWrapper.emit(SHOW_NOTIFICATION_MESSAGE,data)
         }
 

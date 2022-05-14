@@ -1,5 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
+import android.util.Log
+
 interface Data<T> {
 
     fun data(
@@ -14,6 +16,7 @@ interface Data<T> {
             =  if (src.isEmpty()) {
                 failure(EMPTY)
             } else {
+                Log.d("zinoviewk","src $src")
                 src
             }
 

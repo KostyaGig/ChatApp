@@ -15,8 +15,7 @@ interface CloudUser {
         private val nickName: String,
         private val image: String,
         private val lastMessage: String? = null,
-        private val lastMessageSenderNickName: String? = null,
-        private val lastMessageSenderId: String? = null
+        private val lastMessageSenderNickName: String? = null
     ) : CloudUser {
 
         object Empty : Base("","","","","")
@@ -34,7 +33,7 @@ interface CloudUser {
 
         override fun <T> map(mapper: CloudMessageMapper<T>, bitmap: Bitmap): T {
             val bitmapImage = bitmap.bitmap(image)
-            val cloudLastMessage = CloudLastMessage.Base(id,lastMessage,lastMessageSenderNickName,lastMessageSenderId)
+            val cloudLastMessage = CloudLastMessage.Base(nickName,lastMessage,lastMessageSenderNickName)
             return mapper.map(id,nickName,cloudLastMessage,bitmapImage)
         }
 
