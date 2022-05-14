@@ -28,16 +28,28 @@ io.on('connection', (socket) => {
 
 	console.log("connection " + socket.id)
 
-	socket.on('join_user', (clientUser) => {
+	socket.on('join_user', async (clientUser) => {
 
 		var nickName = clientUser['nickname']
 		var image = clientUser['image']
 
 
-		MongoClient.connect(url, function(err, db) {
+		MongoClient.connect(url, async function(err, db) {
   			if (err) throw err;
   			var database = db.db("chat_app_db");
-  			var count = database.collection("user").count({}, function(error, count){
+  			var users = database.collection("user")
+
+  			var query = {
+  				userNickName: nickName
+  			}
+
+  			var user = await users.findOne(query)
+
+  			if (user != null) {
+  				var userId = user['userId']
+  				io.emit('join_user',userId)
+  			} else {
+  				var count = users.count({}, function(error, count){
             if(error) return 0;
 
             var userId = count + 1
@@ -53,11 +65,10 @@ io.on('connection', (socket) => {
     			if (err) throw err;
 
 				io.emit('join_user',userId)
-
-    			db.close();
-  			});
-        });
-
+  				});
+       		 });
+  			}
+				db.close();
 		})
 	})
 
@@ -97,6 +108,7 @@ io.on('connection', (socket) => {
     						var theLastMessage = messages[messages.length - 1]
     						var content = theLastMessage['content']
     						var senderNickName = theLastMessage['senderNickName']
+    						var senderId = theLastMessage['senderId']
 
     						user.lastMessage = content
     						user.lastMessageSenderNickName = senderNickName
@@ -108,6 +120,7 @@ io.on('connection', (socket) => {
     							var theLastMessage = messages[messages.length - 1]
     							var content = theLastMessage['content']
     							var senderNickName = theLastMessage['senderNickName']
+    							var senderId = theLastMessage['senderId']
 
     							user.lastMessage = content
     							user.lastMessageSenderNickName = senderNickName
@@ -127,6 +140,8 @@ io.on('connection', (socket) => {
 	socket.on('send_message', async (clientMessage) => {
 		var senderId = clientMessage.senderId;
 		var receiverId = clientMessage.receiverId;
+
+		console.log('send_message, sender:receiver',senderId,receiverId)
 
 		var firstQuery = {
 			senderId: senderId,
@@ -160,15 +175,12 @@ io.on('connection', (socket) => {
 				// update messages
 				var messages = firstResult['messages']
 
-				console.log('firstResult MSG',messages)
-
 				var listOfMessages = []
 
 				messages.forEach(function(item, index, array) {
 					var message = Object()
 					message.id = item.id
 					message.senderId = item.senderId
-					message.receiverId = item.receiverId
 					message.content = item.content
 					message.senderNickName = item.senderNickName
 					message.isRead = item.isRead
@@ -186,15 +198,14 @@ io.on('connection', (socket) => {
 
 				messagesCollection.updateOne(firstQuery,newMessages, function(err, res) {
     				if (err) throw err;
-    				// todo create method pushMessagesToClient()
-    					io.emit('messages',listOfMessages)
+
+    				io.emit('messages',listOfMessages)
     				db.close();
   				});
 
 			} else {
 				if (secondResult != null) {
 					var messages = secondResult['messages']
-					console.log('secondresult msg',messages)
 
 					var listOfMessages = []
 
@@ -202,7 +213,6 @@ io.on('connection', (socket) => {
 						var message = Object()
 						message.id = item.id
 						message.senderId = item.senderId
-						message.receiverId = item.receiverId
 						message.content = item.content
 						message.senderNickName = item.senderNickName
 						message.isRead = item.isRead
@@ -218,15 +228,24 @@ io.on('connection', (socket) => {
 
     				var newMessages = { $set: jsonMessages}
 
-					messagesCollection.updateOne(firstQuery,newMessages, function(err, res) {
+					messagesCollection.updateOne(secondQuery,newMessages, function(err, res) {
     					if (err) throw err;
 
-    					// todo create method pushMessagesToClient()
     					io.emit('messages',listOfMessages)
     					db.close();
   					});
 				} else {
-					// insert messages
+
+					var listOfMessages = []
+					listOfMessages.push(newMessage)
+
+					var json = {
+						senderId: senderId,
+						receiverId: receiverId,
+						messages: listOfMessages
+					}
+
+					messagesCollection.insertOne(json)
 				}
 			}
 
@@ -276,6 +295,8 @@ io.on('connection', (socket) => {
 		var senderId = data['senderId']
 		var receiverId = data['receiverId']
 
+		console.log('messages, sender:receiver',senderId,receiverId)
+
 		var firstQuery = {
 			senderId: senderId,
 			receiverId: receiverId
@@ -285,6 +306,9 @@ io.on('connection', (socket) => {
 			senderId: receiverId,
 			receiverId: senderId
 		}
+
+		console.log('firstQuery',firstQuery)
+		console.log('secondQuery',secondQuery)
 
 		var listOfMessages = []
 
@@ -317,6 +341,8 @@ io.on('connection', (socket) => {
 
     				var messages = secondResult['messages']
 
+    				console.log('second',messages)
+
     				messages.forEach(function(item, index, array) {
     					var message = Object();
 
@@ -329,9 +355,10 @@ io.on('connection', (socket) => {
 
 						listOfMessages.push(message)
     				})
-
 			}
 		}
+			io.emit("messages",listOfMessages)
+			db.close();
   		});
 	})
 
