@@ -124,57 +124,115 @@ io.on('connection', (socket) => {
 		})
 	})
 
-	socket.on('send_message', (clientMessage) => {
+	socket.on('send_message', async (clientMessage) => {
 		var senderId = clientMessage.senderId;
 		var receiverId = clientMessage.receiverId;
 
-		var message = Object();
-		var messageId = crypto.randomUUID();
-
-		message.id = messageId;
-		message.senderId = senderId;
-		message.content = clientMessage.content;
-		message.isRead = false;
-		message.senderNickName = clientMessage.senderNickName;
-
-		var query = {
-			senderId: '7',
-			receiverId: '7'
+		var firstQuery = {
+			senderId: senderId,
+			receiverId: receiverId
 		}
 
-		MongoClient.connect(url, function(err, db) {
+		var secondQuery = {
+			senderId: receiverId,
+			receiverId: senderId
+		}
+
+		var newMessage = Object();
+		var messageId = crypto.randomUUID();
+
+		newMessage.id = messageId;
+		newMessage.senderId = senderId;
+		newMessage.content = clientMessage.content;
+		newMessage.isRead = false;
+		newMessage.senderNickName = clientMessage.senderNickName;
+
+		MongoClient.connect(url, async function(err, db) {
   			if (err) throw err;
   			var database = db.db("chat_app_db");
-  				database.collection("messages").find(query).toArray(async function(err, result) {
-    			if (err) throw err;
 
-    			var listOfMessages = []
+  			var messagesCollection = database.collection("messages")
 
-    			result.forEach(function(item, index, array) {
-    				var messages = item['messages']
+  			var firstResult = await messagesCollection.findOne(firstQuery)
+			var secondResult = await messagesCollection.findOne(secondQuery)
 
-    				messages.forEach(function(item, index, array) {
-    					var message = Object();
+			if (firstResult != null) {
+				// update messages
+				var messages = firstResult['messages']
 
-    					message.id = item.id;
-    					message.senderId = item.senderId;
-    					message.content = item.content;
-						message.isRead = item.isRead;
-						message.senderNickName = item.senderNickName;
+				console.log('firstResult MSG',messages)
+
+				var listOfMessages = []
+
+				messages.forEach(function(item, index, array) {
+					var message = Object()
+					message.id = item.id
+					message.senderId = item.senderId
+					message.receiverId = item.receiverId
+					message.content = item.content
+					message.senderNickName = item.senderNickName
+					message.isRead = item.isRead
+
+					listOfMessages.push(message)
+				})
+
+				listOfMessages.push(newMessage)
+
+				var jsonMessages = {
+  					messages: listOfMessages
+  				}
+
+    			var newMessages = { $set: jsonMessages}
+
+				messagesCollection.updateOne(firstQuery,newMessages, function(err, res) {
+    				if (err) throw err;
+    				// todo create method pushMessagesToClient()
+    					io.emit('messages',listOfMessages)
+    				db.close();
+  				});
+
+			} else {
+				if (secondResult != null) {
+					var messages = secondResult['messages']
+					console.log('secondresult msg',messages)
+
+					var listOfMessages = []
+
+					messages.forEach(function(item, index, array) {
+						var message = Object()
+						message.id = item.id
+						message.senderId = item.senderId
+						message.receiverId = item.receiverId
+						message.content = item.content
+						message.senderNickName = item.senderNickName
+						message.isRead = item.isRead
 
 						listOfMessages.push(message)
-    				})
-    			})
+				})
 
-    			console.log('sendMessage',"senderId",senderId,"receiverId",receiverId,"msg",listOfMessages)
+					listOfMessages.push(newMessage)
 
-    		})
+					var jsonMessages = {
+  						messages: listOfMessages
+  					}
+
+    				var newMessages = { $set: jsonMessages}
+
+					messagesCollection.updateOne(firstQuery,newMessages, function(err, res) {
+    					if (err) throw err;
+
+    					// todo create method pushMessagesToClient()
+    					io.emit('messages',listOfMessages)
+    					db.close();
+  					});
+				} else {
+					// insert messages
+				}
+			}
+
   		})
 
-
-		// io.emit('messages',messages)
-
-		sendNotification(message.id,message.senderNickName,message.content)
+		sendNotification(newMessage.id,newMessage.senderNickName,newMessage.content)
 	})
 
 	const functions = require("firebase-functions");
@@ -214,27 +272,33 @@ io.on('connection', (socket) => {
 	}
 
 
-	socket.on('messages', (data) => {
+	socket.on('messages', async (data) => {
 		var senderId = data['senderId']
 		var receiverId = data['receiverId']
 
-		var query = {
+		var firstQuery = {
 			senderId: senderId,
 			receiverId: receiverId
 		}
 
-		console.log(query)
+		var secondQuery = {
+			senderId: receiverId,
+			receiverId: senderId
+		}
 
-		MongoClient.connect(url, function(err, db) {
+		var listOfMessages = []
+
+		MongoClient.connect(url, async function(err, db) {
   			if (err) throw err;
   			var database = db.db("chat_app_db");
-  				database.collection("messages").find(query).toArray(async function(err, result) {
-    			if (err) throw err;
-    			var listOfMessages = []
+  			var messagesCollection = database.collection("messages")
 
+  			var firstResult = await messagesCollection.findOne(firstQuery)
+			var secondResult = await messagesCollection.findOne(secondQuery)
 
-    			result.forEach(function(item, index, array) {
-    				var messages = item['messages']
+			if (firstResult != null) {
+
+    				var messages = firstResult['messages']
 
     				messages.forEach(function(item, index, array) {
     					var message = Object();
@@ -248,10 +312,26 @@ io.on('connection', (socket) => {
 						listOfMessages.push(message)
     				})
 
-    			})
+			} else {
+				if (secondResult != null) {
 
-				io.emit('messages',listOfMessages)
-    		});
+    				var messages = secondResult['messages']
+
+    				messages.forEach(function(item, index, array) {
+    					var message = Object();
+
+    					message.id = item.id;
+    					message.senderId = item.senderId;
+    					message.content = item.content;
+						message.isRead = item.isRead;
+						message.senderNickName = item.senderNickName;
+
+
+						listOfMessages.push(message)
+    				})
+
+			}
+		}
   		});
 	})
 
