@@ -1,14 +1,18 @@
 package ru.zinoview.viewmodelmemoryleak.ui
 
 import android.os.Parcelable
+import android.util.Log
 import kotlinx.android.parcel.Parcelize
+import ru.zinoview.viewmodelmemoryleak.core.Mapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession
 import ru.zinoview.viewmodelmemoryleak.ui.core.Action
 import ru.zinoview.viewmodelmemoryleak.ui.core.ChangeTitle
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 
-interface BundleUser : Action<ChatViewModel>,ChangeTitle<ToolbarActivity>,Parcelable {
+interface BundleUser : Action<ChatViewModel>,ChangeTitle<ToolbarActivity>,Parcelable, Mapper<String,UiMessage.EditedMessage> {
+
     fun sendMessage(
         viewModel: ChatViewModel,
         messageSession: MessageSession,
@@ -17,21 +21,28 @@ interface BundleUser : Action<ChatViewModel>,ChangeTitle<ToolbarActivity>,Parcel
 
     override fun doAction(arg: ChatViewModel) = Unit
     override fun changeTitle(arg: ToolbarActivity) = Unit
+    override fun map(src: String) : UiMessage.EditedMessage = UiMessage.EditedMessage.Empty
 
     @Parcelize
     data class Base(
-        private val id: String,
+        private val receiverId: String,
         private val nickName: String
     ) : BundleUser {
 
-        override fun doAction(viewModel: ChatViewModel) = viewModel.messages(id)
+        override fun doAction(viewModel: ChatViewModel) = viewModel.messages(receiverId)
         override fun changeTitle(toolbar: ToolbarActivity) = toolbar.changeTitle(nickName)
 
         override fun sendMessage(
             viewModel: ChatViewModel,
             messageSession: MessageSession,
             content: String
-        ) = messageSession.sendMessage(viewModel,id,content)
+        ) = messageSession.sendMessage(viewModel,receiverId,content)
+
+        override fun map(messageId: String): UiMessage.EditedMessage.Base {
+            return UiMessage.EditedMessage.Base(
+                messageId,receiverId
+            )
+        }
     }
 
     @Parcelize

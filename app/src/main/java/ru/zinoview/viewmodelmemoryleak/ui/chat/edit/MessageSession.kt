@@ -28,7 +28,6 @@ interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit>, SaveState,
         private val snackBar: SnackBar<Unit>,
         private val editedMapper: ToEditedMessageMapper,
         private val oldMapper: ToOldMessageMapper,
-
     ) : MessageSession {
 
         private var editedMessage: UiMessage.EditedMessage = UiMessage.EditedMessage.Empty

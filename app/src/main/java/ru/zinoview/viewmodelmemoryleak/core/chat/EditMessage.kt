@@ -4,6 +4,7 @@ interface EditMessage {
 
     suspend fun editMessage(
         messageId: String,
-        content: String
+        content: String,
+        receiverId: String
     )
 }

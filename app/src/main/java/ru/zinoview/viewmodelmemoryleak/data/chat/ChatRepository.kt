@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.*
 import ru.zinoview.viewmodelmemoryleak.core.chat.SendMessage
@@ -33,8 +34,9 @@ interface ChatRepository<T> : Messages<DataMessage>, SendMessage, EditMessage ,
             chatActions.sendMessage(data)
         }
 
-        override suspend fun editMessage(messageId: String, content: String) {
-            val data = listOf(messageId,content)
+        override suspend fun editMessage(messageId: String, content: String,receiverId: String) {
+            val senderId = userSharedPreferences.id()
+            val data = listOf(messageId,content,senderId,receiverId)
 
             chatActions.editMessage(data)
         }

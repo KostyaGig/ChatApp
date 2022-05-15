@@ -29,6 +29,10 @@ interface CloudMessage : Message, CloudSame {
         private val isRead: Boolean,
     ) : CloudMessage {
 
+        override fun toString(): String {
+            return "id msg $id"
+        }
+
         object Empty : Base("","-1","","",false)
 
         override fun <T> map(content: String, mapper: Mapper<T>): T
@@ -37,9 +41,11 @@ interface CloudMessage : Message, CloudSame {
         override fun map(mapper: CloudToDataMessageMapper)
             = mapper.map(id, senderId, content, senderNickName, isRead)
 
-        override fun same(item: CloudMessage) = item.sameSenderId(senderId.toString())
-        override fun sameSenderId(senderId: String) = this.senderId.toString() == senderId
-        override fun same(id: String, arg2: Unit) = this.id == id
+        override fun same(item: CloudMessage) = item.sameSenderId(senderId)
+        override fun sameSenderId(senderId: String) = this.senderId == senderId
+        override fun same(id: String, arg2: Unit): Boolean {
+            return this.id == id
+        }
 
         override fun sameContent(content: String)
             = this.content == content

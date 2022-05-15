@@ -241,8 +241,8 @@ interface UiMessage :
     interface EditedMessage : UiMessage, EditContent, Action<ChatViewModel>, IsNotEmpty<Unit> {
 
         class Base(
-            private val id: String
-
+            private val id: String,
+            private val receiverId: String
         ) : EditedMessage {
             private var content = ""
 
@@ -251,7 +251,7 @@ interface UiMessage :
             }
 
             override fun doAction(viewModel: ChatViewModel)
-                = viewModel.editMessage(id, content)
+                = viewModel.editMessage(id, content,receiverId)
 
             override fun isNotEmpty(arg: Unit) = true
         }

@@ -12,11 +12,18 @@ import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationService
 
-interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadMessages, ShowNotificationMessage {
+interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, ReadMessages, ShowNotificationMessage {
 
     override fun readMessages(range: Pair<Int, Int>) = Unit
 
     suspend fun messages(senderId: String,receiverId: String,block: (List<CloudMessage>) -> Unit) = Unit
+
+    suspend fun editMessage(
+        messageId: String,
+        content: String,
+        senderId: String,
+        receiverId: String
+    )
 
     suspend fun toTypeMessage(isTyping: Boolean,senderNickName: String) : T
 
@@ -78,13 +85,24 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, EditMessage, ReadM
             socketWrapper.emit(SEND_MESSAGE,data)
         }
 
-        override suspend fun editMessage(messageId: String, content: String) {
+        override suspend fun editMessage(
+            messageId: String,
+            content: String,
+            senderId: String,
+            receiverId: String
+        ) {
             val data = SocketData.Base(json.json(
                 Pair(
                     MESSAGE_ID_KEY,messageId
                 ),
                 Pair(
                     MESSAGE_CONTENT_KEY,content
+                ),
+                Pair(
+                    SENDER_ID_KEY,senderId
+                ),
+                Pair(
+                    RECEIVER_ID_KEY,receiverId
                 )
             ))
 

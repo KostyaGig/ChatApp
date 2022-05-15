@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.domain.chat
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.*
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatRepository
@@ -24,10 +25,10 @@ interface ChatInteractor : Messages<DomainMessage>, SendMessage,
             chatRepository.sendMessage(receiverId,content)
         }
 
-        override suspend fun editMessage(messageId: String, content: String) {
-            processingMessagesRepository.editMessage(messageId,content)
-            updateChatRepository.editMessage(messageId,content)
-            chatRepository.editMessage(messageId, content)
+        override suspend fun editMessage(messageId: String, content: String,receiverId: String) {
+            processingMessagesRepository.editMessage(messageId,content,receiverId)
+            updateChatRepository.editMessage(messageId,content,receiverId)
+            chatRepository.editMessage(messageId, content,receiverId)
         }
 
         override suspend fun toTypeMessage(isTyping: Boolean)

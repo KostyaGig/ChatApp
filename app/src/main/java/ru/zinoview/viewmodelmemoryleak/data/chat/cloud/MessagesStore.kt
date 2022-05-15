@@ -50,11 +50,13 @@ interface MessagesStore :
             )
         }
 
-        override suspend fun editMessage(messageId: String, content: String) {
+        override suspend fun editMessage(messageId: String, content: String, receiverId: String) {
+            Log.d("zinoviewk","EDIT MESSAGES CALLED")
             val messageById = listItem.item(messages,messageId)
             val editedMessageById = messageById.map(content,mapper)
 
             val indexMessageById = listItem.index(messages,messageId)
+            Log.d("zinoviewk","index after same $indexMessageById")
             this.messages[indexMessageById] = editedMessageById
 
             block.invoke(ArrayList(messages))

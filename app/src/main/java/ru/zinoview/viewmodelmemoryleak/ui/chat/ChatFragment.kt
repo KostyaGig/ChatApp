@@ -31,7 +31,6 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NetworkConnectionFragm
 class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentBinding>(
     ChatViewModel.Base::class
 ) {
-
     private var adapter: Adapter<List<UiMessage>> = Adapter.Empty()
     private var scrollListener: ChatRecyclerViewScrollListener =
         ChatRecyclerViewScrollListener.Empty
@@ -83,27 +82,22 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
                 binding.messageField
             ),
             snackBar,
-            ToEditedMessageMapper(),
+            ToEditedMessageMapper(
+                bundleUser
+            ),
             ToOldMessageMapper()
         )
 
         val diffUtil = ChatMessageDiffUtil()
 
-        adapter = ChatAdapter(diffUtil, object : EditMessageListener {
-            override fun onClick(message: UiMessage) {
-                val text = ViewWrapper.Text(binding.oldMessageTv)
-                message.show(text)
-
-                messageSession.show(Unit)
-                messageSession.add(message)
-            }
-        }, mapper)
+        adapter = ChatAdapter(diffUtil,EditMessageListener.Base(binding,messageSession), mapper)
 
         val manager = LinearLayoutManager(requireContext())
 
         binding.chatRv.layoutManager = manager
         binding.chatRv.adapter = adapter as ChatAdapter
 
+        // todo
         memento = UiChatMessagesMemento.Base(
             ToUiFoundMessageMapper.Base(),
             binding.chatRv,
@@ -144,7 +138,6 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
         connectionViewModel.observe(this) { connection ->
             connection.changeTitle(requireActivity() as ToolbarActivity)
-
             connection.doAction { bundleUser.doAction(viewModel) }
         }
 

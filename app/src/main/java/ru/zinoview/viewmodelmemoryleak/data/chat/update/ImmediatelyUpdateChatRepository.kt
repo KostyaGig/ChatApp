@@ -20,7 +20,7 @@ interface ImmediatelyUpdateChatRepository : SendMessage, EditMessage {
             cloudDataSource.sendMessage(id,nickName,content)
         }
 
-        override suspend fun editMessage(messageId: String, content: String)
-            = cloudDataSource.editMessage(messageId, content)
+        override suspend fun editMessage(messageId: String, content: String, receiverId: String)
+            = cloudDataSource.editMessage(messageId, content,receiverId)
     }
 }

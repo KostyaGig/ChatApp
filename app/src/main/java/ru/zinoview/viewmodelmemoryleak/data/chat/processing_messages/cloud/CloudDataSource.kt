@@ -25,8 +25,8 @@ interface CloudDataSource : SendMessageWithSenderData, EditMessage, Show<Unit> {
             processingMessages.add(progressMessage)
         }
 
-        override suspend fun editMessage(messageId: String, content: String)
-            = messagesStore.updateProcessingMessages(processingMessages,messageId, content)
+        override suspend fun editMessage(messageId: String, content: String, receiverId: String)
+            = messagesStore.updateProcessingMessages(processingMessages, messageId,content)
 
         override fun show(arg: Unit) = processingMessages.show(arg)
     }

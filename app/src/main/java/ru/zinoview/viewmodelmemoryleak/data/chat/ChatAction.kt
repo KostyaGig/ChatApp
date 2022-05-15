@@ -71,12 +71,14 @@ interface ChatAction {
         override suspend fun editMessage(data: Data, cloudDataSource: CloudDataSource<Unit>) {
             val messageId = data.getString(MESSAGE_ID_KEY)
             val content = data.getString(MESSAGE_CONTENT_KEY)
-            cloudDataSource.editMessage(messageId!!,content!!)
+            val senderId = data.getString(SENDER_ID_KEY)
+            val receiverId = data.getString(RECEIVER_ID_KEY)
+            cloudDataSource.editMessage(messageId!!,content!!,senderId!!,receiverId!!)
 
             disconnect(content)
         }
 
-        override fun keys() = listOf(MESSAGE_ID_KEY, MESSAGE_CONTENT_KEY)
+        override fun keys() = listOf(MESSAGE_ID_KEY, MESSAGE_CONTENT_KEY,SENDER_ID_KEY,RECEIVER_ID_KEY)
 
         override fun doAction(worker: Worker, workerData: List<Pair<String, String>>)
             = worker.editMessage(workerData)
@@ -84,6 +86,8 @@ interface ChatAction {
         private companion object {
             private const val MESSAGE_CONTENT_KEY = "message_content"
             private const val MESSAGE_ID_KEY = "messageId"
+            private const val SENDER_ID_KEY = "senderId"
+            private const val RECEIVER_ID_KEY = "receiverId"
         }
 
     }

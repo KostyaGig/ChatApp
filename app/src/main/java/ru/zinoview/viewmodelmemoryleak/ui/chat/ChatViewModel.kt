@@ -19,7 +19,7 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
 
     fun sendMessage(receiverId: String,content: String)
 
-    fun editMessage(messageId: String, content: String)
+    fun editMessage(messageId: String, content: String,receiverId: String)
 
     fun toTypeMessage(isTyping: Boolean)
 
@@ -41,9 +41,9 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
                 interactor.sendMessage(receiverId,content)
         }
 
-        override fun editMessage(messageId: String, content: String)
+        override fun editMessage(messageId: String, content: String,receiverId: String)
             = work.doBackground(viewModelScope) {
-                interactor.editMessage(messageId, content)
+                interactor.editMessage(messageId, content,receiverId)
             }
 
         override fun messages(receiverId: String) {
