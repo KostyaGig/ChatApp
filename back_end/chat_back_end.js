@@ -162,6 +162,7 @@ io.on('connection', (socket) => {
 		newMessage.isRead = false;
 		newMessage.senderNickName = clientMessage.senderNickName;
 
+
 		MongoClient.connect(url, async function(err, db) {
   			if (err) throw err;
   			var database = db.db("chat_app_db");
@@ -295,8 +296,6 @@ io.on('connection', (socket) => {
 		var senderId = data['senderId']
 		var receiverId = data['receiverId']
 
-		console.log('messages, sender:receiver',senderId,receiverId)
-
 		var firstQuery = {
 			senderId: senderId,
 			receiverId: receiverId
@@ -306,9 +305,6 @@ io.on('connection', (socket) => {
 			senderId: receiverId,
 			receiverId: senderId
 		}
-
-		console.log('firstQuery',firstQuery)
-		console.log('secondQuery',secondQuery)
 
 		var listOfMessages = []
 
@@ -352,7 +348,6 @@ io.on('connection', (socket) => {
 						message.isRead = item.isRead;
 						message.senderNickName = item.senderNickName;
 
-
 						listOfMessages.push(message)
     				})
 			}
@@ -362,31 +357,126 @@ io.on('connection', (socket) => {
   		});
 	})
 
-	socket.on('edit_message',(clientMessage) => {
-		var id = clientMessage.id;
-		var content = clientMessage.content;
-		var indexEditingContentMessage = -1;
-		var newMessage = Object();
+	socket.on('edit_message',async (clientMessage) => {
+		var messageId = clientMessage.id
+		var content = clientMessage.content
 
-		messages.forEach(function(item, index, array) {
-  			if (item.id == id) {
+		var senderId = clientMessage.senderId
+		var receiverId = clientMessage.receiverId
 
-  				newMessage.id = item.id;
-  				newMessage.senderId = item.senderId
-  				newMessage.content = content;
-  				newMessage.senderNickName = item.senderNickName;
+		var firstQuery = {
+			senderId: '6',
+			receiverId: '5'
+		}
 
-  				// todo if was updated change isRead -> false
-  				newMessage.isRead = false
+		var secondQuery = {
+			senderId: '5',
+			receiverId: '6'
+		}
 
-  				indexEditingContentMessage = index;
+
+		MongoClient.connect(url, async function(err, db) {
+			var database = db.db("chat_app_db");
+  			var messagesCollection = database.collection("messages")
+
+  			var firstResult = await messagesCollection.findOne(firstQuery)
+  			var secondResult = await messagesCollection.findOne(secondQuery)
+
+  			var listOfMessages = []
+
+  			if (firstResult != null) {
+  				var messages = firstResult['messages']
+
+  				messages.forEach(function(item, index, array) {
+    				var message = Object();
+    				var editedMessageContent = item.content
+
+    				if (messageId == item.id) {
+    					editedMessageContent = content
+    				}
+
+    				message.id = item.id
+    				message.senderId = item.senderId;
+    				message.content = editedMessageContent;
+					message.isRead = item.isRead;
+					message.senderNickName = item.senderNickName;
+
+					listOfMessages.push(message)
+    			})
+
+    			var jsonMessages = {
+  						messages: listOfMessages
+  				}
+
+    			var newMessages = { $set: jsonMessages}
+
+    			messagesCollection.updateOne(firstQuery,newMessages, function(err, res) {
+    					if (err) throw err;
+
+    				io.emit('messages',listOfMessages)
+    				db.close();
+  				});
   			}
-		});
 
-		messages[indexEditingContentMessage] = newMessage;
+  			if (secondResult != null) {
+  				var messages = secondResult['messages']
+
+  				messages.forEach(function(item, index, array) {
+    				var message = Object();
+    				var editedMessageContent = item.content
+
+    				if (messageId == item.id) {
+    					editedMessageContent = content
+    				}
+
+    				message.id = item.id
+    				message.senderId = item.senderId;
+    				message.content = editedMessageContent;
+					message.isRead = item.isRead;
+					message.senderNickName = item.senderNickName;
+
+					listOfMessages.push(message)
+    			})
+
+    			var jsonMessages = {
+  						messages: listOfMessages
+  				}
+
+    			var newMessages = { $set: jsonMessages}
+
+    			messagesCollection.updateOne(secondQuery,newMessages, function(err, res) {
+    				if (err) throw err;
+
+    				io.emit('messages',listOfMessages)
+    				db.close();
+  				});
+  			}
+		})
+
+		// var id = clientMessage.id;
+		// var content = clientMessage.content;
+		// var indexEditingContentMessage = -1;
+		// var newMessage = Object();
+
+		// messages.forEach(function(item, index, array) {
+  // 			if (item.id == id) {
+
+  // 				newMessage.id = item.id;
+  // 				newMessage.senderId = item.senderId
+  // 				newMessage.content = content;
+  // 				newMessage.senderNickName = item.senderNickName;
+
+  // 				// todo if was updated change isRead -> false
+  // 				newMessage.isRead = false
+
+  // 				indexEditingContentMessage = index;
+  // 			}
+		// });
+
+		// messages[indexEditingContentMessage] = newMessage;
 
 
-		io.emit('messages',messages)
+		// io.emit('messages',messages)
 
 	})
 
