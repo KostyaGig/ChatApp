@@ -6,7 +6,7 @@ import android.widget.TextView
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
-import ru.zinoview.viewmodelmemoryleak.ui.BundleUser
+import ru.zinoview.viewmodelmemoryleak.ui.users.BundleUser
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditContent
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.SaveState
@@ -17,7 +17,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.*
 
 interface UiMessage :
-    DiffSame<UiMessage>, UiSame, MessageBind, Ui, ChangeTitle<Pair<ToolbarActivity,BundleUser>>,
+    DiffSame<UiMessage>, UiSame, MessageBind, Ui, ChangeTitle<Pair<ToolbarActivity, BundleUser>>,
     Message, Show<ViewWrapper>, UiItem, OnClick<EditMessageListener> {
 
     override fun isContentTheSame(item: UiMessage) = false

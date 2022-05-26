@@ -4,5 +4,5 @@ import androidx.fragment.app.Fragment
 
 interface Navigation : Back, Exit {
 
-    fun navigateTo(fragment: Fragment,notificationMessageId: String = "")
+    fun navigateTo(fragment: Fragment,data: NavigationData)
 }

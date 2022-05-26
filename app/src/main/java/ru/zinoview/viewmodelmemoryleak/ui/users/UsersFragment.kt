@@ -1,13 +1,10 @@
 package ru.zinoview.viewmodelmemoryleak.ui.users
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import org.koin.android.ext.android.get
-import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.databinding.UsersFragmentBinding
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatFragment
 import ru.zinoview.viewmodelmemoryleak.ui.chat.NetworkConnectionReceiver
@@ -15,7 +12,9 @@ import ru.zinoview.viewmodelmemoryleak.ui.connection.ConnectionViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.ScreenScope
+import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NetworkConnectionFragment
+import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.ParcelableWrapper
 
 class UsersFragment : NetworkConnectionFragment<UsersViewModel.Base,UsersFragmentBinding>(
     UsersViewModel.Base::class
@@ -31,22 +30,18 @@ class UsersFragment : NetworkConnectionFragment<UsersViewModel.Base,UsersFragmen
         val diffUtil = UsersDiffUtil()
         adapter = UsersAdapter(diffUtil,object : UserItemClickListener {
             override fun onClick(item: UiUser) {
-                // todo continue doing this feature
                 connectionViewModel.clean()
-                requireActivity()
-                    .supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fragment_container,ChatFragment().apply {
-                        arguments = bundleOf(Pair("user",
-                            item.map(UiToBundleUserMapper.Base())
-                        ))
-                    })
-                    .commit()
+
+                val data = UserNavigationData.Base.User(
+                    ParcelableWrapper.Base(
+                        item.map(UiToBundleUserMapper.Base())
+                    )
+                )
+
+                (requireActivity() as Navigation).navigateTo(ChatFragment(),data)
             }
         })
-
         binding.usersRecView.adapter = adapter as UsersAdapter
-
         connectionViewModel.connection()
     }
 

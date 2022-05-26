@@ -1,7 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.edit
 
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
-import ru.zinoview.viewmodelmemoryleak.ui.BundleUser
+import ru.zinoview.viewmodelmemoryleak.ui.users.BundleUser
 import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
 
 class ToEditedMessageMapper(

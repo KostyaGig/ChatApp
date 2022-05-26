@@ -1,4 +1,4 @@
-package ru.zinoview.viewmodelmemoryleak.ui
+package ru.zinoview.viewmodelmemoryleak.ui.users
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

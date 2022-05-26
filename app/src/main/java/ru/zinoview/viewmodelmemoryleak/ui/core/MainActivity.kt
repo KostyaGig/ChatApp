@@ -39,16 +39,13 @@ class MainActivity : AppCompatActivity(), Navigation,  ToolbarActivity, ResultAp
 
     }
 
-    override fun navigateTo(fragment: Fragment,notificationMessageId: String) {
+    override fun navigateTo(fragment: Fragment,data: NavigationData) {
         fragmentIntent.saveFragment(fragment)
+        fragment.arguments = data.bundle()
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container,fragment)
             .commitNow()
-
-//        if (fragment is ChatFragment) {
-//            fragment.showNotificationMessageInRecyclerView(notificationMessageId)
-//        }
     }
 
     override fun back() {
@@ -56,8 +53,8 @@ class MainActivity : AppCompatActivity(), Navigation,  ToolbarActivity, ResultAp
         fragment.back(this)
     }
 
+    // todo
     override fun image() = image.launch("image/*")
-
 
     override fun onDestroy() {
         super.onDestroy()

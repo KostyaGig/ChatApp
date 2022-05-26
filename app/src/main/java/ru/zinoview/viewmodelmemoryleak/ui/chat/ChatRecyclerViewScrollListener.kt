@@ -3,7 +3,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import ru.zinoview.viewmodelmemoryleak.ui.BundleUser
+import ru.zinoview.viewmodelmemoryleak.ui.users.BundleUser
 
 abstract class ChatRecyclerViewScrollListener : RecyclerView.OnScrollListener() {
 

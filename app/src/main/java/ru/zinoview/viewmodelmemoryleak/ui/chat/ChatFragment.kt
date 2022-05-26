@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.databinding.ChatFragmentBinding
-import ru.zinoview.viewmodelmemoryleak.ui.BundleUser
+import ru.zinoview.viewmodelmemoryleak.ui.users.BundleUser
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.ToEditedMessageMapper
@@ -25,7 +25,9 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.ScreenScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
+import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NavigationData
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NetworkConnectionFragment
+import ru.zinoview.viewmodelmemoryleak.ui.users.UserNavigationData
 
 
 class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentBinding>(
@@ -58,8 +60,10 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // todo
-        bundleUser = arguments?.getParcelable("user")!!
+        val userNavigationData: NavigationData = UserNavigationData.Base.Fetch
+        val parcelableWrapper =  userNavigationData.parcelable<BundleUser.Base>(arguments!!)
+
+        bundleUser = parcelableWrapper.parcelable()
 
         networkConnectionReceiver = NetworkConnectionReceiver.Base(connectionViewModel)
 

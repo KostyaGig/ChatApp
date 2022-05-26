@@ -58,7 +58,6 @@ interface Intent<T> : Navigate {
 
         fun save(fragment: androidx.fragment.app.Fragment)
 
-
         class Base(
             private val stringFragment: StringFragment,
             private val mapper: ExtraToTypeFragmentMapper,
