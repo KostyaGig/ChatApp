@@ -1,7 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
-import android.util.Log
-import ru.zinoview.viewmodelmemoryleak.core.chat.EditMessage
 import ru.zinoview.viewmodelmemoryleak.core.chat.ShowNotificationMessage
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketData
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
@@ -9,12 +7,11 @@ import ru.zinoview.viewmodelmemoryleak.data.chat.SendMessage
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.AbstractCloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
+import ru.zinoview.viewmodelmemoryleak.core.chat.ReadMessage
+import ru.zinoview.viewmodelmemoryleak.core.chat.ReadMessages
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationService
 
-interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, ReadMessages, ShowNotificationMessage {
-
-    override fun readMessages(range: Pair<Int, Int>) = Unit
+interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, ReadMessage, ShowNotificationMessage {
 
     suspend fun messages(senderId: String,receiverId: String,block: (List<CloudMessage>) -> Unit) = Unit
 
@@ -47,8 +44,6 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, ReadMessages, Show
                 val modelMessages = json.objectFromJson(wrapperMessages,CloudMessagesDataWrapper::class.java).map()
 
                 val messages = data.data(modelMessages)
-
-                Log.d("zinoviewk","messages $messages")
 
                 processingMessages.update(messages)
 
@@ -109,19 +104,19 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, ReadMessages, Show
             socketWrapper.emit(EDIT_MESSAGE,data)
         }
 
-        override fun readMessages(range: Pair<Int, Int>) {
-//            socketWrapper.connect(READ_MESSAGE)
-//            messagesStore.unreadMessageIds(range) { unreadMessageIds ->
-//
-//                val ids = CloudUnreadMessageIds.Base(unreadMessageIds)
-//                val jsonIds = SocketData.Base(json.json(ids))
-//
-//                socketWrapper.emit(READ_MESSAGE,jsonIds)
-//
-//                unreadMessageIds.forEach { tag ->
-//                    notificationService.disconnect(tag)
-//                }
-//            }
+        override fun readMessages(readMessages: ReadMessages) {
+            socketWrapper.connect(READ_MESSAGE)
+            val unreadMessageIds = readMessages.unreadMessageIds(messagesStore)
+
+
+            val keys = listOf(ReadMessageKey.Ids(),ReadMessageKey.SenderId(),ReadMessageKey.ReceiverId())
+            val jsonIds = readMessages.json(json,messagesStore,keys)
+
+            socketWrapper.emit(READ_MESSAGE,jsonIds)
+
+            unreadMessageIds.forEach { tag ->
+                notificationService.disconnect(tag)
+            }
         }
 
         override suspend fun toTypeMessage(isTyping: Boolean,senderNickName: String) {
@@ -148,7 +143,7 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, ReadMessages, Show
         override suspend fun showNotificationMessage(messageId: String) {
             val data = SocketData.Base(
                 json.json(
-                    Pair(NOTIFICATION_MESSAGE_ID,messageId)
+                    Pair(NOTIFICATION_MESSAGE_ID_KEY,messageId)
                 )
             )
             socketWrapper.emit(SHOW_NOTIFICATION_MESSAGE,data)
@@ -171,7 +166,8 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, ReadMessages, Show
         private const val MESSAGE_CONTENT_KEY = "content"
         private const val MESSAGE_ID_KEY = "id"
         private const val IS_TYPING_KEY = "isTyping"
-        private const val NOTIFICATION_MESSAGE_ID = "messageId"
+        private const val NOTIFICATION_MESSAGE_ID_KEY = "messageId"
+
     }
 
 }

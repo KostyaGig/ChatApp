@@ -1,9 +1,9 @@
 package ru.zinoview.viewmodelmemoryleak.ui
 
 import android.os.Parcelable
-import android.util.Log
 import kotlinx.android.parcel.Parcelize
 import ru.zinoview.viewmodelmemoryleak.core.Mapper
+import ru.zinoview.viewmodelmemoryleak.core.chat.ReadMessages
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession
@@ -11,7 +11,8 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.Action
 import ru.zinoview.viewmodelmemoryleak.ui.core.ChangeTitle
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 
-interface BundleUser : Action<ChatViewModel>,ChangeTitle<ToolbarActivity>,Parcelable, Mapper<String,UiMessage.EditedMessage> {
+interface BundleUser : Action<ChatViewModel>, ChangeTitle<ToolbarActivity>, Parcelable,
+    Mapper<String, UiMessage.EditedMessage> {
 
     fun sendMessage(
         viewModel: ChatViewModel,
@@ -21,7 +22,7 @@ interface BundleUser : Action<ChatViewModel>,ChangeTitle<ToolbarActivity>,Parcel
 
     override fun doAction(arg: ChatViewModel) = Unit
     override fun changeTitle(arg: ToolbarActivity) = Unit
-    override fun map(src: String) : UiMessage.EditedMessage = UiMessage.EditedMessage.Empty
+    override fun map(src: String): UiMessage.EditedMessage = UiMessage.EditedMessage.Empty
 
     fun readMessages(range: Pair<Int, Int>, viewModel: ChatViewModel) = Unit
 
@@ -38,16 +39,18 @@ interface BundleUser : Action<ChatViewModel>,ChangeTitle<ToolbarActivity>,Parcel
             viewModel: ChatViewModel,
             messageSession: MessageSession,
             content: String
-        ) = messageSession.sendMessage(viewModel,receiverId,content)
+        ) = messageSession.sendMessage(viewModel, receiverId, content)
 
         override fun map(messageId: String): UiMessage.EditedMessage.Base {
             return UiMessage.EditedMessage.Base(
-                messageId,receiverId
+                messageId, receiverId
             )
         }
 
-        override fun readMessages(range: Pair<Int, Int>, viewModel: ChatViewModel)
-            = viewModel.readMessages(range,"",receiverId)
+        override fun readMessages(range: Pair<Int, Int>, viewModel: ChatViewModel) =
+            viewModel.readMessages(
+                ReadMessages.Base(range, receiverId)
+            )
     }
 
     @Parcelize

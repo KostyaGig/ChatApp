@@ -1,15 +1,14 @@
 package ru.zinoview.viewmodelmemoryleak.domain.chat
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.*
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatRepository
 import ru.zinoview.viewmodelmemoryleak.data.chat.processing_messages.ProcessingChatMessagesRepository
 import ru.zinoview.viewmodelmemoryleak.data.chat.update.ImmediatelyUpdateChatRepository
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ReadMessages
+import ru.zinoview.viewmodelmemoryleak.core.chat.ReadMessage
 
 interface ChatInteractor : Messages<DomainMessage>, SendMessage,
-    EditMessage, ShowProcessingMessages, ReadMessages , ToTypeMessage.Unit,ShowNotificationMessage,
+    EditMessage, ShowProcessingMessages, ReadMessage, ToTypeMessage.Unit,ShowNotificationMessage,
     Clean {
 
     class Base(
@@ -40,8 +39,8 @@ interface ChatInteractor : Messages<DomainMessage>, SendMessage,
         override fun showProcessingMessages()
             = processingMessagesRepository.show(Unit)
 
-        override fun readMessages(range: Pair<Int, Int>) = chatRepository.readMessages(range)
-
+        override fun readMessages(readMessages: ReadMessages)
+            = chatRepository.readMessages(readMessages)
 
         override suspend fun messages(receiverId: String,block: (List<DomainMessage>) -> Unit) {
             chatRepository.messages(receiverId) { dataMessages ->

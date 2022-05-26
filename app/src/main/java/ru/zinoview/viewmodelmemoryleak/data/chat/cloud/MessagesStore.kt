@@ -13,9 +13,8 @@ interface MessagesStore :
     EditMessage,
     MessageStoreAdd,
     Messages<CloudMessage>,
-    Remove<CloudMessage> {
-
-    fun unreadMessageIds(range: Pair<Int, Int>, block: (List<String>) -> Unit)
+    Remove<CloudMessage>,
+    UnreadMessageIds<Pair<Int,Int>> {
 
     fun updateProcessingMessages(processingMessages: ProcessingMessages, messageId: String, content: String)
 
@@ -76,7 +75,7 @@ interface MessagesStore :
             processingMessages.add(progressEditMessage)
         }
 
-        override fun unreadMessageIds(range: Pair<Int, Int>, block: (List<String>) -> Unit) {
+        override fun unreadMessageIds(range: Pair<Int, Int>): List<String> {
             val userId = idSharedPreferences.read(Unit)
             val unreadMessageIds = mutableListOf<String>()
 
@@ -93,7 +92,7 @@ interface MessagesStore :
                     }
                 }
             }
-            block.invoke(unreadMessageIds)
+            return unreadMessageIds
         }
 
         override fun messages(): List<CloudMessage> = ArrayList(messages)

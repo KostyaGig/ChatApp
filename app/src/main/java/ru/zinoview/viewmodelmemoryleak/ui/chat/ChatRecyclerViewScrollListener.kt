@@ -3,6 +3,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ru.zinoview.viewmodelmemoryleak.ui.BundleUser
 
 abstract class ChatRecyclerViewScrollListener : RecyclerView.OnScrollListener() {
 
@@ -10,7 +11,8 @@ abstract class ChatRecyclerViewScrollListener : RecyclerView.OnScrollListener() 
 
     class Base(
         private val manager: LinearLayoutManager,
-        private val viewModel: ChatViewModel
+        private val viewModel: ChatViewModel,
+        private val bundleUser: BundleUser
     ) : ChatRecyclerViewScrollListener() {
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -20,7 +22,7 @@ abstract class ChatRecyclerViewScrollListener : RecyclerView.OnScrollListener() 
             Log.d("zinoviewk","first $firstVisibleItemPosition, last $lastVisibleItemPosition")
 
             val range = Pair(firstVisibleItemPosition,lastVisibleItemPosition)
-            viewModel.readMessages(range)
+            bundleUser.readMessages(range, viewModel)
         }
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {

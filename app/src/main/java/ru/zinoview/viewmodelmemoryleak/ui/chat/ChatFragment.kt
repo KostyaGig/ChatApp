@@ -37,8 +37,6 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
     private var messageSession: MessageSession = MessageSession.Empty
 
-    private var memento: UiChatMessagesMemento = UiChatMessagesMemento.Empty
-
     private val connectionViewModel by lazy { get<ConnectionViewModel.Base>() }
 
     private val uiStateViewModel by lazy { getKoin().get<UiStateViewModel.Base>() }
@@ -97,14 +95,8 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
         binding.chatRv.layoutManager = manager
         binding.chatRv.adapter = adapter as ChatAdapter
 
-        // todo
-        memento = UiChatMessagesMemento.Base(
-            ToUiFoundMessageMapper.Base(),
-            binding.chatRv,
-            adapter
-        )
 
-        scrollListener = ChatRecyclerViewScrollListener.Base(manager, viewModel)
+        scrollListener = ChatRecyclerViewScrollListener.Base(manager, viewModel,bundleUser)
         binding.chatRv.addOnScrollListener(scrollListener)
 
         binding.cancelEditBtn.setOnClickListener {
@@ -119,7 +111,6 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
         connectionViewModel.connection()
     }
-
 
     override fun onStart() {
         super.onStart()

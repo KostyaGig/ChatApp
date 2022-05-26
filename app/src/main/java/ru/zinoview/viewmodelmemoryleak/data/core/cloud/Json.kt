@@ -7,6 +7,8 @@ interface Json {
 
     fun json(vararg pairs: Pair<String,Any>) : JSONObject
 
+    fun json(pairs: List<Pair<String,Any>>) : JSONObject
+
     fun json(obj: Any) : String
 
     fun <T> objectFromJson(json: String,clazz:Class<T>) : T
@@ -22,6 +24,15 @@ interface Json {
             }
             return json
         }
+
+        override fun json(pairs: List<Pair<String, Any>>): JSONObject {
+            val json  = JSONObject()
+            pairs.forEach { pair ->
+                json.put(pair.first,pair.second)
+            }
+            return json
+        }
+
 
         override fun json(obj: Any): String = gson.toJson(obj)
 
