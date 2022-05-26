@@ -23,6 +23,8 @@ interface BundleUser : Action<ChatViewModel>,ChangeTitle<ToolbarActivity>,Parcel
     override fun changeTitle(arg: ToolbarActivity) = Unit
     override fun map(src: String) : UiMessage.EditedMessage = UiMessage.EditedMessage.Empty
 
+    fun readMessages(range: Pair<Int, Int>, viewModel: ChatViewModel) = Unit
+
     @Parcelize
     data class Base(
         private val receiverId: String,
@@ -43,6 +45,9 @@ interface BundleUser : Action<ChatViewModel>,ChangeTitle<ToolbarActivity>,Parcel
                 messageId,receiverId
             )
         }
+
+        override fun readMessages(range: Pair<Int, Int>, viewModel: ChatViewModel)
+            = viewModel.readMessages(range,"",receiverId)
     }
 
     @Parcelize
