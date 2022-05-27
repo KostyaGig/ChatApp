@@ -3,6 +3,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.connection
 import ru.zinoview.viewmodelmemoryleak.core.connection.Connection
 
 interface DataToUiConnectionMapper : Connection.Mapper<UiConnection> {
+
     class Base : DataToUiConnectionMapper {
 
         override fun mapSuccess(message: String)
@@ -10,6 +11,5 @@ interface DataToUiConnectionMapper : Connection.Mapper<UiConnection> {
 
         override fun mapMessage(message: String)
             = UiConnection.Message(message)
-
     }
 }

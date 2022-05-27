@@ -15,7 +15,7 @@ interface UiStateViewModel : CommunicationObserve<List<UiState>>, Save<UiStates>
 
     class Base(
         private val work: Work<UiStates,UiStates>,
-        private val repository: UiStateRepository,
+        private val repository: UiStateRepository<UiStates.Base>,
         private val communication: UiStateCommunication,
         private val mapper: DomainToUiMessageMapper,
         private val uiStatesMapper: UiStatesMapper
@@ -23,7 +23,7 @@ interface UiStateViewModel : CommunicationObserve<List<UiState>>, Save<UiStates>
 
         override fun save(state: UiStates)
             = work.doBackground(viewModelScope) {
-                repository.save(state)
+                repository.save(state as UiStates.Base)
             }
 
         override fun observe(owner: LifecycleOwner, observer: Observer<List<UiState>>)

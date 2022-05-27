@@ -3,6 +3,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state
 import ru.zinoview.viewmodelmemoryleak.ui.chat.DomainToUiMessageMapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
 
+// todo move to core -> ui_state
 interface UiStates {
 
     fun map(communication: UiStateCommunication) = Unit
@@ -66,7 +67,5 @@ interface UiStates {
 
         object Empty : Test
     }
-
-
 
 }

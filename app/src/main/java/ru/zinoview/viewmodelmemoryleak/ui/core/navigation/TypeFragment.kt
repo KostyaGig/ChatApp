@@ -10,17 +10,17 @@ interface TypeFragment{
 
     object Join : TypeFragment {
         override fun navigate(navigation: Navigation, notificationMessageId: String)
-            = navigation.navigateTo(JoinUserFragment())
+            = navigation.navigateTo(JoinUserFragment(),NavigationData.Empty)
     }
 
     object Users : TypeFragment {
         override fun navigate(navigation: Navigation, notificationMessageId: String)
-            = navigation.navigateTo(UsersFragment())
+            = navigation.navigateTo(UsersFragment(),NavigationData.Empty)
     }
 
     object Chat : TypeFragment {
 
         override fun navigate(navigation: Navigation, notificationMessageId: String)
-            = navigation.navigateTo(ChatFragment(),notificationMessageId)
+            = navigation.navigateTo(ChatFragment(),NavigationData.Empty)
     }
 }

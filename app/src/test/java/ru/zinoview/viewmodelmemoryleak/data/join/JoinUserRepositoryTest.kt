@@ -26,14 +26,14 @@ class JoinUserRepositoryTest {
     @Test
     fun test_success_join_user()  = runBlocking {
         var expected = DataJoin.Test("0")
-        var actual = repository?.joinedUserId(ImageProfile.Empty,"Kostya")
+        var actual = repository?.joinedUserId(ImageProfile.Default,"Kostya")
 
         assertEquals(expected, actual)
 
-        repository?.joinedUserId(ImageProfile.Empty,"")
+        repository?.joinedUserId(ImageProfile.Default,"")
 
         expected = DataJoin.Test("1")
-        actual = repository?.joinedUserId(ImageProfile.Empty,"Nusha")
+        actual = repository?.joinedUserId(ImageProfile.Default,"Nusha")
 
         assertEquals(expected, actual)
     }
@@ -41,7 +41,7 @@ class JoinUserRepositoryTest {
     @Test
     fun test_failure_join_user_empty_nickname() = runBlocking {
         val expected = DataJoin.Failure("User nickname must not be empty")
-        val actual = repository?.joinedUserId(ImageProfile.Empty,"")
+        val actual = repository?.joinedUserId(ImageProfile.Default,"")
         assertEquals(expected, actual)
     }
 

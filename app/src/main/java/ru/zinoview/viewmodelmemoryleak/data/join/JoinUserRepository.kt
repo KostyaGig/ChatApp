@@ -10,26 +10,30 @@ import ru.zinoview.viewmodelmemoryleak.data.join.cloud.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.ui.join.ImageProfile
 import java.lang.Exception
 
-interface JoinUserRepository : Clean,JoinUserId<DataJoin> {
+interface JoinUserRepository : Clean, JoinUserId<DataJoin> {
 
     class Base(
-        private val idSharedPreferences: IdSharedPreferences<String,Unit>,
-        private val nickNameSharedPreferences: NickNameSharedPreferences<String,Unit>,
+        private val idSharedPreferences: IdSharedPreferences<String, Unit>,
+        private val nickNameSharedPreferences: NickNameSharedPreferences<String, Unit>,
         private val cloudDataSource: CloudDataSource,
-        private val exceptionMapper: ExceptionMapper
-    ) : JoinUserRepository, CleanRepository(cloudDataSource)  {
+        private val exceptionMapper: ExceptionMapper,
+        private val mapper: CloudIdToDataJoinMapper
+    ) : JoinUserRepository, CleanRepository(cloudDataSource) {
 
-
-        override suspend fun joinedUserId(image: ImageProfile,nickname: String) : DataJoin {
-            return try {
-                val userId = cloudDataSource.joinedUserId(image,nickname)
-                idSharedPreferences.save(userId)
+        override fun joinedUserId(
+            image: ImageProfile,
+            nickname: String,
+            block: (DataJoin) -> Unit
+        ) = try {
+            cloudDataSource.joinedUserId(image, nickname) { cloudId ->
+                cloudId.save(idSharedPreferences)
                 nickNameSharedPreferences.save(nickname)
-                DataJoin.Success
-            } catch (e: Exception) {
-                val message = exceptionMapper.map(e)
-                DataJoin.Failure(message)
+                val dataJoin = cloudId.map(mapper)
+                block.invoke(dataJoin)
             }
+        } catch (e: Exception) {
+            val message = exceptionMapper.map(e)
+            block.invoke(DataJoin.Failure(message))
         }
     }
 

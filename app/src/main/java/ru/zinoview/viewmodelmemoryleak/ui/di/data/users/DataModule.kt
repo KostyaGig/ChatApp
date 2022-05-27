@@ -1,18 +1,12 @@
 package ru.zinoview.viewmodelmemoryleak.ui.di.data.users
 
-import android.content.ContentResolver
-import android.graphics.Bitmap
 import org.koin.dsl.module.module
 import ru.zinoview.viewmodelmemoryleak.data.core.ExceptionMapper
-import ru.zinoview.viewmodelmemoryleak.data.join.JoinUserRepository
-import ru.zinoview.viewmodelmemoryleak.data.users.CloudToAbstractUserMapper
 import ru.zinoview.viewmodelmemoryleak.data.users.UsersRepository
 import ru.zinoview.viewmodelmemoryleak.data.users.cloud.CloudMessageMapper
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
 
-class DataModule(
-    private val contentResolver: ContentResolver
-) : Module {
+class DataModule : Module {
 
     private val dataModule = module {
 
@@ -20,9 +14,7 @@ class DataModule(
             UsersRepository.Base(
                 get(),
                 CloudMessageMapper.Base(),
-                ru.zinoview.viewmodelmemoryleak.ui.join.Bitmap.Base(
-                    contentResolver
-                ),
+                get(),
                 ExceptionMapper.Abstract.User(get()),
                 get(),
                 get()

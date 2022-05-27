@@ -4,6 +4,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.core.Navigate
 import ru.zinoview.viewmodelmemoryleak.ui.core.ShowError
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
+import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NavigationData
 import ru.zinoview.viewmodelmemoryleak.ui.users.UsersFragment
 
 interface UiJoin : Navigate<Navigation>, ShowError {
@@ -14,7 +15,7 @@ interface UiJoin : Navigate<Navigation>, ShowError {
     object Success : UiJoin {
 
         override fun navigate(navigation: Navigation)
-            = navigation.navigateTo(UsersFragment())
+            = navigation.navigateTo(UsersFragment(),NavigationData.Empty)
     }
 
     class Failure(
@@ -23,4 +24,6 @@ interface UiJoin : Navigate<Navigation>, ShowError {
         override fun showError(snackBar: SnackBar<String>)
             = snackBar.show(message)
     }
+
+    object Empty : UiJoin
 }

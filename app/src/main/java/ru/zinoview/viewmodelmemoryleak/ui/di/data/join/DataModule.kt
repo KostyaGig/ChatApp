@@ -1,11 +1,19 @@
 package ru.zinoview.viewmodelmemoryleak.ui.di.data.join
 
+import android.content.Context
 import org.koin.dsl.module.module
+import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
 import ru.zinoview.viewmodelmemoryleak.data.core.ExceptionMapper
+import ru.zinoview.viewmodelmemoryleak.data.join.CloudIdToDataJoinMapper
 import ru.zinoview.viewmodelmemoryleak.data.join.JoinUserRepository
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
+import ru.zinoview.viewmodelmemoryleak.ui.join.Base64Image
+import java.io.ByteArrayOutputStream
+import kotlin.math.sign
 
-class DataModule : Module {
+class DataModule(
+    private val context: Context
+) : Module {
 
     private val dataModule = module {
 
@@ -14,7 +22,14 @@ class DataModule : Module {
                 get(),
                 get(),
                 get(),
-                ExceptionMapper.Abstract.Join(get())
+                ExceptionMapper.Abstract.Join(get()),
+                CloudIdToDataJoinMapper.Base()
+            )
+        }
+
+        single<Base64Image> {
+            Base64Image.Base(
+                ResourceProvider.Base(context),context.contentResolver, ByteArrayOutputStream()
             )
         }
     }

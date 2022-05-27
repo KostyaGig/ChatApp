@@ -52,12 +52,14 @@ class ChatApp : Application(), Configuration.Provider {
         val connectionNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.connection.NetworkModule()
 
         val chatDataModule = DataModule(this)
-        val uiStateDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.ui_state.DataModule(this)
+        val chatUiStateDataModule =
+            ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.ui_state.DataModule(this)
         val chatNetworkModule = NetworkModule(this)
 
-        val coreDataModule = CoreDataModule(notification)
-        val joinDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.join.DataModule()
-        val joinNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.join.NetworkModule(this)
+        val coreDataModule = CoreDataModule(notification,this.contentResolver)
+        val joinUiStateDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.join.ui_state.DataModule(this)
+        val joinDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.join.DataModule(this)
+        val joinNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.join.NetworkModule()
 
         val userStatusDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.user_status.DataModule()
         val userStatusNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.chat.user_status.NetworkModule()
@@ -73,7 +75,7 @@ class ChatApp : Application(), Configuration.Provider {
         val koinScope = KoinScope.Base()
 
         val usersNetworkModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.users.NetworkModule()
-        val usersDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.users.DataModule(contentResolver)
+        val usersDataModule = ru.zinoview.viewmodelmemoryleak.ui.di.data.users.DataModule()
         val usersDomainModule = ru.zinoview.viewmodelmemoryleak.ui.di.domain.users.DomainModule()
         val usersUiModule = ru.zinoview.viewmodelmemoryleak.ui.di.ui.users.UiModule()
 
@@ -96,9 +98,10 @@ class ChatApp : Application(), Configuration.Provider {
         modules.add(coreModule)
         modules.add(coreDataModule)
         modules.add(chatDataModule)
-        modules.add(uiStateDataModule)
+        modules.add(chatUiStateDataModule)
         modules.add(chatNetworkModule)
         modules.add(joinDataModule)
+        modules.add(joinUiStateDataModule)
         modules.add(joinNetworkModule)
         modules.add(userStatusDataModule)
         modules.add(userStatusNetworkModule)

@@ -25,7 +25,6 @@ interface JoinWork : Work<DataJoin,UiJoin> {
                 }
             }
         }
-
-
     }
+
 }

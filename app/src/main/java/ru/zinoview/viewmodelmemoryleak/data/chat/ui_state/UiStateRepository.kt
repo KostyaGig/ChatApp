@@ -7,16 +7,19 @@ import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudToDataMessageMapper
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.MessagesStore
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStates
+import ru.zinoview.viewmodelmemoryleak.ui.join.ui_state.JoinUiStates
 
-interface UiStateRepository : Save<UiStates>, Read<UiStates,Unit>, Messages<DataMessage> {
+interface UiStateRepository<T> : Save<T>, Read<T,Unit>, Messages<DataMessage> {
 
-    class Base(
-        private val prefs: UiStateSharedPreferences,
+    override fun messages(): List<DataMessage> = emptyList()
+
+    class Chat(
+        private val prefs: UiStateSharedPreferences<UiStates.Base>,
         private val messagesStore: MessagesStore,
         private val mapper: CloudToDataMessageMapper
-    ) : UiStateRepository {
+    ) : UiStateRepository<UiStates.Base> {
 
-        override fun save(state: UiStates) = prefs.save(state)
+        override fun save(state: UiStates.Base) = prefs.save(state)
 
         override fun read(key: Unit) =  prefs.read(Unit)
 
@@ -25,4 +28,13 @@ interface UiStateRepository : Save<UiStates>, Read<UiStates,Unit>, Messages<Data
             return cloudMessages.map { it.map(mapper) }
         }
     }
+
+    class Join(
+        private val prefs: UiStateSharedPreferences<JoinUiStates.Base>,
+    ) : UiStateRepository<JoinUiStates.Base> {
+
+        override fun save(state: JoinUiStates.Base) = prefs.save(state)
+        override fun read(key: Unit) =  prefs.read(Unit)
+    }
+
 }

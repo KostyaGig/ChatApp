@@ -9,5 +9,5 @@
     <string name="nickname_is_empty_text">Nickname is empty</string>
     <string name="progress_text">Progress…</string>
     <string name="users_are_empty_text">Users are empty</string>
-    <string name="users_text">"Users: "</string>
+    <string name="users_text">Users: </string>
 </resources>

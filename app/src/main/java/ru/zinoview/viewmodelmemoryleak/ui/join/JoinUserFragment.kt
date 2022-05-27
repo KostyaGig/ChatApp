@@ -7,9 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.getKoin
+import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
 import ru.zinoview.viewmodelmemoryleak.databinding.JoinFragmentBinding
 import ru.zinoview.viewmodelmemoryleak.ui.chat.NetworkConnectionReceiver
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
+import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.connection.ConnectionViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.core.ResultApiActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.Text
@@ -17,65 +19,101 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.ScreenScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NetworkConnectionFragment
+import ru.zinoview.viewmodelmemoryleak.ui.join.ui_state.UiJoinState
+import ru.zinoview.viewmodelmemoryleak.ui.join.ui_state.UiStateJoinViewModel
 
 class JoinUserFragment : NetworkConnectionFragment<JoinUserViewModel.Base, JoinFragmentBinding>(
     JoinUserViewModel.Base::class
 ), ImageResult {
 
     private var imageProfile: ImageProfile = ImageProfile.Empty
+    private val uiState = UiJoinState.Base()
 
     private val text = getKoin().get<Text>()
+    private val resourceProvider = getKoin().get<ResourceProvider>()
 
     private val connectionViewModel by lazy {
         get<ConnectionViewModel.Base>()
     }
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
 
-            networkConnectionReceiver = NetworkConnectionReceiver.Base(connectionViewModel)
+    private val uiStateViewModel by lazy {
+        get<UiStateJoinViewModel.Base>()
+    }
 
-            binding.joinBtn.setOnClickListener {
-                val nickName = text.text(binding.nicknameField)
-                viewModel.joinUser(
-                    imageProfile,
-                    nickName
+    // todo create and move to SaveUiStateFragment this code (and cut the same code from ChatFragment)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (savedInstanceState != null) {
+            uiStateViewModel.read(Unit)
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        networkConnectionReceiver = NetworkConnectionReceiver.Base(connectionViewModel)
+
+        binding.joinBtn.setOnClickListener {
+            val nickName = text.text(binding.nicknameField)
+            viewModel.joinUser(
+                imageProfile,
+                nickName
+            )
+        }
+
+        binding.profileImage.setOnClickListener {
+            (requireActivity() as ResultApiActivity).image()
+        }
+
+        connectionViewModel.connection()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        viewModel.observe(this) { uiJoin ->
+            uiJoin.navigate(requireActivity() as Navigation)
+            uiJoin.showError(SnackBar.Base(binding.joinBtn, SnackBar.SnackBarVisibility.Empty()))
+        }
+
+        connectionViewModel.observe(this) { connection ->
+            connection.changeTitle(requireActivity() as ToolbarActivity)
+        }
+
+        uiStateViewModel.observe(this) { uiState ->
+            uiState.forEach { state ->
+                state.recover(
+                    ViewWrapper.Image(binding.profileImage,resourceProvider),
+                    ViewWrapper.Text(binding.nicknameField)
                 )
             }
-
-            binding.profileImage.setOnClickListener {
-                (requireActivity() as ResultApiActivity).image()
-            }
-
-            connectionViewModel.connection()
         }
+    }
 
-        override fun onStart() {
-            super.onStart()
+    override fun onPause() {
+        super.onPause()
 
-            viewModel.observe(this) { uiJoin ->
-                uiJoin.navigate(requireActivity() as Navigation)
-                uiJoin.showError(
-                    SnackBar.Base(binding.joinBtn, SnackBar.SnackBarVisibility.Empty())
-                )
-            }
+        uiState.add(text.text(binding.nicknameField))
+        uiState.addImage(ImageProfile.Drawable(binding.profileImage.drawable))
 
-            connectionViewModel.observe(this) { connection ->
-                connection.changeTitle(requireActivity() as ToolbarActivity)
-            }
-        }
 
-        override fun onImageResult(uri: Uri) {
-            // todo if user with name already exists -> show snack bar with error
-            // todo restore state after killed the app
-            binding.profileImage.setImageURI(uri)
-            imageProfile = ImageProfile.Base(uri)
-        }
 
-        override fun back(navigation: Navigation) = navigation.exit()
+        uiState.save(uiStateViewModel)
+    }
 
-        override fun initBinding(inflater: LayoutInflater, container: ViewGroup?): JoinFragmentBinding
-            = JoinFragmentBinding.inflate(inflater,container,false)
+    override fun onImageResult(uri: Uri) {
+        binding.profileImage.setImageURI(uri)
+        imageProfile = ImageProfile.Uri(uri)
 
-    override fun koinScopes() = listOf(ScreenScope.Join(),ScreenScope.Connection())
-    override fun cleans() = listOf(connectionViewModel,viewModel)
+        uiState.addImage(imageProfile)
+    }
+
+    override fun back(navigation: Navigation) = navigation.exit()
+
+    override fun initBinding(inflater: LayoutInflater, container: ViewGroup?): JoinFragmentBinding =
+        JoinFragmentBinding.inflate(inflater, container, false)
+
+    override fun koinScopes() = listOf(ScreenScope.Join(), ScreenScope.Connection())
+    override fun cleans() = listOf(viewModel)
 }

@@ -4,5 +4,5 @@ import ru.zinoview.viewmodelmemoryleak.ui.join.ImageProfile
 
 interface JoinUserId<T> {
 
-    suspend fun joinedUserId(image: ImageProfile,nickname: String) : T
+    fun joinedUserId(image: ImageProfile,nickname: String,block:(T) -> Unit)
 }

@@ -19,4 +19,6 @@ interface NavigationData {
             = ParcelableWrapper.Base(bundle.getParcelable<T>(key)!!)
     }
 
+    object Empty : NavigationData
+
 }
