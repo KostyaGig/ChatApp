@@ -6,6 +6,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
+import ru.zinoview.viewmodelmemoryleak.core.chat.ReadMessages
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudDataSource
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudMessage
 import ru.zinoview.viewmodelmemoryleak.data.chat.cloud.CloudToDataMessageMapper
@@ -37,16 +38,16 @@ class ChatRepositoryTest {
     @Test
     fun test_success_send_messages() = runBlocking {
 
-        repository?.sendMessage("","Hi,Bob")
-        repository?.sendMessage("","Hello!")
-        repository?.sendMessage("","How are you?")
-        repository?.sendMessage("","I'm fine")
+        repository?.sendMessage("", "Hi,Bob")
+        repository?.sendMessage("", "Hello!")
+        repository?.sendMessage("", "How are you?")
+        repository?.sendMessage("", "I'm fine")
 
         val expected = listOf(
-            DataMessage.Sent.Unread("-1","1","Hi,Bob","-1"),
-            DataMessage.Received("-1","2","Hello!","-1"),
-            DataMessage.Sent.Unread("-1","1","How are you?","-1"),
-            DataMessage.Received("-1","2","I'm fine","-1"),
+            DataMessage.Sent.Unread("-1", "1", "Hi,Bob", "-1"),
+            DataMessage.Received("-1", "2", "Hello!", "-1"),
+            DataMessage.Sent.Unread("-1", "1", "How are you?", "-1"),
+            DataMessage.Received("-1", "2", "I'm fine", "-1"),
         )
         repository?.messages()
         val actual = repository?.messages()
@@ -57,7 +58,7 @@ class ChatRepositoryTest {
     @Test
     fun test_failure_send_messages() = runBlocking {
 
-        repository?.sendMessage("","Hi,Bob")
+        repository?.sendMessage("", "Hi,Bob")
 
         val expected = listOf(
             DataMessage.Failure("Messages are empty")
@@ -70,19 +71,19 @@ class ChatRepositoryTest {
     @Test
     fun test_update_content_message_by_id() = runBlocking {
 
-        repository?.sendMessage("","Hi,Bob")
-        repository?.sendMessage("","Hello!")
-        repository?.sendMessage("","How are you?")
-        repository?.sendMessage("","I'm fine")
+        repository?.sendMessage("", "Hi,Bob")
+        repository?.sendMessage("", "Hello!")
+        repository?.sendMessage("", "How are you?")
+        repository?.sendMessage("", "I'm fine")
 
         val expected = listOf(
-            DataMessage.Sent.Unread("-1","1","Hi,Bob","-1"),
-            DataMessage.Received("-1","2","Hello!","-1"),
-            DataMessage.Sent.Unread("-1","1","What are you doing?","-1"),
-            DataMessage.Received("-1","2","I'm fine","-1"),
+            DataMessage.Sent.Unread("-1", "1", "Hi,Bob", "-1"),
+            DataMessage.Received("-1", "2", "Hello!", "-1"),
+            DataMessage.Sent.Unread("-1", "1", "What are you doing?", "-1"),
+            DataMessage.Received("-1", "2", "I'm fine", "-1"),
         )
 
-        repository?.editMessage("3","What are you doing?")
+        repository?.editMessage("3", "What are you doing?","")
         repository?.messages()
         val actual = repository?.messages()
         assertEquals(expected, actual)
@@ -90,31 +91,31 @@ class ChatRepositoryTest {
 
     @Test
     fun test_read_messages() = runBlocking {
-        repository?.sendMessage("","Hi,Bob")
-        repository?.sendMessage("","Hello!")
-        repository?.sendMessage("","How are you?")
-        repository?.sendMessage("","I'm fine")
+        repository?.sendMessage("", "Hi,Bob")
+        repository?.sendMessage("", "Hello!")
+        repository?.sendMessage("", "How are you?")
+        repository?.sendMessage("", "I'm fine")
 
         var expected = listOf(
-            DataMessage.Sent.Unread("-1","1","Hi,Bob","-1"),
-            DataMessage.Received("-1","2","Hello!","-1"),
-            DataMessage.Sent.Unread("-1","1","What are you doing?","-1"),
-            DataMessage.Received("-1","2","I'm fine","-1"),
+            DataMessage.Sent.Unread("-1", "1", "Hi,Bob", "-1"),
+            DataMessage.Received("-1", "2", "Hello!", "-1"),
+            DataMessage.Sent.Unread("-1", "1", "What are you doing?", "-1"),
+            DataMessage.Received("-1", "2", "I'm fine", "-1"),
         )
 
-        repository?.editMessage("3","What are you doing?")
+        repository?.editMessage("3", "What are you doing?","")
         repository?.messages()
         var actual = repository?.messages()
         assertEquals(expected, actual)
 
         expected = listOf(
-            DataMessage.Sent.Read("-1","1","Hi,Bob","-1"),
-            DataMessage.Received("-1","2","Hello!","-1"),
-            DataMessage.Sent.Read("-1","1","What are you doing?","-1"),
-            DataMessage.Received("-1","2","I'm fine","-1"),
+            DataMessage.Sent.Read("-1", "1", "Hi,Bob", "-1"),
+            DataMessage.Received("-1", "2", "Hello!", "-1"),
+            DataMessage.Sent.Read("-1", "1", "What are you doing?", "-1"),
+            DataMessage.Received("-1", "2", "I'm fine", "-1"),
         )
 
-        repository?.readMessages(Pair(0,3))
+        repository?.readMessages(TestReadMessages(Pair(0, 3)))
         repository?.messages()
         actual = repository?.messages()
         assertEquals(expected, actual)
@@ -162,23 +163,24 @@ class ChatRepositoryTest {
 
         private var count = 0
 
-        override suspend fun editMessage(messageId: String, content: String)
-                = cloudDataSource.editMessage(messageId, content)
+        override suspend fun editMessage(messageId: String, content: String, receiverId: String) =
+            cloudDataSource.editMessage(messageId, content,"",receiverId)
 
         override suspend fun sendMessage(receiverId: String, content: String) {
-            val userId = if (count % 2 == 0 ) 1 else 2
-            cloudDataSource.sendMessage(userId.toString(),"","",content)
+            val userId = if (count % 2 == 0) 1 else 2
+            cloudDataSource.sendMessage(userId.toString(), "", "", content)
             count++
         }
-        override fun readMessages(range: Pair<Int, Int>)
-            = cloudDataSource.readMessages(range)
 
-        override suspend fun toTypeMessage(isTyping: Boolean)
-            = cloudDataSource.toTypeMessage(isTyping,"Bob").first().map(mapper)
+        override fun readMessages(readMessages: ReadMessages) =
+            cloudDataSource.readMessages(readMessages)
+
+        override suspend fun toTypeMessage(isTyping: Boolean) =
+            cloudDataSource.toTypeMessage(isTyping, "Bob").first().map(mapper)
 
         override suspend fun showNotificationMessage(messageId: String) = Unit
 
-        fun messages() : List<DataMessage> = cloudDataSource.messages().map { it.map(mapper) }
+        fun messages(): List<DataMessage> = cloudDataSource.messages().map { it.map(mapper) }
     }
 
     class TestCloudDataSource : CloudDataSource<List<CloudMessage>> {
@@ -194,11 +196,32 @@ class ChatRepositoryTest {
         ) {
             messages.add(
                 CloudMessage.Test(
-                    "-1",senderId,content,false,"-1"
-                ))
+                    "-1", senderId, content, false, "-1"
+                )
+            )
         }
 
-        fun messages() : List<CloudMessage>{
+        override fun readMessages(readMessages: ReadMessages) {
+            val testReadMessages = readMessages as TestReadMessages
+            testReadMessages.readMessages(messages)
+        }
+
+        override suspend fun editMessage(
+            messageId: String,
+            content: String,
+            senderId: String,
+            receiverId: String
+        ) {
+            val message = messages[messageId.toInt() - 1]
+            messages[messageId.toInt() - 1] = message.updated(content)
+        }
+
+        override suspend fun toTypeMessage(
+            isTyping: Boolean,
+            senderNickName: String
+        ) = listOf(CloudMessage.Typing(senderNickName, isTyping))
+
+        fun messages(): List<CloudMessage> {
             val result = if (isSuccess) {
                 messages
             } else {
@@ -208,29 +231,24 @@ class ChatRepositoryTest {
             return result
         }
 
-        override fun readMessages(range: Pair<Int, Int>) {
+        override fun disconnect(arg: Unit) = messages.clear()
+    }
+
+    private inner class TestReadMessages(
+        private val range: Pair<Int, Int>
+    ) : ReadMessages {
+
+        fun readMessages(messages: MutableList<CloudMessage.Test>) {
             for (index in range.first..range.second) {
                 val message = messages[index]
                 messages[index] = message.read()
             }
         }
-
-        override fun disconnect(arg: Unit) = messages.clear()
-
-        override suspend fun editMessage(messageId: String, content: String) {
-            val message = messages[messageId.toInt() - 1]
-            messages[messageId.toInt() - 1]  = message.updated(content)
-        }
-
-        override suspend fun toTypeMessage(
-            isTyping: Boolean,
-            senderNickName: String
-        ) = listOf(CloudMessage.Typing(senderNickName,isTyping))
     }
 
     private inner class TestCloudToDataMessageMapper(
         private val senderId: String
-    ) : CloudToDataMessageMapper,Mapper.Base<DataMessage>(
+    ) : CloudToDataMessageMapper, Mapper.Base<DataMessage>(
         DataMessage.Empty
     ) {
         override fun map(
@@ -251,14 +269,12 @@ class ChatRepositoryTest {
             }
         }
 
-        override fun mapFailure(message: String)
-            = DataMessage.Failure(message)
+        override fun mapFailure(message: String) = DataMessage.Failure(message)
 
-        override fun mapIsTyping(senderNickname: String)
-            = DataMessage.Typing.Is(senderNickname)
+        override fun mapIsTyping(senderNickname: String) = DataMessage.Typing.Is(senderNickname)
 
-        override fun mapIsNotTyping(senderNickname: String)
-            = DataMessage.Typing.IsNot(senderNickname)
+        override fun mapIsNotTyping(senderNickname: String) =
+            DataMessage.Typing.IsNot(senderNickname)
     }
 
 

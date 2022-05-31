@@ -5,8 +5,6 @@ import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import ru.zinoview.viewmodelmemoryleak.data.join.cloud.CloudDataSource
-import ru.zinoview.viewmodelmemoryleak.ui.join.ImageProfile
 
 
 /**
@@ -26,14 +24,14 @@ class JoinUserRepositoryTest {
     @Test
     fun test_success_join_user()  = runBlocking {
         var expected = DataJoin.Test("0")
-        var actual = repository?.joinedUserId(ImageProfile.Default,"Kostya")
+        var actual = repository?.joinedUserId("Kostya")
 
         assertEquals(expected, actual)
 
-        repository?.joinedUserId(ImageProfile.Default,"")
+        repository?.joinedUserId("")
 
         expected = DataJoin.Test("1")
-        actual = repository?.joinedUserId(ImageProfile.Default,"Nusha")
+        actual = repository?.joinedUserId("Nusha")
 
         assertEquals(expected, actual)
     }
@@ -41,7 +39,7 @@ class JoinUserRepositoryTest {
     @Test
     fun test_failure_join_user_empty_nickname() = runBlocking {
         val expected = DataJoin.Failure("User nickname must not be empty")
-        val actual = repository?.joinedUserId(ImageProfile.Default,"")
+        val actual = repository?.joinedUserId("")
         assertEquals(expected, actual)
     }
 
@@ -52,11 +50,11 @@ class JoinUserRepositoryTest {
     }
 
     class TestJoinUserRepository(
-        private val cloudDataSource: CloudDataSource
-    ) : JoinUserRepository {
+        private val cloudDataSource: TestCloudDataSource
+    ) {
 
-        override suspend fun joinedUserId(image: ImageProfile,nickname: String): DataJoin {
-            val userId = cloudDataSource.joinedUserId(image,nickname)
+        suspend fun joinedUserId(nickname: String): DataJoin {
+            val userId = cloudDataSource.joinedUserId(nickname)
 
             return if (userId == "-1") {
                 DataJoin.Failure("User nickname must not be empty")
@@ -65,14 +63,13 @@ class JoinUserRepositoryTest {
             }
         }
 
-        override fun clean()  = Unit
     }
 
-    class TestCloudDataSource : CloudDataSource {
+    inner class TestCloudDataSource {
 
         private var id = -1
 
-        override suspend fun joinedUserId(image: ImageProfile,nickname: String): String {
+        fun joinedUserId(nickname: String) : String {
             return if (nickname.isEmpty()) {
                 "-1"
             } else {
@@ -80,7 +77,6 @@ class JoinUserRepositoryTest {
                 "$id"
             }
         }
-
-        override fun disconnect(arg: Unit) = Unit
     }
+
 }
