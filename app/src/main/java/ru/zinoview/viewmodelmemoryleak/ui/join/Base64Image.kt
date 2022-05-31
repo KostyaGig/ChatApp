@@ -26,7 +26,7 @@ interface Base64Image : ru.zinoview.viewmodelmemoryleak.core.join.Base64Image<Ur
         override fun base64Image(imageUri: Uri) : String {
             val input = contentResolver.openInputStream(imageUri)
             val image = BitmapFactory.decodeStream(input, null, null)
-            image!!.compress(Bitmap.CompressFormat.JPEG, QUALITY, byteArrayOutputStream)
+            image!!.compress(Bitmap.CompressFormat.PNG, QUALITY, byteArrayOutputStream)
             val imageBytes = byteArrayOutputStream.toByteArray()
 
             return Base64.encodeToString(imageBytes, Base64.DEFAULT)
@@ -37,7 +37,7 @@ interface Base64Image : ru.zinoview.viewmodelmemoryleak.core.join.Base64Image<Ur
 
         override fun base64Image(drawable: Drawable): String {
             val bitmap = drawable.toBitmap()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, QUALITY, byteArrayOutputStream)
+            bitmap.compress(Bitmap.CompressFormat.PNG, QUALITY, byteArrayOutputStream)
             val imageBytes = byteArrayOutputStream.toByteArray()
 
             return Base64.encodeToString(imageBytes, Base64.DEFAULT)

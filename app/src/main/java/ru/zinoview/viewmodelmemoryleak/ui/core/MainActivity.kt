@@ -10,7 +10,7 @@ import ru.zinoview.viewmodelmemoryleak.databinding.ActivityMainBinding
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.*
 import ru.zinoview.viewmodelmemoryleak.ui.join.ImageResult
 
-class MainActivity : AppCompatActivity(), Navigation,  ToolbarActivity, ResultApiActivity {
+class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity, ActivityLauncher {
 
     private var _binding: ActivityMainBinding? = null
     private val binding by lazy {
@@ -19,10 +19,12 @@ class MainActivity : AppCompatActivity(), Navigation,  ToolbarActivity, ResultAp
 
     private val fragmentIntent = getKoin().get<Intent<String>>()
 
-    private val image = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        val fragment = supportFragmentManager.fragments.first() as ImageResult
-        uri?.let { fragment.onImageResult(it) }
-    }
+    private val imageLauncher = ActivityResultLauncher.Image(
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            val fragment = supportFragmentManager.fragments.first() as ImageResult
+            uri?.let { fragment.onImageResult(it) }
+        }
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,17 +36,17 @@ class MainActivity : AppCompatActivity(), Navigation,  ToolbarActivity, ResultAp
         if (savedInstanceState != null) {
             fragmentIntent.navigate(this)
         } else {
-            fragmentIntent.navigate(intent,this)
+            fragmentIntent.navigate(intent, this)
         }
 
     }
 
-    override fun navigateTo(fragment: Fragment,data: NavigationData) {
+    override fun navigateTo(fragment: Fragment, data: NavigationData) {
         fragmentIntent.saveFragment(fragment)
         fragment.arguments = data.bundle()
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragment_container,fragment)
+            .replace(R.id.fragment_container, fragment)
             .commitNow()
     }
 
@@ -53,8 +55,7 @@ class MainActivity : AppCompatActivity(), Navigation,  ToolbarActivity, ResultAp
         fragment.back(this)
     }
 
-    // todo
-    override fun image() = image.launch("image/*")
+    override fun launch(launcherType: LauncherType) = launcherType.launch(imageLauncher)
 
     override fun onDestroy() {
         super.onDestroy()

@@ -19,15 +19,7 @@ abstract class SaveUiStateFragment<BVM : ViewModel, SVM : UiStateViewModel<*,*> 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (savedInstanceState != null) {
-            uiStateViewModel.read(Unit)
-        }
+        if (savedInstanceState != null) uiStateViewModel.read(Unit)
     }
 
-
-    override fun onPause() {
-        super.onPause()
-        // todo
-//        uiState.save(uiStateViewModel)
-    }
 }

@@ -12,8 +12,7 @@ interface ImageProfile : ru.zinoview.viewmodelmemoryleak.core.join.Base64Image<B
         private val uri: android.net.Uri
     ) : ImageProfile {
 
-        override fun base64Image(param: Base64Image)
-            = param.base64Image(uri)
+        override fun base64Image(param: Base64Image) = param.base64Image(uri)
     }
 
     data class Bitmap(
@@ -21,7 +20,7 @@ interface ImageProfile : ru.zinoview.viewmodelmemoryleak.core.join.Base64Image<B
     ) : ImageProfile {
 
         override fun base64Image(param: Base64Image) = ""
-        override fun show(image: ViewWrapper) = image.showImage(bitmap)
+        override fun show(image: ViewWrapper) = image.showBitmap(bitmap)
     }
 
     class Drawable(
@@ -29,7 +28,7 @@ interface ImageProfile : ru.zinoview.viewmodelmemoryleak.core.join.Base64Image<B
     ) : ImageProfile {
 
         override fun base64Image(param: Base64Image): String {
-            return param.base64Image(drawable)
+            return param.base64Image(R.drawable.ic_camera)
         }
     }
 
@@ -40,9 +39,8 @@ interface ImageProfile : ru.zinoview.viewmodelmemoryleak.core.join.Base64Image<B
     }
 
     object Empty : ImageProfile {
-        override fun base64Image(base64Image: Base64Image)
-            = ""
+        override fun base64Image(base64Image: Base64Image) = ""
 
-        override fun show(image: ViewWrapper) = image.showImage(R.drawable.ic_camera)
+        override fun show(image: ViewWrapper) = image.map(R.drawable.profile_default_image)
     }
 }

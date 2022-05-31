@@ -1,6 +1,3 @@
 package ru.zinoview.viewmodelmemoryleak.ui.core
 
-interface ResultApiActivity {
-
-    fun image()
-}
+interface ActivityLauncher : Launch<LauncherType>

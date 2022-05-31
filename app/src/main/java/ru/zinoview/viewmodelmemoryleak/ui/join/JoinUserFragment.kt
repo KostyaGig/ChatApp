@@ -2,6 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.join
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,8 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.NetworkConnectionReceiver
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.connection.ConnectionViewModel
-import ru.zinoview.viewmodelmemoryleak.ui.core.ResultApiActivity
+import ru.zinoview.viewmodelmemoryleak.ui.core.ActivityLauncher
+import ru.zinoview.viewmodelmemoryleak.ui.core.LauncherType
 import ru.zinoview.viewmodelmemoryleak.ui.core.Text
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.ScreenScope
@@ -36,6 +38,8 @@ class JoinUserFragment : SaveUiStateFragment<JoinUserViewModel.Base, JoinUiState
         get<ConnectionViewModel.Base>()
     }
 
+    private var userProfileImageState: UserProfileImageState  = UserProfileImageState.UnChosen
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -50,7 +54,7 @@ class JoinUserFragment : SaveUiStateFragment<JoinUserViewModel.Base, JoinUiState
         }
 
         binding.profileImage.setOnClickListener {
-            (requireActivity() as ResultApiActivity).image()
+            (requireActivity() as ActivityLauncher).launch(LauncherType.Image)
         }
 
         connectionViewModel.connection()
@@ -69,12 +73,12 @@ class JoinUserFragment : SaveUiStateFragment<JoinUserViewModel.Base, JoinUiState
         }
 
         uiStateViewModel.observe(this) { uiState ->
-            uiState.forEach { state ->
-                state.recover(
-                    ViewWrapper.Image(binding.profileImage,resourceProvider),
-                    ViewWrapper.Text(binding.nicknameField)
-                )
-            }
+            val views = listOf(
+                ViewWrapper.Image(binding.profileImage,resourceProvider),
+                ViewWrapper.Text(binding.nicknameField)
+            )
+            userProfileImageState.map(Pair(uiState,views))
+            userProfileImageState = userProfileImageState.dropped()
         }
     }
 
@@ -87,7 +91,10 @@ class JoinUserFragment : SaveUiStateFragment<JoinUserViewModel.Base, JoinUiState
         uiState.save(uiStateViewModel)
     }
 
+
     override fun onImageResult(uri: Uri) {
+        userProfileImageState = UserProfileImageState.Chosen
+
         binding.profileImage.setImageURI(uri)
         imageProfile = ImageProfile.Uri(uri)
 
