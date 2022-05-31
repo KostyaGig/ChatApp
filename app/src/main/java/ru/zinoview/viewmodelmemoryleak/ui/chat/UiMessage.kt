@@ -10,9 +10,9 @@ import ru.zinoview.viewmodelmemoryleak.ui.users.BundleUser
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditContent
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.SaveState
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiState
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStateViewModel
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStates
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.ChatUiState
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.ChatUiStates
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.ChatUiStateViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.*
 
@@ -219,18 +219,18 @@ interface UiMessage :
             override fun <T> map(mapper: Mapper<T>)
                 = mapper.map(id,content = content)
 
-            override fun saveState(viewModel: UiStateViewModel, editText: UiState.EditText) {
-                viewModel.save(UiStates.Base(
+            override fun saveState(viewModel: ChatUiStateViewModel, editText: ChatUiState.EditText) {
+                viewModel.save(ChatUiStates.Base(
                     editText,
-                    UiState.MessageSession(content,id)
+                    ChatUiState.MessageSession(content,id)
                 ))
             }
         }
 
         object Empty : OldMessage {
-            override fun saveState(viewModel: UiStateViewModel, editText: UiState.EditText) {
-                viewModel.save(UiStates.Base(
-                    editText,UiState.MessageSession()
+            override fun saveState(viewModel: ChatUiStateViewModel, editText: ChatUiState.EditText) {
+                viewModel.save(ChatUiStates.Base(
+                    editText,ChatUiState.MessageSession()
                 ))
             }
         }

@@ -13,8 +13,8 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.ToEditedMessageMapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.ToOldMessageMapper
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiState
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStateViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.ChatUiState
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.ChatUiStateViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.user_status.UserStatusViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBarHeight
@@ -26,12 +26,12 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.ScreenScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NavigationData
-import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NetworkConnectionFragment
+import ru.zinoview.viewmodelmemoryleak.ui.core.ui_state.SaveUiStateFragment
 import ru.zinoview.viewmodelmemoryleak.ui.users.UserNavigationData
 
-
-class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentBinding>(
-    ChatViewModel.Base::class
+class ChatFragment : SaveUiStateFragment<ChatViewModel.Base, ChatUiStateViewModel,  ChatFragmentBinding>(
+    ChatViewModel.Base::class,
+    ChatUiStateViewModel::class
 ) {
     private var adapter: Adapter<List<UiMessage>> = Adapter.Empty()
     private var scrollListener: ChatRecyclerViewScrollListener =
@@ -41,21 +41,12 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
     private val connectionViewModel by lazy { get<ConnectionViewModel.Base>() }
 
-    private val uiStateViewModel by lazy { getKoin().get<UiStateViewModel.Base>() }
     private val userStatusViewModel by lazy { getKoin().get<UserStatusViewModel.Base>() }
     private val typeMessageTextWatcher by lazy { get<TypeMessageTextWatcher>() }
 
     private val mapper by lazy { get<UiMessagesKeysMapper>() }
 
     private var bundleUser: BundleUser = BundleUser.Empty
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        if (savedInstanceState != null) {
-            uiStateViewModel.read(Unit)
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -149,7 +140,7 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
     override fun onPause() {
         super.onPause()
 
-        val editTextState = UiState.EditText(binding.messageField.text.toString())
+        val editTextState = ChatUiState.EditText(binding.messageField.text.toString())
         messageSession.saveState(uiStateViewModel, editTextState)
 
         viewModel.showProcessingMessages()
@@ -165,4 +156,5 @@ class ChatFragment : NetworkConnectionFragment<ChatViewModel.Base, ChatFragmentB
 
     override fun koinScopes() = listOf(ScreenScope.Connection(), ScreenScope.Chat())
     override fun cleans() = listOf(connectionViewModel,viewModel)
+
 }

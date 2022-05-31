@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.ui.join
 
-import android.graphics.drawable.Drawable
 import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.Show
@@ -29,9 +28,8 @@ interface ImageProfile : ru.zinoview.viewmodelmemoryleak.core.join.Base64Image<B
         private val drawable: android.graphics.drawable.Drawable
     ) : ImageProfile {
 
-        override fun base64Image(param: Base64Image) {
-            drawable.
-            param.base64Image(drawable)
+        override fun base64Image(param: Base64Image): String {
+            return param.base64Image(drawable)
         }
     }
 

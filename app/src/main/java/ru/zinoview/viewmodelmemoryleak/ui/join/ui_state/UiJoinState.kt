@@ -4,7 +4,7 @@ import ru.zinoview.viewmodelmemoryleak.core.Save
 import ru.zinoview.viewmodelmemoryleak.ui.join.ImageProfile
 
 
-interface UiJoinState : UiJoinStateAdd, Save<UiStateJoinViewModel> {
+interface UiJoinState : UiJoinStateAdd, Save<JoinUiStateViewModel> {
 
     class Base : UiJoinState {
 
@@ -14,7 +14,7 @@ interface UiJoinState : UiJoinStateAdd, Save<UiStateJoinViewModel> {
         override fun addImage(image: ImageProfile) { this.userImage = image }
         override fun add(nickName: String) { this.userNickName = nickName }
 
-        override fun save(viewModel: UiStateJoinViewModel) = viewModel.save(
+        override fun save(viewModel: JoinUiStateViewModel) = viewModel.save(
             JoinUiStates.Base(
                 JoinUiState.UserNickName(userNickName),
                 JoinUiState.UserImageProfile(userImage)

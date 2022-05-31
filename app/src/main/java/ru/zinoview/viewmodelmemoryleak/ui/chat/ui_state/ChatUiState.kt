@@ -5,27 +5,18 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
 
-interface UiState : IsNotEmpty<Unit> {
-
-    fun recover(
-        editText: ViewWrapper,
-        viewWrapper: ViewWrapper,
-        messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession,
-        adapter: Adapter<List<UiMessage>>
-    )
+interface ChatUiState : IsNotEmpty<Unit>, ru.zinoview.viewmodelmemoryleak.ui.core.ui_state.UiState {
 
     data class EditText(
         private val text: String = ""
-    ) : UiState {
+    ) : ChatUiState {
 
         override fun recover(
             editText: ViewWrapper,
             viewWrapper: ViewWrapper,
             messageSession: ru.zinoview.viewmodelmemoryleak.ui.chat.edit.MessageSession,
             adapter: Adapter<List<UiMessage>>
-        ) {
-            editText.show(Unit,text)
-        }
+        ) = editText.show(Unit,text)
 
         override fun isNotEmpty(arg: Unit)
             = text.isNotEmpty()
@@ -34,7 +25,7 @@ interface UiState : IsNotEmpty<Unit> {
     data class MessageSession(
         private val oldMessageText: String = "",
         private val messageId: String = ""
-    ) : UiState {
+    ) : ChatUiState {
 
         override fun recover(
             editText: ViewWrapper,
@@ -50,14 +41,13 @@ interface UiState : IsNotEmpty<Unit> {
             messageSession.show(Unit)
         }
 
-
         override fun isNotEmpty(arg: Unit)
             = oldMessageText.isNotEmpty() && messageId.isNotEmpty()
     }
 
     class Messages(
         private val messages: List<UiMessage> = emptyList()
-    ) : UiState {
+    ) : ChatUiState {
 
         override fun recover(
             editText: ViewWrapper,
@@ -69,7 +59,7 @@ interface UiState : IsNotEmpty<Unit> {
         override fun isNotEmpty(arg: Unit): Boolean = messages.isNotEmpty()
     }
 
-    object Empty : UiState {
+    object Empty : ChatUiState {
 
         override fun recover(
             editText: ViewWrapper,

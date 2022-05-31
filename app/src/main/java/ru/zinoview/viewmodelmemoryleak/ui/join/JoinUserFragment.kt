@@ -18,12 +18,12 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.Text
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.ScreenScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
-import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NetworkConnectionFragment
+import ru.zinoview.viewmodelmemoryleak.ui.core.ui_state.SaveUiStateFragment
 import ru.zinoview.viewmodelmemoryleak.ui.join.ui_state.UiJoinState
-import ru.zinoview.viewmodelmemoryleak.ui.join.ui_state.UiStateJoinViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.join.ui_state.JoinUiStateViewModel
 
-class JoinUserFragment : NetworkConnectionFragment<JoinUserViewModel.Base, JoinFragmentBinding>(
-    JoinUserViewModel.Base::class
+class JoinUserFragment : SaveUiStateFragment<JoinUserViewModel.Base, JoinUiStateViewModel ,JoinFragmentBinding>(
+    JoinUserViewModel.Base::class,JoinUiStateViewModel::class
 ), ImageResult {
 
     private var imageProfile: ImageProfile = ImageProfile.Empty
@@ -34,19 +34,6 @@ class JoinUserFragment : NetworkConnectionFragment<JoinUserViewModel.Base, JoinF
 
     private val connectionViewModel by lazy {
         get<ConnectionViewModel.Base>()
-    }
-
-    private val uiStateViewModel by lazy {
-        get<UiStateJoinViewModel.Base>()
-    }
-
-    // todo create and move to SaveUiStateFragment this code (and cut the same code from ChatFragment)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        if (savedInstanceState != null) {
-            uiStateViewModel.read(Unit)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -96,8 +83,6 @@ class JoinUserFragment : NetworkConnectionFragment<JoinUserViewModel.Base, JoinF
 
         uiState.add(text.text(binding.nicknameField))
         uiState.addImage(ImageProfile.Drawable(binding.profileImage.drawable))
-
-
 
         uiState.save(uiStateViewModel)
     }

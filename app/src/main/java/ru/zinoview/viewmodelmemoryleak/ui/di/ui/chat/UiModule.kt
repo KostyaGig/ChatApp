@@ -4,10 +4,10 @@ import kotlinx.coroutines.CoroutineScope
 import org.koin.dsl.module.module
 import ru.zinoview.viewmodelmemoryleak.core.Time
 import ru.zinoview.viewmodelmemoryleak.ui.chat.*
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStateCommunication
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStateViewModel
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStateWork
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStatesMapper
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.ChatUiStateViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.core.ui_state.UiStateCommunication
+import ru.zinoview.viewmodelmemoryleak.ui.core.ui_state.UiStateWork
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.ChatUiStatesMapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.user_status.UiMessagesNotificationCommunication
 import ru.zinoview.viewmodelmemoryleak.ui.chat.user_status.UserStatusViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
@@ -20,12 +20,12 @@ class UiModule(
 
     private val uiStateChatModule = module {
         scope(SCOPE_NAME) {
-            UiStateViewModel.Base(
+            ChatUiStateViewModel(
                 UiStateWork(get()),
                 get(),
                 UiStateCommunication(),
                 get(),
-                UiStatesMapper.Base()
+                ChatUiStatesMapper.Base()
             )
         }
     }

@@ -1,18 +1,17 @@
-package ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state
+package ru.zinoview.viewmodelmemoryleak.ui.core.ui_state
 
 import kotlinx.coroutines.CoroutineScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
 import ru.zinoview.viewmodelmemoryleak.ui.core.Work
 
-class UiStateWork(
+class UiStateWork<T>(
     private val dispatcher: Dispatcher
-) : Work.Abstract<UiStates,UiStates>(dispatcher) {
-
+) : Work.Abstract<T,T>(dispatcher) {
 
     override fun execute(
         scope: CoroutineScope,
-        background: suspend () -> UiStates,
-        ui: (UiStates) -> Unit
+        background: suspend () -> T,
+        ui: (T) -> Unit
     ) {
         dispatcher.doBackground(scope) {
             val data = background.invoke()

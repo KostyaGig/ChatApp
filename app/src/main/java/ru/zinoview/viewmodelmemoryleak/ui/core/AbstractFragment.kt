@@ -1,7 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.core
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
 import org.koin.android.ext.android.getKoin
 import ru.zinoview.viewmodelmemoryleak.core.Clean
+import ru.zinoview.viewmodelmemoryleak.ui.chat.NetworkConnectionReceiver
 import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.KoinScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.ScreenScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Back
@@ -20,6 +20,8 @@ abstract class AbstractFragment<VM : ViewModel, B: ViewBinding>(
 ) : Fragment(), Back {
 
     private val scope = KoinScope.Base()
+
+    protected var networkConnectionReceiver: NetworkConnectionReceiver = NetworkConnectionReceiver.Empty
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +56,16 @@ abstract class AbstractFragment<VM : ViewModel, B: ViewBinding>(
         _binding = initBinding(inflater,container)
 
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        networkConnectionReceiver.register(requireActivity().applicationContext)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        networkConnectionReceiver.unRegister(requireActivity().applicationContext)
     }
 
     override fun onDestroyView() {

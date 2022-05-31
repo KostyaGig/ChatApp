@@ -2,11 +2,11 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state
 
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 
-class ToUiStateMessageSessionMapper : Mapper.Base<UiState>(UiState.Empty) {
+class ToUiStateMessageSessionMapper : Mapper.Base<ChatUiState>(ChatUiState.Empty) {
     override fun map(
         id: String,
         senderId: String,
         content: String,
         senderNickname: String
-    ) = UiState.MessageSession(content,id)
+    ) = ChatUiState.MessageSession(content,id)
 }

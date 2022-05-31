@@ -9,14 +9,14 @@ import ru.zinoview.viewmodelmemoryleak.databinding.UsersFragmentBinding
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatFragment
 import ru.zinoview.viewmodelmemoryleak.ui.chat.NetworkConnectionReceiver
 import ru.zinoview.viewmodelmemoryleak.ui.connection.ConnectionViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.core.AbstractFragment
 import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.ScreenScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
-import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NetworkConnectionFragment
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.ParcelableWrapper
 
-class UsersFragment : NetworkConnectionFragment<UsersViewModel.Base,UsersFragmentBinding>(
+class UsersFragment : AbstractFragment<UsersViewModel.Base,UsersFragmentBinding>(
     UsersViewModel.Base::class
 ) {
 

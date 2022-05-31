@@ -26,4 +26,5 @@ interface CloudId : Save<IdSharedPreferences<String, Unit>>, Mapper<CloudIdToDat
 
         override fun map(mapper: CloudIdToDataJoinMapper)  = mapper.mapFailure(message)
     }
+
 }

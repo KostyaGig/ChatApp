@@ -6,8 +6,8 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.SaveState
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.ToOldMessageMapper
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiState
-import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.UiStateViewModel
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.ChatUiState
+import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.ChatUiStateViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.Show
@@ -20,7 +20,7 @@ interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit>, SaveState,
     override fun show(arg: Unit) = Unit
     override fun editContent(content: String) = Unit
     override fun disconnect(arg: Unit) = Unit
-    override fun saveState(viewModel: UiStateViewModel, editText: UiState.EditText) = Unit
+    override fun saveState(viewModel: ChatUiStateViewModel, editText: ChatUiState.EditText) = Unit
 
     class Base(
         private val viewWrapper: ViewWrapper,
@@ -38,8 +38,9 @@ interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit>, SaveState,
             this.oldMessage = message.map(oldMapper)
         }
 
-        override fun saveState(viewModel: UiStateViewModel, editText: UiState.EditText)
+        override fun saveState(viewModel: ChatUiStateViewModel, editText: ChatUiState.EditText)
             = oldMessage.saveState(viewModel, editText)
+
         override fun editContent(content: String) = editedMessage.editContent(content)
 
         override fun sendMessage(viewModel: ChatViewModel,receiverId:String,content: String) {

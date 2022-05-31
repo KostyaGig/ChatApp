@@ -1,4 +1,4 @@
-package ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state
+package ru.zinoview.viewmodelmemoryleak.ui.core.ui_state
 
 import ru.zinoview.viewmodelmemoryleak.ui.core.Communication
 

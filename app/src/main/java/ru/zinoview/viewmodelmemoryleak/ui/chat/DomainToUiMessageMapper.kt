@@ -39,15 +39,13 @@ interface DomainToUiMessageMapper : Mapper<UiMessage> {
             senderNickname: String
         ) =  UiMessage.Sent.Unread(id,content,senderId,senderNickname)
 
-        override fun mapIsTyping(senderNickname: String)
-            = UiMessage.Typing.Is("$senderNickname $SUFFIX")
+        override fun mapIsTyping(senderNickname: String): UiMessage {
+            val isTyping = resourceProvider.string(R.string.is_typing_text)
+            return UiMessage.Typing.Is("$senderNickname $isTyping")
+        }
 
         override fun mapIsNotTyping(senderNickname: String)
             = UiMessage.Typing.IsNot(resourceProvider.string(R.string.app_name))
-
-        private companion object {
-            private const val SUFFIX = "is typing..."
-        }
     }
 
 }
