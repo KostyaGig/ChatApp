@@ -2,12 +2,12 @@ package ru.zinoview.viewmodelmemoryleak.ui.join
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.getKoin
+import ru.zinoview.viewmodelmemoryleak.core.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
 import ru.zinoview.viewmodelmemoryleak.databinding.JoinFragmentBinding
 import ru.zinoview.viewmodelmemoryleak.ui.chat.NetworkConnectionReceiver
@@ -73,12 +73,24 @@ class JoinUserFragment : SaveUiStateFragment<JoinUserViewModel.Base, JoinUiState
         }
 
         uiStateViewModel.observe(this) { uiState ->
-            val views = listOf(
+
+            val imageProfileState = uiState[1]
+            imageProfile = imageProfileState.map(imageProfileState as Mapper<Unit, ImageProfile>)
+
+            val view = listOf(
                 ViewWrapper.Image(binding.profileImage,resourceProvider),
                 ViewWrapper.Text(binding.nicknameField)
             )
-            userProfileImageState.map(Pair(uiState,views))
-            userProfileImageState = userProfileImageState.dropped()
+
+            userProfileImageState.map(Pair(uiState,view))
+
+//            uiState.forEach { state ->
+//                state.recover(
+//                    ViewWrapper.Image(binding.profileImage,resourceProvider),
+//                    ViewWrapper.Text(binding.nicknameField)
+//                )
+//            }
+
         }
     }
 
@@ -86,8 +98,6 @@ class JoinUserFragment : SaveUiStateFragment<JoinUserViewModel.Base, JoinUiState
         super.onPause()
 
         uiState.add(text.text(binding.nicknameField))
-        uiState.addImage(ImageProfile.Drawable(binding.profileImage.drawable))
-
         uiState.save(uiStateViewModel)
     }
 
@@ -96,6 +106,7 @@ class JoinUserFragment : SaveUiStateFragment<JoinUserViewModel.Base, JoinUiState
         userProfileImageState = UserProfileImageState.Chosen
 
         binding.profileImage.setImageURI(uri)
+
         imageProfile = ImageProfile.Uri(uri)
 
         uiState.addImage(imageProfile)

@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.data.join.ui_state
 
 import android.content.Context
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.data.cache.SharedPreferencesReader
 import ru.zinoview.viewmodelmemoryleak.data.core.ui_state.UiStateSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.ui.join.Base64Image
@@ -21,10 +22,16 @@ interface JoinUiStateSharedPreferences : UiStateSharedPreferences<JoinUiStates.B
         private val prefs = context.getSharedPreferences(NAME, Context.MODE_PRIVATE)
 
         override fun save(data: JoinUiStates.Base) {
+
             val pair = data.map(base64Image)
 
+            if (data.isNotEmpty(Unit)) {
+                Log.d("zinoviewk","save image SHARED PREFERENCES")
+                prefs.edit().putString(IMAGE_KEY, pair.second).apply()
+            } else {
+                Log.d("zinoviewk","NOT save image SHARED PREFERENCES")
+            }
             prefs.edit().putString(NICK_NAME_KEY, pair.first).apply()
-            prefs.edit().putString(IMAGE_KEY, pair.second).apply()
         }
 
         override fun read(key: Unit, map: (JoinUiStates.Base) -> JoinUiStates): JoinUiStates {

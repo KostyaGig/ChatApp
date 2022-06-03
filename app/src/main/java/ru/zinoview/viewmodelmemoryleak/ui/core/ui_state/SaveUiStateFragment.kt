@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.core.ui_state
 
 import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
 import org.koin.android.ext.android.getKoin
@@ -18,8 +19,7 @@ abstract class SaveUiStateFragment<BVM : ViewModel, SVM : UiStateViewModel<*,*> 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        if (savedInstanceState != null) uiStateViewModel.read(Unit)
+        uiStateViewModel.read(Unit)
     }
 
 }

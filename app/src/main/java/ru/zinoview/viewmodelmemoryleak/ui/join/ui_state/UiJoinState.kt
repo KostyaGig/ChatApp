@@ -25,5 +25,9 @@ interface UiJoinState : UiJoinStateAdd, Save<JoinUiStateViewModel> {
                 )
             )
         }
+
+        override fun toString(): String {
+            return "$userImage"
+        }
     }
 }

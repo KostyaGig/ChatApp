@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.ui.join
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Mapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.ui_state.UiState

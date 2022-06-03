@@ -3,6 +3,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state
 import ru.zinoview.viewmodelmemoryleak.data.core.ui_state.AbstractModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
 import ru.zinoview.viewmodelmemoryleak.ui.core.Communication
+import ru.zinoview.viewmodelmemoryleak.ui.core.ui_state.UiState
 import ru.zinoview.viewmodelmemoryleak.ui.core.ui_state.UiStates
 
 interface ChatUiStates : UiStates, AbstractModel<ChatUiStates> {
@@ -16,7 +17,7 @@ interface ChatUiStates : UiStates, AbstractModel<ChatUiStates> {
         private val messages: ChatUiState.Messages = ChatUiState.Messages()
     ) : ChatUiStates {
 
-        override fun map(communication: Communication<List<ru.zinoview.viewmodelmemoryleak.ui.core.ui_state.UiState>>) {
+        override fun map(communication: Communication<List<UiState>>) {
             val states = mutableListOf<ChatUiState>()
 
             if (messageField.isNotEmpty(Unit)) {

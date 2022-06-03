@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.view
 
 import android.graphics.Bitmap
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -66,7 +67,10 @@ interface ViewWrapper :
         private val resourceProvider: ResourceProvider
     ) : ViewWrapper {
 
-        override fun showBitmap(bitmap: Bitmap) = imageView.setImageBitmap(bitmap)
+        override fun showBitmap(bitmap: Bitmap) {
+            Log.d("zinoviewk","Show bitmap $bitmap")
+            imageView.setImageBitmap(bitmap)
+        }
         override fun map(@IdRes idRes: Int) = imageView.setImageDrawable(resourceProvider.drawable(idRes))
     }
 
