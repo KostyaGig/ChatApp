@@ -33,8 +33,10 @@ io.on('connection', (socket) => {
         var nickName = clientUser['nickname']
         var image = clientUser['image']
 
-
-        MongoClient.connect(url, async function (err, db) {
+        if (nickName == '') {
+        	io.emit('join_user', -1)
+        } else {
+        	MongoClient.connect(url, async function (err, db) {
             if (err) throw err;
             var database = db.db("chat_app_db");
             var users = database.collection("user")
@@ -70,6 +72,8 @@ io.on('connection', (socket) => {
             }
             db.close();
         })
+        }
+
     })
 
     socket.on('users', async (user) => {
