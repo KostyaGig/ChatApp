@@ -32,7 +32,7 @@ class UsersFragment : AbstractFragment<UsersViewModel.Base,UsersFragmentBinding>
             override fun onClick(item: UiUser) {
                 connectionViewModel.clean()
 
-                val data = UserNavigationData.Base.User(
+                val data = NavigationData.User(
                     ParcelableWrapper.Base(
                         item.map(UiToBundleUserMapper.Base())
                     )

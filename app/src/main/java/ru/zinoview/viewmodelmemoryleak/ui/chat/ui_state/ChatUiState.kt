@@ -1,6 +1,8 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
+import ru.zinoview.viewmodelmemoryleak.core.Mapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
@@ -37,6 +39,8 @@ interface ChatUiState : IsNotEmpty<Unit>, ru.zinoview.viewmodelmemoryleak.ui.cor
 
             val uiChatMessage = UiMessage.OldMessage.Base(messageId,oldMessageText)
             messageSession.add(uiChatMessage)
+
+            Log.d("zinoviewk","recover old message $oldMessageText")
 
             messageSession.show(Unit)
         }

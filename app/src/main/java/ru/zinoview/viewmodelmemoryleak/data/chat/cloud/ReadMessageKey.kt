@@ -48,7 +48,7 @@ interface ReadMessageKey {
             senderId: String,
             receiverId: String,
             ids: CloudUnreadMessageIds
-        ) = senderId
+        ) = receiverId
 
         private companion object {
             private const val KEY = "receiverId"

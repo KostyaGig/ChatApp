@@ -12,12 +12,11 @@ interface UiAuth : Navigate<ActivityNavigation> {
     object Success : UiAuth {
 
         override fun navigate(navigation: ActivityNavigation)
-            = navigation.navigateTo(MainActivity(), TypeFragment.Join)
+            = navigation.navigateTo(MainActivity(), TypeFragment.Users)
     }
 
     object Failure : UiAuth {
         override fun navigate(navigation: ActivityNavigation)
             = navigation.navigateTo(MainActivity(),TypeFragment.Join)
-
     }
 }

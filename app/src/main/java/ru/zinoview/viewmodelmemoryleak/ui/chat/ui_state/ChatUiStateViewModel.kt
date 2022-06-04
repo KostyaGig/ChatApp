@@ -6,6 +6,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.DomainToUiMessageMapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.ui_state.UiStateCommunication
 import ru.zinoview.viewmodelmemoryleak.ui.core.ui_state.UiStateViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.core.ui_state.UiStateWork
+import ru.zinoview.viewmodelmemoryleak.ui.users.BundleUser
 
 class ChatUiStateViewModel(
     private val work: UiStateWork<ChatUiStates>,
@@ -16,6 +17,15 @@ class ChatUiStateViewModel(
 ) : UiStateViewModel<ChatUiStates.Base, ChatUiStates>(
     repository, communication
 ) {
+
+    // todo
+    private var user: BundleUser = BundleUser.Empty
+
+    fun saveUser(bundleUser: BundleUser) {
+        user = bundleUser
+    }
+
+    fun getUser() : BundleUser= user
 
     override fun read(key: Unit) = work.execute(viewModelScope, {
         val dataMessages = repository.messages()

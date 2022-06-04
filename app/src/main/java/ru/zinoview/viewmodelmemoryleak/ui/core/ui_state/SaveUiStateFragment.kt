@@ -1,7 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.core.ui_state
 
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
 import org.koin.android.ext.android.getKoin
@@ -13,13 +12,18 @@ abstract class SaveUiStateFragment<BVM : ViewModel, SVM : UiStateViewModel<*,*> 
     uiStateViewModelClazz: KClass<SVM>
 ) : AbstractFragment<BVM,B>(baseViewModelClazz)  {
 
-    protected val uiStateViewModel: SVM by lazy {
-        getKoin().get(clazz = uiStateViewModelClazz)
-    }
+    protected val uiStateViewModel: SVM by lazy { getKoin().get(clazz = uiStateViewModelClazz) }
+
+    abstract fun recoverStateAfterLaunch() : Boolean
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        uiStateViewModel.read(Unit)
+        if (recoverStateAfterLaunch()) {
+            uiStateViewModel.read(Unit)
+        } else {
+            if (savedInstanceState != null) {
+                uiStateViewModel.read(Unit)
+            }
+        }
     }
-
 }

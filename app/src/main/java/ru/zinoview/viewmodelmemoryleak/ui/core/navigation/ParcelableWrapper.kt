@@ -8,9 +8,11 @@ interface ParcelableWrapper {
 
     fun bundle(key: String) : Bundle = Bundle()
 
+    fun put(bundle: Bundle,key: String) = Unit
+
     fun <T : Parcelable> parcelable() : T
 
-    class Base(
+    data class Base(
         private val parcelable: Parcelable
     ) : ParcelableWrapper {
 
@@ -18,6 +20,9 @@ interface ParcelableWrapper {
             = Bundle().apply {
                 putParcelable(key,parcelable)
             }
+
+        override fun put(bundle: Bundle, key: String) = bundle.putParcelable(key,parcelable)
+
 
         override fun <T : Parcelable> parcelable() = parcelable as T
     }

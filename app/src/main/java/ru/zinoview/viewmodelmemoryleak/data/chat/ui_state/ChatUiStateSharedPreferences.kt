@@ -27,7 +27,7 @@ interface ChatUiStateSharedPreferences : UiStateSharedPreferences<ChatUiStates.B
         }
 
         override fun read(key: Unit, map: (ChatUiStates.Base) -> ChatUiStates)
-             = super.read(key) {base -> base.map()}
+             = super.read(key) { base -> base.map() }
 
     }
 }

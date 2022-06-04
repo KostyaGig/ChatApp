@@ -2,7 +2,9 @@ package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
 interface CloudUnreadMessageIds {
 
-    class Base(
-        private val ids: List<String>
+    data class Base(
+        private val ids: List<String>,
+        private val senderId: String,
+        private val receiverId: String
     ) : CloudUnreadMessageIds
 }

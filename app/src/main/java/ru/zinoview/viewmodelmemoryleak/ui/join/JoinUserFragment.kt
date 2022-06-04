@@ -2,6 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.join
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +40,13 @@ class JoinUserFragment : SaveUiStateFragment<JoinUserViewModel.Base, JoinUiState
     }
 
     private var userProfileImageState: UserProfileImageState  = UserProfileImageState.UnChosen
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState != null) {
+            uiStateViewModel.read(Unit)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -83,14 +91,6 @@ class JoinUserFragment : SaveUiStateFragment<JoinUserViewModel.Base, JoinUiState
             )
 
             userProfileImageState.map(Pair(uiState,view))
-
-//            uiState.forEach { state ->
-//                state.recover(
-//                    ViewWrapper.Image(binding.profileImage,resourceProvider),
-//                    ViewWrapper.Text(binding.nicknameField)
-//                )
-//            }
-
         }
     }
 
@@ -119,4 +119,5 @@ class JoinUserFragment : SaveUiStateFragment<JoinUserViewModel.Base, JoinUiState
 
     override fun koinScopes() = listOf(ScreenScope.Join(), ScreenScope.Connection())
     override fun cleans() = listOf(viewModel)
+    override fun recoverStateAfterLaunch() = true
 }

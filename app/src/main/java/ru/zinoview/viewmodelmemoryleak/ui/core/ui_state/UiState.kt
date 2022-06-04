@@ -4,8 +4,9 @@ import ru.zinoview.viewmodelmemoryleak.core.Mapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.UiMessage
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
+import ru.zinoview.viewmodelmemoryleak.ui.users.BundleUser
 
-interface UiState{
+interface UiState {
 
     fun <T> map(mapper: Mapper<Unit,T>) : T = mapper.map(Unit)
 

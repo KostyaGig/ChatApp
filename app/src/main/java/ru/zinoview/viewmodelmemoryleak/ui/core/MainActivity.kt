@@ -2,6 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.core
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import org.koin.android.ext.android.getKoin
@@ -9,6 +10,8 @@ import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.databinding.ActivityMainBinding
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.*
 import ru.zinoview.viewmodelmemoryleak.ui.join.ImageResult
+import ru.zinoview.viewmodelmemoryleak.ui.users.BundleUser
+
 
 class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity, ActivityLauncher {
 
@@ -28,6 +31,7 @@ class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity, ActivityL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(_binding?.root)
 
@@ -43,7 +47,7 @@ class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity, ActivityL
 
     override fun navigateTo(fragment: Fragment, data: NavigationData) {
         fragmentIntent.saveFragment(fragment)
-        fragment.arguments = data.bundle()
+        fragment.arguments = data.map(Unit)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container, fragment)
@@ -67,4 +71,6 @@ class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity, ActivityL
     override fun changeTitle(title: String) {
         supportActionBar?.title = title
     }
+
+
 }

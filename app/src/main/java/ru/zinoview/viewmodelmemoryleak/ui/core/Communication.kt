@@ -21,4 +21,5 @@ interface Communication<T> : CommunicationObserve<T> {
             liveData.value = value
         }
     }
+
 }

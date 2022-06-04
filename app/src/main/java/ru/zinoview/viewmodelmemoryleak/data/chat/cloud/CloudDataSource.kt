@@ -108,11 +108,9 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, ReadMessage, ShowN
             socketWrapper.connect(READ_MESSAGE)
             val unreadMessageIds = readMessages.unreadMessageIds(messagesStore)
 
+            val data = readMessages.json(json,messagesStore)
 
-            val keys = listOf(ReadMessageKey.Ids(),ReadMessageKey.SenderId(),ReadMessageKey.ReceiverId())
-            val jsonIds = readMessages.json(json,messagesStore,keys)
-
-            socketWrapper.emit(READ_MESSAGE,jsonIds)
+            socketWrapper.emit(READ_MESSAGE,data)
 
             unreadMessageIds.forEach { tag ->
                 notificationService.disconnect(tag)

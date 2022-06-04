@@ -1,10 +1,13 @@
 package ru.zinoview.viewmodelmemoryleak.ui.core.navigation
 
 import android.os.Bundle
+import ru.zinoview.viewmodelmemoryleak.core.Mapper
 
-interface NavigationData {
+interface NavigationData : Mapper<Unit,Bundle> {
 
-    fun bundle() : Bundle = Bundle()
+    override fun map(src: Unit): Bundle = Bundle()
+
+    fun put(src: Bundle) = Unit
 
     fun <T : android.os.Parcelable?> parcelable(bundle: Bundle) : ParcelableWrapper = ParcelableWrapper.Empty
 
@@ -13,12 +16,18 @@ interface NavigationData {
         private val key: String
     ) : NavigationData {
 
-        override fun bundle() =  parcelable.bundle(key)
+        override fun map(src: Unit) =  parcelable.bundle(key)
 
-        override fun <T : android.os.Parcelable?> parcelable(bundle: Bundle)
-            = ParcelableWrapper.Base(bundle.getParcelable<T>(key)!!)
+        override fun put(src: Bundle) = parcelable.put(src,key)
+
+        override fun <T : android.os.Parcelable?> parcelable(bundle: Bundle): ParcelableWrapper {
+            return if (bundle.getParcelable<T>(key) == null) {
+                ParcelableWrapper.Empty
+            } else {
+                ParcelableWrapper.Base(bundle.getParcelable<T>(key)!!)
+            }
+        }
     }
 
     object Empty : NavigationData
-
 }

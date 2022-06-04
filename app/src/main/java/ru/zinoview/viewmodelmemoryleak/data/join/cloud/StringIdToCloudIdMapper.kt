@@ -10,13 +10,16 @@ interface StringIdToCloudIdMapper : Mapper<String, CloudId> {
         private val resourceProvider: ResourceProvider
     ) : StringIdToCloudIdMapper {
 
-        override fun map(id: String) = when (id) {
-            EMPTY_ID -> CloudId.Failure(resourceProvider.string(R.string.nickname_is_empty_text))
-            else -> CloudId.Base(id)
-        }
-    }
+        override fun map(src: String): CloudId {
 
-    private companion object {
-        private const val EMPTY_ID = "-1"
+            return if (src == resourceProvider.string(R.string.nickname_is_empty_text) || src == resourceProvider.string(
+                    R.string.something_went_wrong
+                )
+            ) {
+                CloudId.Failure(src)
+            } else {
+                CloudId.Base(src)
+            }
+        }
     }
 }

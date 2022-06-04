@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat.edit
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Add
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.ui.chat.ChatViewModel
@@ -11,6 +12,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.chat.ui_state.ChatUiStateViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.SnackBar
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.Show
+import ru.zinoview.viewmodelmemoryleak.ui.users.BundleUser
 
 interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit>, SaveState, Add<UiMessage> {
 
@@ -20,7 +22,8 @@ interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit>, SaveState,
     override fun show(arg: Unit) = Unit
     override fun editContent(content: String) = Unit
     override fun disconnect(arg: Unit) = Unit
-    override fun saveState(viewModel: ChatUiStateViewModel, editText: ChatUiState.EditText) = Unit
+    override fun saveState(viewModel: ChatUiStateViewModel, editText: ChatUiState.EditText,bundleUser: BundleUser) = Unit
+    fun saveState(viewModel: ChatUiStateViewModel) = Unit
 
     class Base(
         private val viewWrapper: ViewWrapper,
@@ -38,8 +41,13 @@ interface MessageSession : Disconnect<Unit>, EditContent, Show<Unit>, SaveState,
             this.oldMessage = message.map(oldMapper)
         }
 
-        override fun saveState(viewModel: ChatUiStateViewModel, editText: ChatUiState.EditText)
-            = oldMessage.saveState(viewModel, editText)
+        override fun saveState(viewModel: ChatUiStateViewModel, editText: ChatUiState.EditText,bundleUser: BundleUser ) {
+            oldMessage.saveState(viewModel, editText,bundleUser)
+        }
+
+        override fun saveState(viewModel: ChatUiStateViewModel) {
+            oldMessage.saveState(viewModel,ChatUiState.EditText(),BundleUser.Empty)
+        }
 
         override fun editContent(content: String) = editedMessage.editContent(content)
 

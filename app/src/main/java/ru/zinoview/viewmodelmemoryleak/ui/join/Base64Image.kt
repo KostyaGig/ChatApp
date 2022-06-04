@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.join
 
+import android.R.attr
 import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -9,6 +10,10 @@ import java.io.ByteArrayOutputStream
 import android.util.Base64
 import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
 import androidx.core.graphics.drawable.toBitmap
+import android.R.attr.bitmap
+
+
+
 
 
 interface Base64Image : ru.zinoview.viewmodelmemoryleak.core.join.Base64Image<Uri> {
@@ -16,6 +21,8 @@ interface Base64Image : ru.zinoview.viewmodelmemoryleak.core.join.Base64Image<Ur
     fun base64Image(drawableId: Int): String
 
     fun base64Image(drawable: Drawable): String
+
+    fun base64Image(bitmap: Bitmap) : String
 
     class Base(
         private val resourceProvider: ResourceProvider,
@@ -37,6 +44,13 @@ interface Base64Image : ru.zinoview.viewmodelmemoryleak.core.join.Base64Image<Ur
 
         override fun base64Image(drawable: Drawable): String {
             val bitmap = drawable.toBitmap()
+            bitmap.compress(Bitmap.CompressFormat.PNG, QUALITY, byteArrayOutputStream)
+            val imageBytes = byteArrayOutputStream.toByteArray()
+
+            return Base64.encodeToString(imageBytes, Base64.DEFAULT)
+        }
+
+        override fun base64Image(bitmap: Bitmap): String {
             bitmap.compress(Bitmap.CompressFormat.PNG, QUALITY, byteArrayOutputStream)
             val imageBytes = byteArrayOutputStream.toByteArray()
 

@@ -219,16 +219,16 @@ interface UiMessage :
             override fun <T> map(mapper: Mapper<T>)
                 = mapper.map(id,content = content)
 
-            override fun saveState(viewModel: ChatUiStateViewModel, editText: ChatUiState.EditText) {
+            override fun saveState(viewModel: ChatUiStateViewModel, editText: ChatUiState.EditText,bundleUser: BundleUser) {
                 viewModel.save(ChatUiStates.Base(
                     editText,
-                    ChatUiState.MessageSession(content,id)
+                    ChatUiState.MessageSession(content,id),
                 ))
             }
         }
 
         object Empty : OldMessage {
-            override fun saveState(viewModel: ChatUiStateViewModel, editText: ChatUiState.EditText) {
+            override fun saveState(viewModel: ChatUiStateViewModel, editText: ChatUiState.EditText,bundleUser: BundleUser) {
                 viewModel.save(ChatUiStates.Base(
                     editText,ChatUiState.MessageSession()
                 ))

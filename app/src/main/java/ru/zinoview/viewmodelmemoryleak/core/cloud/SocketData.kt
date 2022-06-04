@@ -4,7 +4,7 @@ import io.socket.client.Socket
 
 interface SocketData : Push {
 
-    class Base(
+   data class Base(
         private val obj: Any
     ) : SocketData {
 

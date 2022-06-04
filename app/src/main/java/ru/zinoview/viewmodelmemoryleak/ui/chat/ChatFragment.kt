@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,9 +26,9 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.Adapter
 import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.ScreenScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
-import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.NavigationData
+import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.ParcelableWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.ui_state.SaveUiStateFragment
-import ru.zinoview.viewmodelmemoryleak.ui.users.UserNavigationData
+import ru.zinoview.viewmodelmemoryleak.ui.users.NavigationData
 
 class ChatFragment : SaveUiStateFragment<ChatViewModel.Base, ChatUiStateViewModel,  ChatFragmentBinding>(
     ChatViewModel.Base::class,
@@ -48,13 +49,31 @@ class ChatFragment : SaveUiStateFragment<ChatViewModel.Base, ChatUiStateViewMode
 
     private var bundleUser: BundleUser = BundleUser.Empty
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val userNavigationData = NavigationData.User(ParcelableWrapper.Empty)
+        val user = userNavigationData.parcelable<BundleUser.Base>(arguments!!)
+
+        bundleUser = if (user is ParcelableWrapper.Empty) {
+            uiStateViewModel.getUser()
+        } else {
+            userNavigationData.parcelable<BundleUser.Base>(arguments!!).parcelable()
+        }
+
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val userNavigationData: NavigationData = UserNavigationData.Base.Fetch
-        val parcelableWrapper =  userNavigationData.parcelable<BundleUser.Base>(arguments!!)
-
-        bundleUser = parcelableWrapper.parcelable()
+        binding.changeOrientation.setOnClickListener {
+            val state = requireActivity().requestedOrientation
+            if (state == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            } else {
+                requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            }
+        }
 
         networkConnectionReceiver = NetworkConnectionReceiver.Base(connectionViewModel)
 
@@ -96,6 +115,7 @@ class ChatFragment : SaveUiStateFragment<ChatViewModel.Base, ChatUiStateViewMode
 
         binding.cancelEditBtn.setOnClickListener {
             messageSession.disconnect(Unit)
+            messageSession.saveState(uiStateViewModel)
         }
 
         binding.sendMessageBtn.setOnClickListener {
@@ -141,12 +161,14 @@ class ChatFragment : SaveUiStateFragment<ChatViewModel.Base, ChatUiStateViewMode
         super.onPause()
 
         val editTextState = ChatUiState.EditText(binding.messageField.text.toString())
-        messageSession.saveState(uiStateViewModel, editTextState)
+        messageSession.saveState(uiStateViewModel, editTextState,bundleUser)
 
         viewModel.showProcessingMessages()
         // todo make user offline when he leaves the app
         userStatusViewModel.offline()
         userStatusViewModel.clean()
+
+        uiStateViewModel.saveUser(bundleUser)
     }
 
     override fun back(navigation: Navigation) = navigation.exit()
@@ -156,5 +178,5 @@ class ChatFragment : SaveUiStateFragment<ChatViewModel.Base, ChatUiStateViewMode
 
     override fun koinScopes() = listOf(ScreenScope.Connection(), ScreenScope.Chat())
     override fun cleans() = listOf(connectionViewModel,viewModel)
-
+    override fun recoverStateAfterLaunch() = false
 }

@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.join.cloud
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketData
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
 import ru.zinoview.viewmodelmemoryleak.core.join.JoinUserId
@@ -20,8 +21,7 @@ interface CloudDataSource : Disconnect<Unit>, AbstractCloudDataSource, JoinUserI
 
         override fun joinedUserId(image: ImageProfile, nickname: String, block: (CloudId) -> Unit) {
             socketWrapper.subscribe(JOIN_USER) { data ->
-                val id = data.first() as Int
-                val cloudId = mapper.map(id.toString())
+                val cloudId = mapper.map(data.first() as String)
                 block.invoke(cloudId)
             }
 
