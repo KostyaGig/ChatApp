@@ -3,6 +3,7 @@ const socket = require('socket.io'); //requires socket.io module
 const crypto = require('crypto'); // for uuid
 
 const fs = require('fs');
+const admin = require("firebase-admin");
 const app = express();
 
 var PORT = process.env.PORT || 3000;
@@ -34,46 +35,50 @@ io.on('connection', (socket) => {
         var image = clientUser['image']
 
         if (nickName == '') {
-        	io.emit('join_user', -1)
+            console.log('emit empty name')
+            io.emit("join_user", "Nickname is empty")
         } else {
-        	MongoClient.connect(url, async function (err, db) {
-            if (err) throw err;
-            var database = db.db("chat_app_db");
-            var users = database.collection("user")
+            MongoClient.connect(url, async function (err, db) {
+                if (err) throw err;
+                var database = db.db("chat_app_db");
+                var users = database.collection("user")
 
-            var query = {
-                userNickName: nickName
-            }
+                var query = {
+                    userNickName: nickName
+                }
 
-            var user = await users.findOne(query)
+                var user = await users.findOne(query)
 
-            if (user != null) {
-                var userId = user['userId']
-                io.emit('join_user', userId)
-            } else {
-                var count = users.count({}, function (error, count) {
-                    if (error) return 0;
+                if (user != null) {
+                    var userId = user['userId']
+                    io.emit('join_user', "" + userId)
+                } else {
+                    users.count({}, function (error, count) {
+                        if (error)  {
+                            io.emit('join_user', "Something went wrong on the server")
+                            console.log('error', error)
+                            return 0;
+                        }
 
-                    var userId = count + 1
-                    console.log(userId, nickName)
+                        var userId = count + 1
+                        console.log(userId, nickName)
 
-                    var user = {
-                        userId: userId,
-                        userNickName: nickName,
-                        userImage: image
-                    }
+                        var user = {
+                            userId: userId,
+                            userNickName: nickName,
+                            userImage: image
+                        }
 
-                    database.collection("user").insertOne(user, function (err, res) {
-                        if (err) throw err;
+                        database.collection("user").insertOne(user, function (err, res) {
+                            if (err) throw err;
 
-                        io.emit('join_user', userId)
+                            console.log("emit id ",userId)
+                            io.emit('join_user', "" + userId)
+                        });
                     });
-                });
-            }
-            db.close();
-        })
+                }
+            })
         }
-
     })
 
     socket.on('users', async (user) => {
@@ -450,11 +455,16 @@ io.on('connection', (socket) => {
     })
 
     socket.on('read_message', async (data) => {
-        var jsonIds = JSON.parse(data.ids)['ids']
-        var senderId = data.senderId
-        var receiverId = data.receiverId
 
-        if (typeof jsonIds !== 'undefined') {
+        var json = JSON.parse(data)
+
+        var jsonIds = json['ids']
+        var senderId = json['senderId']
+        var receiverId = json['receiverId']
+
+        console.log('ids', jsonIds, 'sender ',senderId, 'receiver ',receiverId)
+
+        if (typeof jsonIds !== 'undefined' && jsonIds.length  !== 0) {
 
             var firstQuery = {
                 senderId: senderId,
@@ -629,6 +639,8 @@ io.on('connection', (socket) => {
 
     var isTypingYet = false
 
+    var lastSent = true
+
     socket.on('to_type_message', (message) => {
         var objectMessage = Object()
         var isTyping = message['isTyping']
@@ -636,22 +648,28 @@ io.on('connection', (socket) => {
 
         objectMessage.senderNickName = senderNickName
 
+        objectMessage.isTyping = true
+
         if (isTyping) {
             if (isTypingYet == false) {
                 objectMessage.isTyping = true
                 isTypingYet = true
-                io.emit('to_type_message', objectMessage)
                 console.log('push', objectMessage)
             }
         } else {
             if (isTypingYet == true) {
                 objectMessage.isTyping = false
                 isTypingYet = false
-                io.emit('to_type_messaage', objectMessage)
                 console.log('push', objectMessage)
             }
         }
-    })
+
+        if (objectMessage.isTyping !== lastSent) {
+        	io.emit('to_type_message', objectMessage)
+        	lastSent = objectMessage.isTyping
+        }
+
+  })
 
 
     var MongoClient = require('mongodb').MongoClient;
