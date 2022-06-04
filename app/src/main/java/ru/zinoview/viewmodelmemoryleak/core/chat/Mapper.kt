@@ -20,6 +20,13 @@ interface Mapper<T> : FailureMapper<T,String>{
             senderNickname: String
         )  = empty
 
+        override fun mapReadEdited(
+            id: String,
+            senderId: String,
+            content: String,
+            senderNickname: String
+        ) = empty
+
         override fun mapRead(
             id: String,
             senderId: String,
@@ -34,7 +41,21 @@ interface Mapper<T> : FailureMapper<T,String>{
             senderNickname: String
         ) = empty
 
+        override fun mapReceivedEdited(
+            id: String,
+            senderId: String,
+            content: String,
+            senderNickname: String
+        ) = empty
+
         override fun mapUnRead(
+            id: String,
+            senderId: String,
+            content: String,
+            senderNickname: String
+        ) = empty
+
+        override fun mapUnReadEdited(
             id: String,
             senderId: String,
             content: String,
@@ -65,6 +86,13 @@ interface Mapper<T> : FailureMapper<T,String>{
         senderNickname: String
     ): T
 
+    fun mapReceivedEdited(
+        id: String,
+        senderId: String,
+        content: String,
+        senderNickname: String
+    ): T
+
     fun mapRead(
         id: String,
         senderId: String,
@@ -72,7 +100,21 @@ interface Mapper<T> : FailureMapper<T,String>{
         senderNickname: String
     ) : T
 
+    fun mapReadEdited(
+        id: String,
+        senderId: String,
+        content: String,
+        senderNickname: String
+    ) : T
+
     fun mapUnRead(
+        id: String,
+        senderId: String,
+        content: String,
+        senderNickname: String
+    ) : T
+
+    fun mapUnReadEdited(
         id: String,
         senderId: String,
         content: String,

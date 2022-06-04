@@ -6,6 +6,7 @@ import android.widget.TextView
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
+import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
 import ru.zinoview.viewmodelmemoryleak.ui.users.BundleUser
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditContent
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener
@@ -65,6 +66,7 @@ interface UiMessage :
         private val isFounded: Boolean = false,
         private val senderNickname: String = "",
         private val senderId: String = "",
+        private val isEdited: Boolean
     ) : UiMessage {
 
         override fun bind(view: TextView) {
@@ -105,8 +107,9 @@ interface UiMessage :
         private val content: String,
         private val senderId: String,
         private val senderNickname: String,
-        isRead: Boolean
-    ) : Base(id,content,isRead,false,senderNickname,senderId) {
+        isRead: Boolean,
+        private val isEdited: Boolean
+    ) : Base(id,content,isRead,false,senderNickname,senderId,isEdited) {
 
         override fun bind(view: TextView, stateImage: ImageView, editImage: ImageView) {
             super.bind(view, stateImage, editImage)
@@ -121,20 +124,53 @@ interface UiMessage :
         override fun show(view: ViewWrapper) = view.show(Unit,content)
 
 
-        data class Read(
+        abstract class Read(
             private val id: String,
             private val content: String,
             private val senderId: String,
-            private val senderNickname: String
-        ) : Sent(id, content, senderId, senderNickname,true)
+            private val senderNickname: String,
+            private val isEdited: Boolean
+        ) : Sent(id, content, senderId, senderNickname,true, isEdited) {
+
+            data class Base(
+                private val id: String,
+                private val senderId: String,
+                private val content: String,
+                private val senderNickname: String
+            ) : Read(id, senderId, content, senderNickname,false)
+
+            data class Edited(
+                private val id: String,
+                private val senderId: String,
+                private val content: String,
+                private val senderNickname: String
+            ) : Read(id, senderId, content, senderNickname,true)
 
 
-        class Unread(
+        }
+
+        abstract class Unread(
             private val id: String,
             private val content: String,
             private val senderId: String,
-            private val senderNickname: String
-        ) : Sent(id,content, senderId, senderNickname,false)
+            private val senderNickname: String,
+            private val isEdited: Boolean
+        ) : Sent(id,content, senderId, senderNickname,false,isEdited) {
+
+            class Base(
+                private val id: String,
+                private val senderId: String,
+                private val content: String,
+                private val senderNickname: String
+            ) : Unread(id, senderId, content, senderNickname,false)
+
+            class Edited(
+                private val id: String,
+                private val senderId: String,
+                private val content: String,
+                private val senderNickname: String
+            ) : Unread(id, senderId, content, senderNickname,true)
+        }
 
     }
 
@@ -143,26 +179,33 @@ interface UiMessage :
         private val content: String,
         private val senderId: String,
         private val senderNickname: String,
-        private val isFounded: Boolean
-    ) : Base(id,content,false,isFounded,senderNickname,senderId) {
+        private val isFounded: Boolean,
+        private val isEdited: Boolean
+    ) : Base(id,content,false,isFounded,senderNickname,senderId,isEdited) {
 
-        data class Base(
+        override fun <T> map(mapper: Mapper<T>) = mapper.map(id,senderId,content, senderNickname)
+
+        class Base(
             private val id: String,
-            private val content: String,
             private val senderId: String,
+            private val content: String,
             private val senderNickname: String
-        ) : Received(id, content, senderId, senderNickname,false) {
+        ) : Received(id, senderId, content, senderNickname,false,false)
 
-            override fun <T> map(mapper: Mapper<T>) = mapper.map(id,senderId,content, senderNickname)
+        class Edited(
+            private val id: String,
+            private val senderId: String,
+            private val content: String,
+            private val senderNickname: String
+        ) : Received(id, senderId, content, senderNickname,false,true)
 
-        }
 
         data class Found(
             private val id: String,
             private val content: String,
             private val senderId: String,
             private val senderNickname: String
-        ) : Received(id, content, senderId, senderNickname,true)
+        ) : Received(id, content, senderId, senderNickname,true,false)
 
     }
 
@@ -171,7 +214,7 @@ interface UiMessage :
         private val senderId: String,
         private val content: String,
         private val senderNickname: String
-    ) : Base(senderId,content,false) {
+    ) : Base(senderId,content,false,false,senderNickname,senderId,false) {
 
         override fun bind(view: TextView, stateImage: ImageView,editImage: ImageView) {
             super.bind(view)

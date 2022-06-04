@@ -26,6 +26,7 @@
         <entry key="app/src/main/res/layout/activity_notification_message.xml" value="0.3098958333333333" />
         <entry key="app/src/main/res/layout/activity_tap.xml" value="0.26944444444444443" />
         <entry key="app/src/main/res/layout/chat_fragment.xml" value="0.24166666666666667" />
+        <entry key="app/src/main/res/layout/edited_read.xml" value="0.29259259259259257" />
         <entry key="app/src/main/res/layout/empty.xml" value="0.30512820512820515" />
         <entry key="app/src/main/res/layout/empty_screen.xml" value="0.26944444444444443" />
         <entry key="app/src/main/res/layout/error.xml" value="0.13333333333333333" />

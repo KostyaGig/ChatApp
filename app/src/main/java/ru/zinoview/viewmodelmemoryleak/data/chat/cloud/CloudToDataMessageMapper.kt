@@ -11,7 +11,8 @@ interface CloudToDataMessageMapper : Mapper<DataMessage> {
         senderId: String = "-1",
         content: String = "",
         senderNickname: String = "",
-        isRead: Boolean
+        isRead: Boolean,
+        isEdited: Boolean
     ) : DataMessage
 
     class Base(
@@ -23,16 +24,29 @@ interface CloudToDataMessageMapper : Mapper<DataMessage> {
             senderId: String,
             content: String,
             senderNickname: String,
-            isRead: Boolean
+            isRead: Boolean,
+            isEdited: Boolean
         ): DataMessage {
             return if (idSharedPreferences.read(Unit) == senderId) {
                 if (isRead) {
-                    DataMessage.Sent.Read(id, senderId, content, senderNickname)
+                    if (isEdited) {
+                        DataMessage.Sent.Read.Edited(id, senderId, content, senderNickname)
+                    } else {
+                        DataMessage.Sent.Read.Base(id, senderId, content, senderNickname)
+                    }
                 } else {
-                    DataMessage.Sent.Unread(id, senderId, content, senderNickname)
+                    if (isEdited) {
+                        DataMessage.Sent.Unread.Edited(id, senderId, content, senderNickname)
+                    } else {
+                        DataMessage.Sent.Unread.Base(id, senderId, content, senderNickname)
+                    }
                 }
             } else {
-                DataMessage.Received(id, senderId, content, senderNickname)
+                if (isEdited) {
+                    DataMessage.Received.Edited(id, senderId, content, senderNickname)
+                } else {
+                    DataMessage.Received.Base(id, senderId, content, senderNickname)
+                }
             }
         }
 

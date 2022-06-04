@@ -14,27 +14,45 @@ interface DataToDomainMessageMapper : Mapper<DomainMessage> {
             senderId: String,
             content: String,
             senderNickname: String
-        ): DomainMessage
-                = DomainMessage.Received(
-            id,senderId,content,senderNickname
-        )
+        ) = DomainMessage.Received.Base(id,senderId,content,senderNickname)
+
+        override fun mapReceivedEdited(
+            id: String,
+            senderId: String,
+            content: String,
+            senderNickname: String
+        ) = DomainMessage.Received.Edited(id,senderId,content,senderNickname)
 
         override fun mapProgress(senderId: String, content: String,senderNickname: String)
             = DomainMessage.Progress(senderId,content,senderNickname)
+
+        override fun mapReadEdited(
+            id: String,
+            senderId: String,
+            content: String,
+            senderNickname: String
+        ) = DomainMessage.Sent.Read.Edited(id,senderId,content,senderNickname)
 
         override fun mapRead(
             id: String,
             senderId: String,
             content: String,
             senderNickname: String
-        ) = DomainMessage.Sent.Read(id,senderId,content,senderNickname)
+        ) = DomainMessage.Sent.Read.Base(id,senderId,content,senderNickname)
 
         override fun mapUnRead(
             id: String,
             senderId: String,
             content: String,
             senderNickname: String
-        ) =  DomainMessage.Sent.Unread(id,senderId,content,senderNickname)
+        ) = DomainMessage.Sent.Unread.Base(id,senderId,content,senderNickname)
+
+        override fun mapUnReadEdited(
+            id: String,
+            senderId: String,
+            content: String,
+            senderNickname: String
+        ) = DomainMessage.Sent.Unread.Edited(id,senderId,content,senderNickname)
 
         override fun mapIsTyping(senderNickname: String)
             = DomainMessage.Typing.Is(senderNickname)

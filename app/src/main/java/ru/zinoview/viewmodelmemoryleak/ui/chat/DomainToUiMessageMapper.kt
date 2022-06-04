@@ -25,7 +25,7 @@ interface DomainToUiMessageMapper : Mapper<UiMessage> {
         override fun mapProgress(senderId: String, content: String,senderNickname: String)
             = UiMessage.ProgressMessage(senderId,content,senderNickname)
 
-        override fun mapRead(
+        override fun mapReadEdited(
             id: String,
             senderId: String,
             content: String,

@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.chat.ShowNotificationMessage
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketData
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper

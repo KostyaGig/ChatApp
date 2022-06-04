@@ -27,6 +27,7 @@ interface CloudMessage : Message, CloudSame {
         private val content: String,
         private val senderNickName: String,
         private val isRead: Boolean,
+        private val isEdited: Boolean = false
     ) : CloudMessage {
 
         override fun toString(): String {
@@ -39,7 +40,7 @@ interface CloudMessage : Message, CloudSame {
             = mapper.map(id, senderId, content, senderNickName)
 
         override fun map(mapper: CloudToDataMessageMapper)
-            = mapper.map(id, senderId, content, senderNickName, isRead)
+            = mapper.map(id, senderId, content, senderNickName, isRead,isEdited)
 
         override fun same(item: CloudMessage) = item.sameSenderId(senderId)
         override fun sameSenderId(senderId: String) = this.senderId == senderId
@@ -139,7 +140,7 @@ interface CloudMessage : Message, CloudSame {
                 = mapper.map(id, senderId, content, senderNickname)
 
         override fun map(mapper: CloudToDataMessageMapper)
-             = mapper.map(id, senderId, content, senderNickname, isRead)
+             = mapper.map(id, senderId, content, senderNickname, isRead,false)
 
         fun updated(content: String) = Test(id,senderId, content,isRead ,senderNickname)
 
