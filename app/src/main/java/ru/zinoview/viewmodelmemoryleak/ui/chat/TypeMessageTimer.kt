@@ -26,7 +26,7 @@ interface TypeMessageTimer {
             val currentTime = time.time()
             val difference = currentTime - timeOfTimer
 
-            Log.d("zinoviewk2","stop typing,$currentTime")
+            Log.d("zinoviewk2","stop typing,difference $difference")
 
             if (difference >= MAX_TIME_AFTER_STOP_TYPING) {
                 viewModel.toTypeMessage(false)

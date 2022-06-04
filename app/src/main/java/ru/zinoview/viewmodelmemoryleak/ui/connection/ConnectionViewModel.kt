@@ -19,10 +19,6 @@ interface ConnectionViewModel : CommunicationObserve<UiConnection>,Connection,Up
         private val mapper: DataToUiConnectionMapper
     ) : BaseViewModel<UiConnection>(communication, listOf(communication)), ConnectionViewModel {
 
-        init {
-            Log.d("zinoviewk","ConnectionViewModel -> Init")
-        }
-
         override fun connection() {
             work.doBackground(viewModelScope) {
                 interactor.observe { data ->

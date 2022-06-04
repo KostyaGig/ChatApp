@@ -11,7 +11,8 @@ class DomainModule : Module {
         single<ConnectionInteractor> {
             ConnectionInteractor.Base(
                 get(),
-                DataToDomainConnectionMapper.Base()
+                DataToDomainConnectionMapper.Base(),
+                get()
             )
         }
     }
