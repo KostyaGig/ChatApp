@@ -436,9 +436,11 @@ io.on('connection', (socket) => {
                 messages.forEach(function (item, index, array) {
                     var message = Object();
                     var editedMessageContent = item.content
+                    var isEdited = item.isEdited;
 
                     if (messageId == item.id) {
                         editedMessageContent = content
+                        isEdited = true;
                     }
 
                     message.id = item.id
@@ -447,7 +449,7 @@ io.on('connection', (socket) => {
                     message.isRead = item.isRead;
                     message.senderNickName = item.senderNickName;
 
-                    message.isEdited = true;
+                    message.isEdited = isEdited;
 
                     listOfMessages.push(message)
                 })
@@ -518,11 +520,12 @@ io.on('connection', (socket) => {
                                 readMessage.content = message.content;
                                 readMessage.isRead = true
                                 readMessage.senderNickName = message.senderNickName;
-                                readMessage.isEdited = message.isEdited;
 
                                 listOfReadMessages.push(readMessage)
                             }
                         })
+
+                         console.log('read messages',listOfReadMessages)
 
 
                         var willBeReadMessagesIndexes = []
@@ -546,11 +549,14 @@ io.on('connection', (socket) => {
                             willBeReadMessagesIndexes.forEach(function (value) {
                                 var readMessage = messages[value]
                                 readMessage.isRead = true
+
                                 messages[value] = readMessage
                             })
                         }
 
                         io.emit('messages', messages)
+
+                        console.log('update read messages FIRST', messages)
 
                         var jsonMessages = {
                             messages: messages
@@ -558,7 +564,7 @@ io.on('connection', (socket) => {
 
                         var newMessages = { $set: jsonMessages}
 
-                        messagesCollection.updateOne(secondQuery,newMessages);
+                        messagesCollection.updateOne(firstQuery,newMessages);
                     })
 
                 }
@@ -591,6 +597,7 @@ io.on('connection', (socket) => {
                         })
 
 
+                            console.log('read messages',listOfReadMessages)
                         var willBeReadMessagesIndexes = []
                         var lastReadMessage = listOfReadMessages[listOfReadMessages.length - 1]
 
@@ -621,6 +628,8 @@ io.on('connection', (socket) => {
                         var jsonMessages = {
                             messages: messages
                         }
+
+                        console.log('update read messages SECOND', messages)
 
                         var newMessages = { $set: jsonMessages}
 
