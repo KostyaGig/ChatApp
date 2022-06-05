@@ -8,4 +8,5 @@ interface MessageBind : Bind<TextView> {
 
     fun bind(view: TextView, stateImage: ImageView, editImage: ImageView) = Unit
     fun bindNickName(view: TextView) = Unit
+    fun bindEditedText(view: TextView) = Unit
 }

@@ -52,7 +52,7 @@ interface DomainMessage : Message {
             ) : Read(id, senderId, content, senderNickname) {
 
                 override fun <T> map(mapper: Mapper<T>): T
-                        = mapper.mapReadEdited(id, senderId, content, senderNickname)
+                        = mapper.mapReceivedEdited(id, senderId, content, senderNickname)
             }
 
             data class Base(
@@ -63,7 +63,7 @@ interface DomainMessage : Message {
             ) : Read(id, senderId, content, senderNickname) {
 
                 override fun <T> map(mapper: Mapper<T>): T
-                    = mapper.mapReadEdited(id, senderId, content, senderNickname)
+                    = mapper.mapRead(id, senderId, content, senderNickname)
             }
         }
 
@@ -93,7 +93,7 @@ interface DomainMessage : Message {
                 private val senderNickname: String
             ) : Unread(id, senderId, content, senderNickname) {
                 override fun <T> map(mapper: Mapper<T>): T
-                        = mapper.mapReadEdited(id, senderId, content, senderNickname)
+                        = mapper.mapUnRead(id, senderId, content, senderNickname)
             }
         }
     }

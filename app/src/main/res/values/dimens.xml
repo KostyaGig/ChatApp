@@ -12,4 +12,5 @@
     <dimen name="user_nick_name_tv_size">18sp</dimen>
     <dimen name="name_content_message_container_margin">20dp</dimen>
     <dimen name="content_nick_name_tv_space">5dp</dimen>
+    <dimen name="edit_container_padding">7dp</dimen>
 </resources>

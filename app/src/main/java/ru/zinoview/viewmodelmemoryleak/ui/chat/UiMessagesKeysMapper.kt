@@ -56,7 +56,7 @@ interface UiMessagesKeysMapper {
                 is UiMessage.Sent.Read -> READ
                 is UiMessage.Sent.Unread -> UNREAD
                 is UiMessage.ProgressMessage -> PROGRESS
-                is UiMessage.Received.Base -> RECEIVED
+                is UiMessage.Received -> RECEIVED
                 is UiMessage.Progress, UiMessage.Empty, is UiMessage.Typing.IsNot,is UiMessage.Empty,  -> EMPTY
                 is UiMessage.Typing.Is -> TYPING
                 is UiMessage.Received.Found -> FOUND

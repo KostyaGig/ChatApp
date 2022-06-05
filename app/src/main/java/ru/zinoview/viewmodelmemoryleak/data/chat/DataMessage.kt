@@ -60,7 +60,7 @@ interface DataMessage : Message {
                 private val senderNickname: String
             ) : Read(id, senderId, content, senderNickname) {
                 override fun <T> map(mapper: Mapper<T>): T
-                    = mapper.mapReadEdited(id, senderId, content, senderNickname)
+                    = mapper.mapRead(id, senderId, content, senderNickname)
             }
 
         }
@@ -89,7 +89,7 @@ interface DataMessage : Message {
                 private val senderNickname: String
             ) : Unread(id, senderId, content, senderNickname) {
                 override fun <T> map(mapper: Mapper<T>): T
-                    = mapper.mapReadEdited(id, senderId, content, senderNickname)
+                    = mapper.mapUnRead(id, senderId, content, senderNickname)
             }
         }
     }

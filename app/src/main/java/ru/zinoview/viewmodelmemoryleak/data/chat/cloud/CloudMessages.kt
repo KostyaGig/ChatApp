@@ -31,7 +31,7 @@ interface CloudMessage : Message, CloudSame {
     ) : CloudMessage {
 
         override fun toString(): String {
-            return "id msg $id"
+            return "id msg $id, isEdited $isEdited, content $content"
         }
 
         object Empty : Base("","-1","","",false)

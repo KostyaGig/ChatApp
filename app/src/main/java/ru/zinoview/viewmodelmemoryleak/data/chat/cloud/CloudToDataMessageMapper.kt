@@ -30,22 +30,22 @@ interface CloudToDataMessageMapper : Mapper<DataMessage> {
             return if (idSharedPreferences.read(Unit) == senderId) {
                 if (isRead) {
                     if (isEdited) {
-                        DataMessage.Sent.Read.Edited(id, senderId, content, senderNickname)
+                        DataMessage.Sent.Read.Edited(id, senderId,content,  senderNickname)
                     } else {
-                        DataMessage.Sent.Read.Base(id, senderId, content, senderNickname)
+                        DataMessage.Sent.Read.Base(id, senderId,content, senderNickname)
                     }
                 } else {
                     if (isEdited) {
-                        DataMessage.Sent.Unread.Edited(id, senderId, content, senderNickname)
+                        DataMessage.Sent.Unread.Edited(id, senderId,content,  senderNickname)
                     } else {
-                        DataMessage.Sent.Unread.Base(id, senderId, content, senderNickname)
+                        DataMessage.Sent.Unread.Base(id, senderId,content, senderNickname)
                     }
                 }
             } else {
                 if (isEdited) {
                     DataMessage.Received.Edited(id, senderId, content, senderNickname)
                 } else {
-                    DataMessage.Received.Base(id, senderId, content, senderNickname)
+                    DataMessage.Received.Edited(id, senderId, content, senderNickname)
                 }
             }
         }

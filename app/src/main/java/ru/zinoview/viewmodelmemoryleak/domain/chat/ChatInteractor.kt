@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.domain.chat
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.*
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatRepository
@@ -45,6 +46,7 @@ interface ChatInteractor : Messages<DomainMessage>, SendMessage,
         override suspend fun messages(receiverId: String,block: (List<DomainMessage>) -> Unit) {
             chatRepository.messages(receiverId) { dataMessages ->
                 val domainMessages = dataMessages.map { it.map(mapper)}
+
                 block.invoke(domainMessages)
             }
         }

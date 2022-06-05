@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -30,6 +31,7 @@ interface UiMessage :
 
     override fun bind(view: TextView) = Unit
     override fun bindNickName(view: TextView) = Unit
+    override fun bindEditedText(view: TextView) = Unit
 
     override fun changeTitle(arg: Pair<ToolbarActivity, BundleUser>) = Unit
 
@@ -82,6 +84,10 @@ interface UiMessage :
             stateImage.visibility = View.GONE
         }
 
+        override fun bindEditedText(view: TextView) {
+            if (isEdited) view.visibility = View.VISIBLE else view.visibility = View.GONE
+        }
+
         override fun isItemTheSame(item: UiMessage): Boolean {
             return item.same(id) && item.sameFound(isFounded)
         }
@@ -126,8 +132,8 @@ interface UiMessage :
 
         abstract class Read(
             private val id: String,
-            private val content: String,
             private val senderId: String,
+            private val content: String,
             private val senderNickname: String,
             private val isEdited: Boolean
         ) : Sent(id, content, senderId, senderNickname,true, isEdited) {
@@ -151,8 +157,8 @@ interface UiMessage :
 
         abstract class Unread(
             private val id: String,
-            private val content: String,
             private val senderId: String,
+            private val content: String,
             private val senderNickname: String,
             private val isEdited: Boolean
         ) : Sent(id,content, senderId, senderNickname,false,isEdited) {
@@ -176,8 +182,8 @@ interface UiMessage :
 
     abstract class Received(
         private val id: String,
-        private val content: String,
         private val senderId: String,
+        private val content: String,
         private val senderNickname: String,
         private val isFounded: Boolean,
         private val isEdited: Boolean
@@ -185,19 +191,22 @@ interface UiMessage :
 
         override fun <T> map(mapper: Mapper<T>) = mapper.map(id,senderId,content, senderNickname)
 
-        class Base(
+        data class Base(
             private val id: String,
             private val senderId: String,
             private val content: String,
             private val senderNickname: String
         ) : Received(id, senderId, content, senderNickname,false,false)
 
-        class Edited(
+        data class Edited(
             private val id: String,
             private val senderId: String,
             private val content: String,
             private val senderNickname: String
-        ) : Received(id, senderId, content, senderNickname,false,true)
+        ) : Received(id, senderId, content, senderNickname,false,true) {
+
+
+        }
 
 
         data class Found(
@@ -228,10 +237,14 @@ interface UiMessage :
 
     interface Typing : UiMessage {
 
-        abstract class Base(private val message: String) : Typing {
+        abstract class Base(private val message: String,private val showMessage: Boolean = true) : Typing {
 
-            override fun changeTitle(pair: Pair<ToolbarActivity, BundleUser>)
-                = pair.first.changeTitle(message)
+            override fun changeTitle(pair: Pair<ToolbarActivity, BundleUser>) {
+                if (showMessage)
+                    pair.first.changeTitle(message)
+                else
+                    pair.second.changeTitle(pair.first)
+            }
 
         }
 
@@ -244,9 +257,7 @@ interface UiMessage :
             }
         }
 
-         class IsNot(
-             message: String
-         ) : Base(message)
+         object IsNot : Base("",false)
 
     }
 

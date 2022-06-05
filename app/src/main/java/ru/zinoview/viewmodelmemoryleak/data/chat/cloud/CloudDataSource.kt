@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.chat.ShowNotificationMessage
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketData
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
@@ -121,6 +122,7 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, ReadMessage, ShowN
             socketWrapper.subscribe(TO_TYPE_MESSAGE) { cloudData ->
                 val jsonTypingMessage = json.json(cloudData.first())
                 val typingMessage = json.objectFromJson(jsonTypingMessage,TypingMessageValue::class.java).map()
+
 
                 messagesStore.add(typingMessage)
                 messagesStore.remove(typingMessage)

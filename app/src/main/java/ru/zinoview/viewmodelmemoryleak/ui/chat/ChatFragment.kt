@@ -2,6 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -132,6 +133,7 @@ class ChatFragment : SaveUiStateFragment<ChatViewModel.Base, ChatUiStateViewMode
         userStatusViewModel.online()
 
         viewModel.observe(this) { messages ->
+            Log.d("zinoviewk","message last state ${messages.last()}")
             messages.last().changeTitle(
                 Pair(requireActivity() as ToolbarActivity,bundleUser)
             )

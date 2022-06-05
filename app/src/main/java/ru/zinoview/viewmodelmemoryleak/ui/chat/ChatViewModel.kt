@@ -49,7 +49,6 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
             }
 
         override fun messages(receiverId: String) {
-            Log.d("zinoviewk","GET MESSAGES ")
             communication.postValue(listOf(UiMessage.Empty))
             work.doBackground(viewModelScope) {
                 interactor.messages(receiverId) { domain ->
