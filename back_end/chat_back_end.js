@@ -168,6 +168,7 @@ io.on('connection', (socket) => {
         newMessage.content = clientMessage.content;
         newMessage.isRead = false;
         newMessage.senderNickName = clientMessage.senderNickName;
+        newMessage.isEdited = false;
 
 
         MongoClient.connect(url, async function (err, db) {
@@ -194,6 +195,7 @@ io.on('connection', (socket) => {
                     message.content = item.content
                     message.senderNickName = item.senderNickName
                     message.isRead = item.isRead
+                    message.isEdited = item.isEdited;
 
                     listOfMessages.push(message)
                 })
@@ -221,6 +223,7 @@ io.on('connection', (socket) => {
                         message.content = item.content
                         message.senderNickName = item.senderNickName
                         message.isRead = item.isRead
+                        message.isEdited = item.isEdited;
 
                         listOfMessages.push(message)
                     })
@@ -247,6 +250,7 @@ io.on('connection', (socket) => {
                         messages: listOfMessages
                     }
 
+
                     io.emit('messages', listOfMessages)
                     messagesCollection.insertOne(json)
                 }
@@ -269,26 +273,26 @@ io.on('connection', (socket) => {
     function sendNotification(messageId, senderNickName, content) {
 
 
-        offlineUserNotificationTokens.forEach(function (item, index, array) {
-            var notificationToken = item
+        // offlineUserNotificationTokens.forEach(function (item, index, array) {
+        //     var notificationToken = item
 
-            const message = {
-                data: {
-                    messageId: messageId,
-                    nickName: senderNickName,
-                    content: content
-                },
-                token: notificationToken
-            };
+        //     const message = {
+        //         data: {
+        //             messageId: messageId,
+        //             nickName: senderNickName,
+        //             content: content
+        //         },
+        //         token: notificationToken
+        //     };
 
-            admin.messaging().send(message)
-                .then((response) => {
-                    console.log('Successfully sent message:', response);
-                })
-                .catch((error) => {
-                    console.log('Error sending message:', error);
-                });
-        })
+        //     admin.messaging().send(message)
+        //         .then((response) => {
+        //             console.log('Successfully sent message:', response);
+        //         })
+        //         .catch((error) => {
+        //             console.log('Error sending message:', error);
+        //         });
+        // })
 
     }
 
@@ -330,6 +334,9 @@ io.on('connection', (socket) => {
                     message.isRead = item.isRead;
                     message.senderNickName = item.senderNickName;
 
+                    message.isEdited = item.isEdited;
+
+
                     listOfMessages.push(message)
                 })
 
@@ -346,6 +353,8 @@ io.on('connection', (socket) => {
                         message.content = item.content;
                         message.isRead = item.isRead;
                         message.senderNickName = item.senderNickName;
+
+                        message.isEdited = item.isEdited;
 
                         listOfMessages.push(message)
                     })
@@ -389,9 +398,11 @@ io.on('connection', (socket) => {
                 messages.forEach(function (item, index, array) {
                     var message = Object();
                     var editedMessageContent = item.content
+                    var isEdited = item.isEdited;
 
                     if (messageId == item.id) {
                         editedMessageContent = content
+                        isEdited = true;
                     }
 
                     message.id = item.id
@@ -399,6 +410,8 @@ io.on('connection', (socket) => {
                     message.content = editedMessageContent;
                     message.isRead = item.isRead;
                     message.senderNickName = item.senderNickName;
+
+                    message.isEdited = isEdited;
 
                     listOfMessages.push(message)
                 })
@@ -433,6 +446,8 @@ io.on('connection', (socket) => {
                     message.content = editedMessageContent;
                     message.isRead = item.isRead;
                     message.senderNickName = item.senderNickName;
+
+                    message.isEdited = true;
 
                     listOfMessages.push(message)
                 })
@@ -503,6 +518,7 @@ io.on('connection', (socket) => {
                                 readMessage.content = message.content;
                                 readMessage.isRead = true
                                 readMessage.senderNickName = message.senderNickName;
+                                readMessage.isEdited = message.isEdited;
 
                                 listOfReadMessages.push(readMessage)
                             }
@@ -568,6 +584,7 @@ io.on('connection', (socket) => {
                                 readMessage.content = message.content;
                                 readMessage.isRead = true
                                 readMessage.senderNickName = message.senderNickName;
+                                readMessage.isEdited = message.isEdited;
 
                                 listOfReadMessages.push(readMessage)
                             }
@@ -639,34 +656,33 @@ io.on('connection', (socket) => {
 
     var isTypingYet = false
 
-    var lastSent = true
-
     socket.on('to_type_message', (message) => {
         var objectMessage = Object()
         var isTyping = message['isTyping']
         var senderNickName = message['senderNickName']
 
+        console.log('TO TYPE MSG ', isTyping)
+
         objectMessage.senderNickName = senderNickName
 
-        objectMessage.isTyping = true
-
         if (isTyping) {
-            if (isTypingYet == false) {
+            if(isTypingYet == false) {
                 objectMessage.isTyping = true
                 isTypingYet = true
-                console.log('push', objectMessage)
+                io.emit('to_type_message',objectMessage)
+                console.log('push',objectMessage)
+            } else {
+                console.log('else', isTyping,isTypingYet)
             }
         } else {
-            if (isTypingYet == true) {
+            if(isTypingYet == true) {
                 objectMessage.isTyping = false
                 isTypingYet = false
-                console.log('push', objectMessage)
+                io.emit('to_type_message',objectMessage)
+                console.log('push',objectMessage)
+            } else {
+                console.log('else', isTyping,isTypingYet)
             }
-        }
-
-        if (objectMessage.isTyping !== lastSent) {
-        	io.emit('to_type_message', objectMessage)
-        	lastSent = objectMessage.isTyping
         }
 
   })
