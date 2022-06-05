@@ -18,14 +18,14 @@ interface DomainToUiMessageMapper : Mapper<UiMessage> {
             senderId: String,
             content: String,
             senderNickname: String
-        ) = UiMessage.Received.Base(id,senderId,content,senderNickname)
+        ) = UiMessage.Received.BaseReceived(id,senderId,content,senderNickname)
 
         override fun mapReceivedEdited(
             id: String,
             senderId: String,
             content: String,
             senderNickname: String
-        ) = UiMessage.Received.Edited(id,senderId,content, senderNickname)
+        ) = UiMessage.Received.EditedReceived(id,senderId,content, senderNickname)
 
         override fun mapProgress(senderId: String, content: String,senderNickname: String)
             = UiMessage.ProgressMessage(senderId,content,senderNickname)
@@ -35,13 +35,13 @@ interface DomainToUiMessageMapper : Mapper<UiMessage> {
             senderId: String,
             content: String,
             senderNickname: String
-        ) = UiMessage.Sent.Read.Base(id,senderId,content ,senderNickname)
+        ) = UiMessage.Sent.Read.BaseReadSent(id,senderId,content ,senderNickname)
         override fun mapReadEdited(
             id: String,
             senderId: String,
             content: String,
             senderNickname: String
-        ) = UiMessage.Sent.Read.Edited(id,senderId,content, senderNickname)
+        ) = UiMessage.Sent.Read.EditedReadSent(id,senderId,content, senderNickname)
 
         override fun mapUnRead(
             id: String,

@@ -2,7 +2,6 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat
 
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
 
@@ -15,10 +14,14 @@ interface TypeMessageTextWatcher : TextWatcher {
         private val scope: CoroutineScope
     ) : TypeMessageTextWatcher {
 
+        private var theLastText = ""
+
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            val textLength = p0.toString()
-            if (textLength.isNotEmpty()) {
-                timer.startTyping()
+            val currentText = p0.toString().trim()
+            if (currentText != theLastText)  {
+                if (currentText.isNotEmpty()) {
+                    timer.startTyping()
+                }
             }
         }
 

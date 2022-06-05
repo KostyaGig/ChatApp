@@ -22,6 +22,8 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.ToolbarActivity
 import ru.zinoview.viewmodelmemoryleak.ui.core.koin_scope.ScreenScope
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.ui.core.ui_state.SaveUiStateFragment
+import ru.zinoview.viewmodelmemoryleak.ui.join.ui_state.ImageUiState
+import ru.zinoview.viewmodelmemoryleak.ui.join.ui_state.JoinUiState
 import ru.zinoview.viewmodelmemoryleak.ui.join.ui_state.UiJoinState
 import ru.zinoview.viewmodelmemoryleak.ui.join.ui_state.JoinUiStateViewModel
 
@@ -53,6 +55,12 @@ class JoinUserFragment : SaveUiStateFragment<JoinUserViewModel.Base, JoinUiState
 
         networkConnectionReceiver = NetworkConnectionReceiver.Base(connectionViewModel)
 
+//        content://com.android.providers.downloads.documents/document/msf%3A17
+//        val bitmap = Bitmap.Base(
+//            requireActivity().contentResolver
+//        ).bitmap(Uri.parse("content://com.android.providers.downloads.documents/document/msf%3A17"))
+//        binding.profileImage.setImageBitmap(bitmap)
+
         binding.joinBtn.setOnClickListener {
             val nickName = text.text(binding.nicknameField)
             viewModel.joinUser(
@@ -80,10 +88,16 @@ class JoinUserFragment : SaveUiStateFragment<JoinUserViewModel.Base, JoinUiState
             connection.changeTitle(requireActivity() as ToolbarActivity)
         }
 
+        val imageUiState = ImageUiState.Base()
         uiStateViewModel.observe(this) { uiState ->
+            Log.d("zinoviewk","STATE $uiState")
+            imageProfile = imageUiState.imageProfile(uiState)
 
-            val imageProfileState = uiState[1]
-            imageProfile = imageProfileState.map(imageProfileState as Mapper<Unit, ImageProfile>)
+//            if (uiState.size >= 2) {
+//                val image = uiState[1] as JoinUiState
+//                image.state()
+//
+//            }
 
             val view = listOf(
                 ViewWrapper.Image(binding.profileImage,resourceProvider),
@@ -119,5 +133,5 @@ class JoinUserFragment : SaveUiStateFragment<JoinUserViewModel.Base, JoinUiState
 
     override fun koinScopes() = listOf(ScreenScope.Join(), ScreenScope.Connection())
     override fun cleans() = listOf(viewModel)
-    override fun recoverStateAfterLaunch() = true
+    override fun recoverStateAfterLaunch() = false
 }

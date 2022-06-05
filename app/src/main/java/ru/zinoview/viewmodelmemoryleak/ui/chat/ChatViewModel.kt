@@ -54,6 +54,8 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
                 interactor.messages(receiverId) { domain ->
                     val uiMessages = domain.map { it.map(mapper) }
 
+                    Log.d("zinoviewk","ui $uiMessages")
+
                     dispatcher.doUi(viewModelScope) {
                         communication.postValue(uiMessages)
                         scroll.add(uiMessages)

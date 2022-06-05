@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.join.ui_state
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.core.Mapper
 import ru.zinoview.viewmodelmemoryleak.ui.chat.view.ViewWrapper
@@ -28,7 +29,13 @@ interface JoinUiState :  UiState, Mapper<Unit,ImageProfile>, IsNotEmpty<Unit> {
         private val imageProfile: ImageProfile
     ):  JoinUiState {
 
-        override fun state(src: Base64Image) = imageProfile.base64Image(src)
+
+        // todo
+        override fun state(src: Base64Image): String {
+            val base64 = imageProfile.base64Image(src)
+            Log.d("zinoviewk","base 64 image $imageProfile")
+            return imageProfile.base64Image(src)
+        }
 
         override fun recover(image: ViewWrapper, text: ViewWrapper)
             = imageProfile.show(image)

@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.data.cache.IdSharedPreferences
 import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
@@ -27,9 +28,12 @@ interface CloudToDataMessageMapper : Mapper<DataMessage> {
             isRead: Boolean,
             isEdited: Boolean
         ): DataMessage {
-            return if (idSharedPreferences.read(Unit) == senderId) {
+            val prefId = idSharedPreferences.read(Unit)
+            Log.d("zinoviewk","pref id $prefId, senderId $senderId, isRead $isRead, isEidted $isEdited")
+            return if (prefId == senderId) {
                 if (isRead) {
                     if (isEdited) {
+                        Log.d("zinoviewk","SENT EDITED")
                         DataMessage.Sent.Read.Edited(id, senderId,content,  senderNickname)
                     } else {
                         DataMessage.Sent.Read.Base(id, senderId,content, senderNickname)
@@ -43,9 +47,10 @@ interface CloudToDataMessageMapper : Mapper<DataMessage> {
                 }
             } else {
                 if (isEdited) {
+                    Log.d("zinoviewk","RECEIVED EDITED")
                     DataMessage.Received.Edited(id, senderId, content, senderNickname)
                 } else {
-                    DataMessage.Received.Edited(id, senderId, content, senderNickname)
+                    DataMessage.Received.Base(id, senderId, content, senderNickname)
                 }
             }
         }

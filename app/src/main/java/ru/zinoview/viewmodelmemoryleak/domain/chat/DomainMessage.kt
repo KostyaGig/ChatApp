@@ -52,7 +52,7 @@ interface DomainMessage : Message {
             ) : Read(id, senderId, content, senderNickname) {
 
                 override fun <T> map(mapper: Mapper<T>): T
-                        = mapper.mapReceivedEdited(id, senderId, content, senderNickname)
+                        = mapper.mapReadEdited(id, senderId, content, senderNickname)
             }
 
             data class Base(

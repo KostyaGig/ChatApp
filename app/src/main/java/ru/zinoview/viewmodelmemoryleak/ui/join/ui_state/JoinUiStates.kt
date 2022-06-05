@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.join.ui_state
 
+import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.data.core.ui_state.AbstractModel
 import ru.zinoview.viewmodelmemoryleak.ui.core.Communication

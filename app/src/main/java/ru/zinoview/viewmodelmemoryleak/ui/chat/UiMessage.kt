@@ -138,14 +138,14 @@ interface UiMessage :
             private val isEdited: Boolean
         ) : Sent(id, content, senderId, senderNickname,true, isEdited) {
 
-            data class Base(
+            data class BaseReadSent(
                 private val id: String,
                 private val senderId: String,
                 private val content: String,
                 private val senderNickname: String
             ) : Read(id, senderId, content, senderNickname,false)
 
-            data class Edited(
+            data class EditedReadSent(
                 private val id: String,
                 private val senderId: String,
                 private val content: String,
@@ -191,14 +191,14 @@ interface UiMessage :
 
         override fun <T> map(mapper: Mapper<T>) = mapper.map(id,senderId,content, senderNickname)
 
-        data class Base(
+        data class BaseReceived(
             private val id: String,
             private val senderId: String,
             private val content: String,
             private val senderNickname: String
         ) : Received(id, senderId, content, senderNickname,false,false)
 
-        data class Edited(
+        data class EditedReceived(
             private val id: String,
             private val senderId: String,
             private val content: String,

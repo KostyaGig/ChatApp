@@ -18,7 +18,7 @@ interface ImageProfile : ru.zinoview.viewmodelmemoryleak.core.join.Base64Image<B
     }
 
     data class Bitmap(
-        private val bitmap: android.graphics.Bitmap
+        val bitmap: android.graphics.Bitmap
     ) : ImageProfile {
 
         override fun base64Image(param: Base64Image) = param.base64Image(bitmap)

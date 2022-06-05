@@ -4,7 +4,6 @@ import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Save
 import ru.zinoview.viewmodelmemoryleak.ui.join.ImageProfile
 
-
 interface UiJoinState : UiJoinStateAdd, Save<JoinUiStateViewModel> {
 
     class Base : UiJoinState {
