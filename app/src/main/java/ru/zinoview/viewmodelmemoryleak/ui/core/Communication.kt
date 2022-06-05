@@ -22,4 +22,18 @@ interface Communication<T> : CommunicationObserve<T> {
         }
     }
 
+    abstract class StartValue<T>(
+        value: T
+    ) : Communication.Base<T>() {
+
+        private val liveData = MutableLiveData(value)
+
+        override fun observe(owner: LifecycleOwner, observer: Observer<T>)
+            = liveData.observe(owner, observer)
+
+        override fun postValue(value: T) {
+            liveData.value = value
+        }
+    }
+
 }

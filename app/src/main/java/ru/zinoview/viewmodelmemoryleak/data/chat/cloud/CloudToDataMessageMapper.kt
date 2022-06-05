@@ -47,7 +47,6 @@ interface CloudToDataMessageMapper : Mapper<DataMessage> {
                 }
             } else {
                 if (isEdited) {
-                    Log.d("zinoviewk","RECEIVED EDITED")
                     DataMessage.Received.Edited(id, senderId, content, senderNickname)
                 } else {
                     DataMessage.Received.Base(id, senderId, content, senderNickname)

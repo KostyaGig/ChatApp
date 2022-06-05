@@ -64,6 +64,7 @@ class UsersFragment : AbstractFragment<UsersViewModel.Base,UsersFragmentBinding>
         container: ViewGroup?
     ) = UsersFragmentBinding.inflate(inflater,container,false)
 
+    override fun back(navigation: Navigation) = navigation.exit()
     override fun koinScopes() = listOf(ScreenScope.Users(),ScreenScope.Connection())
 
     override fun cleans() = listOf(connectionViewModel,viewModel)

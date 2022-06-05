@@ -2,7 +2,6 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +29,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.Navigation
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.ParcelableWrapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.ui_state.SaveUiStateFragment
 import ru.zinoview.viewmodelmemoryleak.ui.users.NavigationData
+import ru.zinoview.viewmodelmemoryleak.ui.users.UsersFragment
 
 class ChatFragment : SaveUiStateFragment<ChatViewModel.Base, ChatUiStateViewModel,  ChatFragmentBinding>(
     ChatViewModel.Base::class,
@@ -125,6 +125,7 @@ class ChatFragment : SaveUiStateFragment<ChatViewModel.Base, ChatUiStateViewMode
             bundleUser.sendMessage(viewModel,messageSession,message)
         }
 
+        viewModel.subscribeToChanges()
         connectionViewModel.connection()
     }
 
@@ -133,10 +134,7 @@ class ChatFragment : SaveUiStateFragment<ChatViewModel.Base, ChatUiStateViewMode
         userStatusViewModel.online()
 
         viewModel.observe(this) { messages ->
-            Log.d("zinoviewk","message last state ${messages.last()}")
-            messages.last().changeTitle(
-                Pair(requireActivity() as ToolbarActivity,bundleUser)
-            )
+            messages.last().changeTitle(Pair(requireActivity() as ToolbarActivity,bundleUser))
             adapter.update(messages)
         }
 
@@ -165,20 +163,20 @@ class ChatFragment : SaveUiStateFragment<ChatViewModel.Base, ChatUiStateViewMode
         val editTextState = ChatUiState.EditText(binding.messageField.text.toString())
         messageSession.saveState(uiStateViewModel, editTextState,bundleUser)
 
+        uiStateViewModel.saveUser(bundleUser)
         viewModel.showProcessingMessages()
+
         // todo make user offline when he leaves the app
         userStatusViewModel.offline()
-        userStatusViewModel.clean()
-
-        uiStateViewModel.saveUser(bundleUser)
     }
 
-    override fun back(navigation: Navigation) = navigation.exit()
+
+    override fun back(navigation: Navigation) = navigation.navigateTo(UsersFragment())
 
     override fun initBinding(inflater: LayoutInflater, container: ViewGroup?): ChatFragmentBinding =
         ChatFragmentBinding.inflate(layoutInflater, container, false)
 
     override fun koinScopes() = listOf(ScreenScope.Connection(), ScreenScope.Chat())
-    override fun cleans() = listOf(connectionViewModel,viewModel)
+    override fun cleans() = listOf(connectionViewModel,viewModel,userStatusViewModel)
     override fun recoverStateAfterLaunch() = false
 }

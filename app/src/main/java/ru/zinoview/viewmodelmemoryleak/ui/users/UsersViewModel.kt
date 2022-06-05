@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.ui.users
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import ru.zinoview.viewmodelmemoryleak.domain.users.UsersInteractor
 import ru.zinoview.viewmodelmemoryleak.ui.core.BaseViewModel

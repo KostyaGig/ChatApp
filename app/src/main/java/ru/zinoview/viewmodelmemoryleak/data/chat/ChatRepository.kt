@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.*
 import ru.zinoview.viewmodelmemoryleak.core.chat.SendMessage
@@ -11,7 +10,7 @@ import ru.zinoview.viewmodelmemoryleak.data.core.CleanRepository
 import ru.zinoview.viewmodelmemoryleak.core.chat.ReadMessage
 
 interface ChatRepository<T> : Messages<DataMessage>, SendMessage, EditMessage,
-    ReadMessage, ToTypeMessage<T>, ShowNotificationMessage, ShowProcessingMessages, Clean {
+    ReadMessage, ToTypeMessage<T>, ShowNotificationMessage, ShowProcessingMessages, Subscribe, Clean {
 
     override fun showProcessingMessages() = Unit
 
@@ -60,6 +59,8 @@ interface ChatRepository<T> : Messages<DataMessage>, SendMessage, EditMessage,
                 block.invoke(data)
             }
         }
+
+        override fun subscribeToChanges() = cloudDataSource.subscribeToChanges()
 
         override fun showProcessingMessages() = Unit
     }

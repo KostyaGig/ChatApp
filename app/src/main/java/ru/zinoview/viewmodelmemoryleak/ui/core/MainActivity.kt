@@ -10,7 +10,6 @@ import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.databinding.ActivityMainBinding
 import ru.zinoview.viewmodelmemoryleak.ui.core.navigation.*
 import ru.zinoview.viewmodelmemoryleak.ui.join.ImageResult
-import ru.zinoview.viewmodelmemoryleak.ui.users.BundleUser
 
 
 class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity, ActivityLauncher {
@@ -46,18 +45,15 @@ class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity, ActivityL
     }
 
     override fun navigateTo(fragment: Fragment, data: NavigationData) {
+        Log.d("zinoviewk","navigate to $fragment")
         fragmentIntent.saveFragment(fragment)
         fragment.arguments = data.map(Unit)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container, fragment)
-            .commitNow()
+            .commit()
     }
 
-    override fun back() {
-        val fragment = supportFragmentManager.fragments.first() as Back
-        fragment.back(this)
-    }
 
     override fun launch(launcherType: LauncherType) = launcherType.launch(imageLauncher)
 
@@ -70,6 +66,11 @@ class MainActivity : AppCompatActivity(), Navigation, ToolbarActivity, ActivityL
 
     override fun changeTitle(title: String) {
         supportActionBar?.title = title
+    }
+
+    override fun onBackPressed() {
+        val fragment = supportFragmentManager.fragments.first() as Back
+        fragment.back(this)
     }
 
 

@@ -8,11 +8,10 @@ import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
 class DomainModule : Module {
 
     private val domainModule = module {
-        single<ConnectionInteractor> {
+        factory <ConnectionInteractor> {
             ConnectionInteractor.Base(
                 get(),
-                DataToDomainConnectionMapper.Base(),
-                get()
+                DataToDomainConnectionMapper.Base()
             )
         }
     }

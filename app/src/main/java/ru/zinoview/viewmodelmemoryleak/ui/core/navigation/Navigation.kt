@@ -2,7 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.core.navigation
 
 import androidx.fragment.app.Fragment
 
-interface Navigation : Back, Exit {
+interface Navigation : Exit {
 
-    fun navigateTo(fragment: Fragment,data: NavigationData)
+    fun navigateTo(fragment: Fragment,data: NavigationData = NavigationData.Empty)
 }

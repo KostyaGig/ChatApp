@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.chat.cloud
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.chat.ShowNotificationMessage
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketData
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
@@ -10,9 +9,10 @@ import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Disconnect
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
 import ru.zinoview.viewmodelmemoryleak.core.chat.ReadMessage
 import ru.zinoview.viewmodelmemoryleak.core.chat.ReadMessages
+import ru.zinoview.viewmodelmemoryleak.core.chat.Subscribe
 import ru.zinoview.viewmodelmemoryleak.ui.chat.notification.NotificationService
 
-interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, ReadMessage, ShowNotificationMessage {
+interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, ReadMessage, ShowNotificationMessage,Subscribe {
 
     suspend fun messages(senderId: String,receiverId: String,block: (List<CloudMessage>) -> Unit) = Unit
 
@@ -37,8 +37,15 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, ReadMessage, ShowN
         private val notificationService: NotificationService
     ) : AbstractCloudDataSource.Base(socketWrapper), CloudDataSource<Unit> {
 
-        override suspend fun messages(senderId: String, receiverId: String, block:(List<CloudMessage>) -> Unit) {
-            messagesStore.subscribe(block)
+        override fun subscribeToChanges() {
+            socketWrapper.subscribe(TO_TYPE_MESSAGE) { cloudData ->
+                val jsonTypingMessage = json.json(cloudData.first())
+                val typingMessage = json.objectFromJson(jsonTypingMessage,TypingMessageValue::class.java).map()
+
+
+                messagesStore.add(typingMessage)
+                messagesStore.remove(typingMessage)
+            }
 
             socketWrapper.subscribe(MESSAGES) {cloudData ->
                 val wrapperMessages = json.json(cloudData.first())
@@ -50,6 +57,10 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, ReadMessage, ShowN
 
                 messagesStore.addMessages(messages)
             }
+        }
+
+        override suspend fun messages(senderId: String, receiverId: String, block:(List<CloudMessage>) -> Unit) {
+            messagesStore.subscribe(block)
 
             val json = json.json(
                 Pair(
@@ -119,15 +130,6 @@ interface CloudDataSource<T> : Disconnect<Unit>, SendMessage, ReadMessage, ShowN
         }
 
         override suspend fun toTypeMessage(isTyping: Boolean,senderNickName: String) {
-            socketWrapper.subscribe(TO_TYPE_MESSAGE) { cloudData ->
-                val jsonTypingMessage = json.json(cloudData.first())
-                val typingMessage = json.objectFromJson(jsonTypingMessage,TypingMessageValue::class.java).map()
-
-
-                messagesStore.add(typingMessage)
-                messagesStore.remove(typingMessage)
-            }
-
             val data = SocketData.Base(json.json(
                 Pair(
                     IS_TYPING_KEY,isTyping

@@ -1,13 +1,11 @@
 package ru.zinoview.viewmodelmemoryleak.ui.chat
 
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import ru.zinoview.viewmodelmemoryleak.core.IsNotEmpty
 import ru.zinoview.viewmodelmemoryleak.core.chat.Mapper
 import ru.zinoview.viewmodelmemoryleak.core.chat.Message
-import ru.zinoview.viewmodelmemoryleak.data.chat.DataMessage
 import ru.zinoview.viewmodelmemoryleak.ui.users.BundleUser
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditContent
 import ru.zinoview.viewmodelmemoryleak.ui.chat.edit.EditMessageListener

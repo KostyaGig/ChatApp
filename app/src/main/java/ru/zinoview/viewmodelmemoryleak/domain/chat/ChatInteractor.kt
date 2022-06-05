@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.domain.chat
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.*
 import ru.zinoview.viewmodelmemoryleak.data.chat.ChatRepository
@@ -10,6 +9,7 @@ import ru.zinoview.viewmodelmemoryleak.core.chat.ReadMessage
 
 interface ChatInteractor : Messages<DomainMessage>, SendMessage,
     EditMessage, ShowProcessingMessages, ReadMessage, ToTypeMessage.Unit,ShowNotificationMessage,
+    Subscribe,
     Clean {
 
     class Base(
@@ -50,6 +50,8 @@ interface ChatInteractor : Messages<DomainMessage>, SendMessage,
                 block.invoke(domainMessages)
             }
         }
+
+        override fun subscribeToChanges() = chatRepository.subscribeToChanges()
 
         override fun clean() = chatRepository.clean()
     }

@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.ui.connection
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import ru.zinoview.viewmodelmemoryleak.domain.connection.ConnectionInteractor
 import ru.zinoview.viewmodelmemoryleak.ui.chat.UpdateNetworkState

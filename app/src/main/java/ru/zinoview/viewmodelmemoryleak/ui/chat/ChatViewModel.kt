@@ -8,6 +8,7 @@ import ru.zinoview.viewmodelmemoryleak.core.Clean
 import ru.zinoview.viewmodelmemoryleak.core.chat.ReadMessage
 import ru.zinoview.viewmodelmemoryleak.core.chat.ReadMessages
 import ru.zinoview.viewmodelmemoryleak.core.chat.ShowProcessingMessages
+import ru.zinoview.viewmodelmemoryleak.core.chat.Subscribe
 import ru.zinoview.viewmodelmemoryleak.domain.chat.ChatInteractor
 import ru.zinoview.viewmodelmemoryleak.ui.core.BaseViewModel
 import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
@@ -15,7 +16,7 @@ import ru.zinoview.viewmodelmemoryleak.ui.core.Dispatcher
 interface ChatViewModel : ChatViewModelObserve, Clean,
     ReadMessage,
     ObserveScroll,
-    ShowProcessingMessages {
+    ShowProcessingMessages,Subscribe {
 
     fun messages(receiverId: String)
 
@@ -35,7 +36,7 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
         private val communication: MessagesCommunication,
         private val scroll: Scroll,
     ) : BaseViewModel<List<UiMessage>>(
-        communication, listOf(interactor, scroll)
+        communication, listOf(communication,interactor, scroll)
     ), ChatViewModel {
 
         override fun sendMessage(receiverId: String, content: String) =
@@ -48,13 +49,13 @@ interface ChatViewModel : ChatViewModelObserve, Clean,
                 interactor.editMessage(messageId, content, receiverId)
             }
 
+        override fun subscribeToChanges() = interactor.subscribeToChanges()
+
         override fun messages(receiverId: String) {
             communication.postValue(listOf(UiMessage.Empty))
             work.doBackground(viewModelScope) {
                 interactor.messages(receiverId) { domain ->
                     val uiMessages = domain.map { it.map(mapper) }
-
-                    Log.d("zinoviewk","ui $uiMessages")
 
                     dispatcher.doUi(viewModelScope) {
                         communication.postValue(uiMessages)
