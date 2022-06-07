@@ -3,24 +3,25 @@ package ru.zinoview.viewmodelmemoryleak.data.users.cloud
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketData
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
 import ru.zinoview.viewmodelmemoryleak.data.core.cloud.Json
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 interface CloudDataSource {
 
-    suspend fun users(userId: String) : List<CloudUser>
+    suspend fun users(userId: String,block:(List<CloudUser>) -> Unit)
 
     class Base(
         private val socketWrapper: SocketWrapper,
         private val json: Json,
+        private val updateUsers: UpdateUsers
     ) : CloudDataSource {
 
-        override suspend fun users(userId: String) = suspendCoroutine<List<CloudUser>> {  continuation ->
+        override suspend fun users(userId: String,block:(List<CloudUser>) -> Unit) {
             socketWrapper.subscribe(USERS) { cloudData ->
                 val stringJson = json.json(cloudData.first())
                 val users = json.objectFromJson(stringJson,UsersDataWrapper::class.java).map()
-                continuation.resume(users)
-                socketWrapper.disconnect(USERS)
+
+                val excludeCurrentUserUsers = users.filterNot { user -> user.same(userId) }
+
+                updateUsers.update(excludeCurrentUserUsers,block)
             }
 
             val json = json.json(

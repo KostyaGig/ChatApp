@@ -23,19 +23,17 @@ interface JoinUiState :  UiState, Mapper<Unit,ImageProfile>, IsNotEmpty<Unit> {
 
         override fun recover(image: ViewWrapper, text: ViewWrapper)
             = text.show(Unit,userNickName)
+
+        override fun recover(text: ViewWrapper) = text.show(Unit,userNickName)
+
+        override fun isNotEmpty(arg: Unit) = userNickName.isNotEmpty()
     }
 
     data class UserImageProfile(
         private val imageProfile: ImageProfile
     ):  JoinUiState {
 
-
-        // todo
-        override fun state(src: Base64Image): String {
-            val base64 = imageProfile.base64Image(src)
-            Log.d("zinoviewk","base 64 image $imageProfile")
-            return imageProfile.base64Image(src)
-        }
+        override fun state(src: Base64Image) = imageProfile.base64Image(src)
 
         override fun recover(image: ViewWrapper, text: ViewWrapper)
             = imageProfile.show(image)

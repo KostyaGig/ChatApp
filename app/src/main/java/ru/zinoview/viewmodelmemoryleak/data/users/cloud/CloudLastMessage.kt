@@ -1,29 +1,27 @@
 package ru.zinoview.viewmodelmemoryleak.data.users.cloud
 
+import android.util.Log
+import ru.zinoview.viewmodelmemoryleak.R
 import ru.zinoview.viewmodelmemoryleak.core.Mapper
+import ru.zinoview.viewmodelmemoryleak.core.ResourceProvider
 
-interface CloudLastMessage : Mapper<Unit,String> {
+interface CloudLastMessage : Mapper<ResourceProvider,String> {
 
     class Base(
         private val userNickName: String,
         private val lastMessage: String?,
-        private val lastMessageSenderNickName: String?,
+        private val lastMessageSenderNickName: String?
     ) : CloudLastMessage {
 
-        override fun map(src: Unit): String {
+        override fun map(resourceProvider: ResourceProvider): String {
+            Log.d("zinoviewk","sender name $userNickName, msg $lastMessage")
             return when {
-                lastMessage == null -> START_CHATTING
-                userNickName != lastMessageSenderNickName -> {
-                    YOUR_MESSAGE + lastMessage
+                lastMessage == null -> resourceProvider.string(R.string.start_chatting_text)
+                userNickName == lastMessageSenderNickName -> {
+                    resourceProvider.string(R.string.you_prefix) + lastMessage
                 }
                 else -> "$lastMessageSenderNickName : $lastMessage"
             }
         }
-
-        private companion object {
-            private const val START_CHATTING = "Start chatting now!"
-            private const val YOUR_MESSAGE = "You : "
-        }
-
     }
 }

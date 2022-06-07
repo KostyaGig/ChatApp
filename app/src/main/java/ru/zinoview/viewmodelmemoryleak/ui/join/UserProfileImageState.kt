@@ -9,7 +9,15 @@ interface UserProfileImageState : Mapper<Pair<List<UiState>,List<ViewWrapper>>,U
     override fun map(src: Pair<List<UiState>, List<ViewWrapper>>) = Unit
     override fun dropped(): UserProfileImageState = UnChosen
 
-    object Chosen : UserProfileImageState
+    object Chosen : UserProfileImageState {
+
+        override fun map(src: Pair<List<UiState>, List<ViewWrapper>>) {
+            val text = src.second[1]
+            text.show(Unit)
+
+            src.first.forEach { state -> state.recover(text) }
+        }
+    }
 
     object UnChosen : UserProfileImageState {
         override fun map(src: Pair<List<UiState>, List<ViewWrapper>>) {

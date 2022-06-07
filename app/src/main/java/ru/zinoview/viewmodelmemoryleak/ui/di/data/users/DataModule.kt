@@ -13,7 +13,7 @@ class DataModule : Module {
         single<UsersRepository> {
             UsersRepository.Base(
                 get(),
-                CloudMessageMapper.Base(),
+                CloudMessageMapper.Base(get()),
                 get(),
                 ExceptionMapper.Abstract.User(get()),
                 get(),

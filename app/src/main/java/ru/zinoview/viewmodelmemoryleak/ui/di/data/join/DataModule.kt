@@ -9,7 +9,6 @@ import ru.zinoview.viewmodelmemoryleak.data.join.JoinUserRepository
 import ru.zinoview.viewmodelmemoryleak.ui.di.core.Module
 import ru.zinoview.viewmodelmemoryleak.ui.join.Base64Image
 import java.io.ByteArrayOutputStream
-import kotlin.math.sign
 
 class DataModule(
     private val context: Context

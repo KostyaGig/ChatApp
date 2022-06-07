@@ -1,6 +1,7 @@
 package ru.zinoview.viewmodelmemoryleak.ui.users
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,6 +50,7 @@ class UsersFragment : AbstractFragment<UsersViewModel.Base,UsersFragmentBinding>
         super.onStart()
 
         viewModel.observe(this) { users ->
+            Log.d("zinoviewk","UPDATE USERS")
             users.update(adapter)
             users.changeTitle(requireActivity() as ToolbarActivity)
         }

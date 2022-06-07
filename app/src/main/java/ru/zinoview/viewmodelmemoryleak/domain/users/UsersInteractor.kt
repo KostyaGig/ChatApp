@@ -8,10 +8,12 @@ interface UsersInteractor : Data<DomainUsers> {
     class Base(
         private val repository: UsersRepository,
         private val mapper: DataToDomainUsersMapper,
-        ) : UsersInteractor {
+    ) : UsersInteractor {
 
 
-        override suspend fun data()
-            = repository.data().map(mapper)
+        override suspend fun data(block: (DomainUsers) -> Unit) = repository.data { dataUsers ->
+            block.invoke(dataUsers.map(mapper))
+        }
     }
+
 }

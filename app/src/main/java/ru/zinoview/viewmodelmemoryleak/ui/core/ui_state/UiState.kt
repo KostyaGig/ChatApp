@@ -18,4 +18,5 @@ interface UiState {
     ) = Unit
 
     fun recover(image: ViewWrapper,text: ViewWrapper) = Unit
+    fun recover(text: ViewWrapper) = Unit
 }

@@ -2,6 +2,7 @@ package ru.zinoview.viewmodelmemoryleak.ui.chat
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -127,6 +128,8 @@ class ChatFragment : SaveUiStateFragment<ChatViewModel.Base, ChatUiStateViewMode
 
         viewModel.subscribeToChanges()
         connectionViewModel.connection()
+
+        // todo отображение последнего месседжа в сообщениях с юзером
     }
 
     override fun onStart() {
@@ -151,6 +154,7 @@ class ChatFragment : SaveUiStateFragment<ChatViewModel.Base, ChatUiStateViewMode
         val text = ViewWrapper.Text(binding.oldMessageTv)
 
         uiStateViewModel.observe(this) { states ->
+            Log.d("zinoviewk","state $states")
             states.forEach { state ->
                 state.recover(editText, text, messageSession, adapter)
             }
@@ -177,6 +181,6 @@ class ChatFragment : SaveUiStateFragment<ChatViewModel.Base, ChatUiStateViewMode
         ChatFragmentBinding.inflate(layoutInflater, container, false)
 
     override fun koinScopes() = listOf(ScreenScope.Connection(), ScreenScope.Chat())
-    override fun cleans() = listOf(connectionViewModel,viewModel,userStatusViewModel)
+    override fun cleans() = listOf(connectionViewModel)
     override fun recoverStateAfterLaunch() = false
 }

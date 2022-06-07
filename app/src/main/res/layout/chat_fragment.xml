@@ -55,15 +55,15 @@
             android:id="@+id/write_message_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="1"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            >
 
             <EditText
                 android:id="@+id/message_field"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.75"
                 android:padding="10dp"
@@ -71,17 +71,17 @@
 
             <Button
                 android:id="@+id/send_message_btn"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Send!"
-                android:layout_weight="0.15"/>
+                />
 
             <Button
                 android:id="@+id/change_orientation"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Change orientation!"
-                android:layout_weight="0.15"/>
+                android:text="Rotate!"
+                />
 
         </LinearLayout>
 

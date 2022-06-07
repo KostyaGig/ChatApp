@@ -12,4 +12,6 @@
     <string name="users_text">Users: </string>
     <string name="is_typing_text">is  typing...</string>
     <string name="edited_text">edited</string>
+    <string name="start_chatting_text">Start chatting now!</string>
+    <string name="you_prefix">"You : "</string>
 </resources>

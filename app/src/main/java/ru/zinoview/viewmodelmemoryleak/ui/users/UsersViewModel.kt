@@ -1,5 +1,6 @@
 package ru.zinoview.viewmodelmemoryleak.ui.users
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import ru.zinoview.viewmodelmemoryleak.domain.users.UsersInteractor
 import ru.zinoview.viewmodelmemoryleak.ui.core.BaseViewModel
@@ -17,16 +18,19 @@ interface UsersViewModel : CommunicationObserve<UiUsers> {
         private val communication: UsersCommunication
     ) : UsersViewModel, BaseViewModel<UiUsers>(communication) {
 
-        override fun users() {
-            dispatcher.doUi(viewModelScope) {
-                val domain = interactor.data()
-                val ui = domain.map(mapper)
 
+        override fun users() {
                 dispatcher.doUi(viewModelScope) {
-                    communication.postValue(ui)
+                    interactor.data { domainUsers ->
+                        val ui = domainUsers.map(mapper)
+
+                        Log.d("zinoviewk","ui users $ui")
+                        dispatcher.doUi(viewModelScope) {
+                            communication.postValue(ui)
+                        }
+                    }
                 }
             }
-        }
 
     }
 }

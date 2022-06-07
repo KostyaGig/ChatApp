@@ -1,6 +1,5 @@
 package ru.zinoview.viewmodelmemoryleak.data.join.cloud
 
-import android.util.Log
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketData
 import ru.zinoview.viewmodelmemoryleak.core.cloud.SocketWrapper
 import ru.zinoview.viewmodelmemoryleak.core.join.JoinUserId

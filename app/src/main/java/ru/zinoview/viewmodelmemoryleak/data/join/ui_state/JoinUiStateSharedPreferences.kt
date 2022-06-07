@@ -25,11 +25,17 @@ interface JoinUiStateSharedPreferences : UiStateSharedPreferences<JoinUiStates.B
 
             val pair = data.map(base64Image)
 
+            Log.d("zinoviewk",pair.second)
             if (data.isNotEmpty(Unit)) {
-                Log.d("zinoviewk","SAVE IMAGE SHARED PREFERENCES $data")
                 prefs.edit().putString(IMAGE_KEY, pair.second).apply()
+                Log.d("zinoviewk","save image IS NOT EMPTY")
+            } else {
+                Log.d("zinoviewk","save image EMPTY")
             }
-            prefs.edit().putString(NICK_NAME_KEY, pair.first).apply()
+
+            if (data.textIsNotEmpty()) {
+                prefs.edit().putString(NICK_NAME_KEY, pair.first).apply()
+            }
         }
 
         override fun read(key: Unit, map: (JoinUiStates.Base) -> JoinUiStates): JoinUiStates {

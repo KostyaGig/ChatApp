@@ -2,6 +2,8 @@ package ru.zinoview.viewmodelmemoryleak.ui.di.data.users
 
 import org.koin.dsl.module.module
 import ru.zinoview.viewmodelmemoryleak.data.users.cloud.CloudDataSource
+import ru.zinoview.viewmodelmemoryleak.data.users.cloud.UpdateUser
+import ru.zinoview.viewmodelmemoryleak.data.users.cloud.UpdateUsers
 
 class NetworkModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
 
@@ -9,7 +11,8 @@ class NetworkModule : ru.zinoview.viewmodelmemoryleak.ui.di.core.Module {
         single<CloudDataSource> {
             CloudDataSource.Base(
                 get(),
-                get()
+                get(),
+                UpdateUsers.Base(UpdateUser.Base())
             )
         }
     }

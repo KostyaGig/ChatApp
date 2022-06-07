@@ -7,12 +7,12 @@ import ru.zinoview.viewmodelmemoryleak.core.users.UserBitmap
 import ru.zinoview.viewmodelmemoryleak.core.users.UserMapper
 import ru.zinoview.viewmodelmemoryleak.ui.core.*
 
-sealed class UiUser : DiffSame<UiUser>, SameOne<String>, Same<String,Unit>, UserBind, UiItem, OnClick<UserItemClickListener>, AbstractUser {
+sealed class UiUser : DiffSame<UiUser>, SameOne<String>, Same<String,String>, UserBind, UiItem, OnClick<UserItemClickListener>, AbstractUser {
 
     override fun isContentTheSame(item: UiUser) = false
     override fun isItemTheSame(item: UiUser) = false
     override fun same(data: String) = false
-    override fun same(arg1: String, arg2: Unit) = false
+    override fun same(arg1: String, arg2: String) = false
 
     override fun bind(view: Pair<TextView, ImageView>) = Unit
     override fun bindLastMessage(view: TextView) = Unit
@@ -21,7 +21,7 @@ sealed class UiUser : DiffSame<UiUser>, SameOne<String>, Same<String,Unit>, User
 
     override fun <T> map(mapper: UserMapper<T>) = mapper.map("","","",UserBitmap.Empty)
 
-    class Base(
+    data class Base(
         private val id: String,
         private val nickName: String,
         private val lastMessageText: String,
@@ -32,13 +32,13 @@ sealed class UiUser : DiffSame<UiUser>, SameOne<String>, Same<String,Unit>, User
             = item.same(id)
 
         override fun isItemTheSame(item: UiUser)
-            = item.same(nickName,Unit)
+            = item.same(nickName,lastMessageText)
 
         override fun same(id: String)
             = this.id == id
 
-        override fun same(nickName: String, arg2: Unit)
-            = this.nickName == nickName
+        override fun same(nickName: String, lastMessageText: String)
+            = this.nickName == nickName && this.lastMessageText == lastMessageText
 
         override fun bind(view: Pair<TextView, ImageView>) {
             view.first.text = nickName
