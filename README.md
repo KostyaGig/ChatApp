@@ -2,6 +2,7 @@
 
 - [Description](#description)
 - [Technology](#technology)
+- [Project statistic](#statistic)
 - [Backend](#backend)
 
 # Description
@@ -88,6 +89,9 @@ For automatically sending and editting messages I used [WorkManager](https://dev
 - [Socket io](https://socket.io/blog/native-socket-io-and-android/)
 - [CircleImageView](https://github.com/hdodenhof/CircleImageView) and [Glide](https://github.com/bumptech/glide) libs are involved to obtain and display user profile image
 - [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager)
+
+# Statistic
+<img src="https://firebasestorage.googleapis.com/v0/b/chatsocketapp-2d5bd.appspot.com/o/Screenshot%202022-06-07%20at%208.53.04%20PM.png?alt=media&token=91a070c3-6175-499b-a762-0cef593c2293">
 
 # Backend 
 Beckend was wrotten with the help of [node.js](https://nodejs.org/en/) <br/>
