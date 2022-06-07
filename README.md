@@ -48,11 +48,12 @@ Show users who has already joned to the chat <br />
 Showing image profile of the user his nick name and also we show the last sender message's name and its content <br />
 For uploading images I used [Glide](https://github.com/bumptech/glide), they have circle form with the help of [CircleImageView](https://github.com/hdodenhof/CircleImageView)<br /> <br />
 
+<img src="https://firebasestorage.googleapis.com/v0/b/chatsocketapp-2d5bd.appspot.com/o/users_screen.png?alt=media&token=7e1c8367-43c2-4ad0-bef1-86fb4f58ef70" width="400" height="600"> <br />
+
 The last sent message updates on screen with users<br />
 For updating recycler view I used Diffutils<br />
 <img src="https://media.giphy.com/media/vnyMXONz2SvPku3HCQ/giphy.gif"> <br /> <br />
 
-<img src="https://firebasestorage.googleapis.com/v0/b/chatsocketapp-2d5bd.appspot.com/o/users_screen.png?alt=media&token=7e1c8367-43c2-4ad0-bef1-86fb4f58ef70" width="400" height="600"> <br />
 
 ### Chat
 In this screen I also save the state to restore it in the future <br />
