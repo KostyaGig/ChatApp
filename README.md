@@ -95,5 +95,5 @@ For automatically sending and editting messages I used [WorkManager](https://dev
 <img src="https://firebasestorage.googleapis.com/v0/b/chatsocketapp-2d5bd.appspot.com/o/Screenshot%202022-06-07%20at%208.53.04%20PM.png?alt=media&token=91a070c3-6175-499b-a762-0cef593c2293">
 
 # Backend 
-Beckend was wrotten with the help of [node.js](https://nodejs.org/en/) <br/>
+Beckend was written with the help of [node.js](https://nodejs.org/en/) <br/>
 You can see the file with source code [here](https://github.com/KostyaGig/ChatApp/blob/master/back_end/chat_back_end.js)
