@@ -82,7 +82,75 @@ io.on('connection', (socket) => {
     })
 
     socket.on('users', async (user) => {
-        var userId = user['userId']
+        users(user['userId'])
+        // var userId = user['userId']
+        // MongoClient.connect(url, function (err, db) {
+        //     if (err) throw err;
+        //     var database = db.db("chat_app_db");
+        //     database.collection("user").find({}).toArray(async function (err, result) {
+        //         if (err) throw err;
+
+        //         var messagesCollection = database.collection("messages")
+
+        //         var users = []
+        //         for (const currentUser of result) {
+        //             var user = Object()
+        //             var currentUserId = currentUser['userId'].toString();
+        //             user.id = currentUserId
+        //             user.nickName = currentUser['userNickName']
+        //             user.image = currentUser['userImage']
+
+        //             var firstMessagesJson = {
+        //                 senderId: userId,
+        //                 receiverId: currentUserId
+        //             }
+
+        //             var secondMessagesJson = {
+        //                 senderId: currentUserId,
+        //                 receiverId: userId
+        //             }
+        //             var firstResult = await messagesCollection.findOne(firstMessagesJson)
+        //             var secondResult = await messagesCollection.findOne(secondMessagesJson)
+
+        //             if (firstResult == null && secondResult != null) {
+        //                 var messages = secondResult['messages']
+        //                 if (messages.length != 0) {
+        //                     var theLastMessage = messages[messages.length - 1]
+        //                     var content = theLastMessage['content']
+        //                     var senderNickName = theLastMessage['senderNickName']
+        //                     var senderId = theLastMessage['senderId']
+
+        //                     user.lastMessage = content
+        //                     user.lastMessageSenderNickName = senderNickName
+        //                 }
+        //             } else {
+        //                 if (firstResult != null) {
+        //                     var messages = firstResult['messages']
+        //                     if (messages.length != 0) {
+        //                         var theLastMessage = messages[messages.length - 1]
+        //                         var content = theLastMessage['content']
+        //                         var senderNickName = theLastMessage['senderNickName']
+        //                         var senderId = theLastMessage['senderId']
+
+        //                         user.lastMessage = content
+        //                         user.lastMessageSenderNickName = senderNickName
+        //                     }
+        //                 }
+        //             }
+        //             if (user.id != userId) {
+        //                 users.push(user)
+        //             }
+        //         }
+        //         io.emit('users', users)
+        //         db.close();
+        //     });
+        // })
+    })
+
+    async function users(senderId,receiverId) {
+        console.log('receiver id ',receiverId)
+        var userId = senderId
+        var pushMessages = true
         MongoClient.connect(url, function (err, db) {
             if (err) throw err;
             var database = db.db("chat_app_db");
@@ -96,8 +164,20 @@ io.on('connection', (socket) => {
                     var user = Object()
                     var currentUserId = currentUser['userId'].toString();
                     user.id = currentUserId
-                    user.nickName = currentUser['userNickName']
                     user.image = currentUser['userImage']
+                    user.actualNickName = currentUser['userNickName']
+                    user.senderNickName = ""
+                    user.receiverNickName = ""
+                    user.lastUpdaterId = ""
+
+                    var update = true
+
+                    if (typeof receiverId === 'undefined') {
+                        console.log('UPDATE IS FALSE ')
+                        update = false
+                    }
+
+                    user.update = update
 
                     var firstMessagesJson = {
                         senderId: userId,
@@ -117,10 +197,20 @@ io.on('connection', (socket) => {
                             var theLastMessage = messages[messages.length - 1]
                             var content = theLastMessage['content']
                             var senderNickName = theLastMessage['senderNickName']
+                            var receiverNickName = theLastMessage['receiverNickName']
                             var senderId = theLastMessage['senderId']
 
                             user.lastMessage = content
                             user.lastMessageSenderNickName = senderNickName
+                            user.senderNickName = senderNickName
+                            user.receiverNickName = receiverNickName
+                            user.lastUpdaterId = currentUserId
+
+                            if (currentUserId == receiverId) {
+                                pushMessages = false
+                            }
+
+                            console.log('SECOND RESULT sender id', senderId, "last message ", content)
                         }
                     } else {
                         if (firstResult != null) {
@@ -129,22 +219,49 @@ io.on('connection', (socket) => {
                                 var theLastMessage = messages[messages.length - 1]
                                 var content = theLastMessage['content']
                                 var senderNickName = theLastMessage['senderNickName']
+                                var receiverNickName = theLastMessage['receiverNickName']
                                 var senderId = theLastMessage['senderId']
 
                                 user.lastMessage = content
                                 user.lastMessageSenderNickName = senderNickName
+                                user.senderNickName = senderNickName
+                                user.receiverNickName = receiverNickName
+                                user.lastUpdaterId = userId
+
+                                if (userId == receiverId) {
+                                    pushMessages = false
+                                }
+
+                                console.log('FIRST RESULT sender id', senderId, "last message ", content)
                             }
                         }
                     }
-                    if (user.id != userId) {
-                        users.push(user)
+
+                    users.push(user)
+                }
+                var names = []
+                var lastmsg = []
+                for (const cUser of users) {
+                    names.push(cUser.actualNickName)
+                    lastmsg.push(cUser.lastMessage)
+                }
+                 console.log('push users ',names)
+                 console.log('push users ',lastmsg)
+
+
+                console.log('receiver id ',receiverId,"push messages ",pushMessages)
+                if (typeof receiverId === 'undefined') {
+                    io.emit('users', users)
+                } else {
+                    if (pushMessages) {
+                        io.emit('users', users)
                     }
                 }
-                io.emit('users', users)
                 db.close();
             });
         })
-    })
+    }
+
 
     socket.on('send_message', async (clientMessage) => {
         var senderId = clientMessage.senderId;
@@ -175,6 +292,14 @@ io.on('connection', (socket) => {
             if (err) throw err;
             var database = db.db("chat_app_db");
 
+            var receiverUserQuery = {
+                userId: Number(receiverId)
+            }
+            var receiverUser = await database.collection("user").findOne(receiverUserQuery)
+
+            newMessage.receiverNickName = receiverUser.userNickName
+
+
             var messagesCollection = database.collection("messages")
 
             var firstResult = await messagesCollection.findOne(firstQuery)
@@ -194,6 +319,7 @@ io.on('connection', (socket) => {
                     message.senderId = item.senderId
                     message.content = item.content
                     message.senderNickName = item.senderNickName
+                    message.receiverNickName = item.receiverNickName
                     message.isRead = item.isRead
                     message.isEdited = item.isEdited;
 
@@ -210,6 +336,8 @@ io.on('connection', (socket) => {
 
                 io.emit('messages', listOfMessages)
                 messagesCollection.updateOne(firstQuery, newMessages)
+                console.log('FIRST RESULT RECEIVER ID',receiverId,"SENDER ID ",senderId)
+                users(senderId,receiverId)
             } else {
                 if (secondResult != null) {
                     var messages = secondResult['messages']
@@ -222,6 +350,7 @@ io.on('connection', (socket) => {
                         message.senderId = item.senderId
                         message.content = item.content
                         message.senderNickName = item.senderNickName
+                        message.receiverNickName = item.receiverNickName
                         message.isRead = item.isRead
                         message.isEdited = item.isEdited;
 
@@ -238,6 +367,9 @@ io.on('connection', (socket) => {
 
                     io.emit('messages', listOfMessages)
                     messagesCollection.updateOne(secondQuery, newMessages)
+
+                    console.log('SECOND RESULT RECEIVER ID',receiverId,'SENDER ID ',senderId)
+                    users(senderId,receiverId)
                 } else {
 
                     console.log('create branch')
@@ -253,12 +385,18 @@ io.on('connection', (socket) => {
 
                     io.emit('messages', listOfMessages)
                     messagesCollection.insertOne(json)
+                    users(senderId,receiverId)
+                    console.log('ELSE RESULT RECEIVER ',receiverId)
                 }
 
             }
+
+            sendNotification(newMessage.id, newMessage.senderNickName, newMessage.content)
+
         })
-        sendNotification(newMessage.id, newMessage.senderNickName, newMessage.content)
     })
+
+        
 
     const functions = require("firebase-functions");
     var admin = require("firebase-admin");
@@ -271,28 +409,29 @@ io.on('connection', (socket) => {
     }
 
     function sendNotification(messageId, senderNickName, content) {
+            console.log('PUSH NOTIFICATION notification ', notificationToken)
+
+        offlineUserNotificationTokens.forEach(function (item, index, array) {
+            var notificationToken = item
 
 
-        // offlineUserNotificationTokens.forEach(function (item, index, array) {
-        //     var notificationToken = item
+            const message = {
+                data: {
+                    messageId: messageId,
+                    nickName: senderNickName,
+                    content: content
+                },
+                token: notificationToken
+            };
 
-        //     const message = {
-        //         data: {
-        //             messageId: messageId,
-        //             nickName: senderNickName,
-        //             content: content
-        //         },
-        //         token: notificationToken
-        //     };
-
-        //     admin.messaging().send(message)
-        //         .then((response) => {
-        //             console.log('Successfully sent message:', response);
-        //         })
-        //         .catch((error) => {
-        //             console.log('Error sending message:', error);
-        //         });
-        // })
+            admin.messaging().send(message)
+                .then((response) => {
+                    console.log('Successfully sent message:', response);
+                })
+                .catch((error) => {
+                    console.log('Error sending message:', error);
+                });
+        })
 
     }
 
@@ -410,6 +549,7 @@ io.on('connection', (socket) => {
                     message.content = editedMessageContent;
                     message.isRead = item.isRead;
                     message.senderNickName = item.senderNickName;
+                    message.receiverNickName = item.receiverNickName;
 
                     message.isEdited = isEdited;
 
@@ -448,6 +588,7 @@ io.on('connection', (socket) => {
                     message.content = editedMessageContent;
                     message.isRead = item.isRead;
                     message.senderNickName = item.senderNickName;
+                    message.receiverNickName = item.receiverNickName;
 
                     message.isEdited = isEdited;
 
@@ -520,6 +661,7 @@ io.on('connection', (socket) => {
                                 readMessage.content = message.content;
                                 readMessage.isRead = true
                                 readMessage.senderNickName = message.senderNickName;
+                                readMessage.receiverNickName = message.receiverNickName;
 
                                 listOfReadMessages.push(readMessage)
                             }
@@ -591,6 +733,7 @@ io.on('connection', (socket) => {
                                 readMessage.isRead = true
                                 readMessage.senderNickName = message.senderNickName;
                                 readMessage.isEdited = message.isEdited;
+                                readMessage.receiverNickName = message.receiverNickName;
 
                                 listOfReadMessages.push(readMessage)
                             }
